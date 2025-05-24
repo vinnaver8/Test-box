@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bell Ripple + Wave Animation</title>
+  <style>
+    body {
+      background: #111;
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .notification {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .notification .bell {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px; height: 48px;
+      background: #222;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      z-index: 2;
+    }
+
+    /* rotating colored ring */
+    .notification .bell::before {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 90px; height: 90px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(255, 165, 0, .8),
+        rgba(0, 191, 255, .8),
+        rgba(255, 165, 0, .8)
+      );
+      filter: blur(6px);
+      animation: spin 4s linear infinite;
+      z-index: 1;
+    }
+
+    /* two pulsing ripples */
+    .notification .bell::after,
+    .notification .bell .ripple {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 1;
+      animation: ripple 2.5s infinite ease-out;
+    }
+
+    .notification .bell .ripple {
+      width: 70px; height: 70px;
+      animation-duration: 3.5s;
+    }
+
+    .notification .bell::after {
+      width: 50px; height: 50px;
+      animation-duration: 2s;
+    }
+
+    @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes ripple {
+      to {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="notification">
+    <div class="bell">
+      🔔
+      <!-- second ripple layer -->
+      <div class="ripple"></div>
+    </div>
+  </div>
+
+</body>
+</html>
