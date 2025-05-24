@@ -13,91 +13,73 @@
       justify-content: center;
       margin: 0;
     }
+    .bell-icon {
+  font-size: 24px;
+}
 
-    .notification {
-      position: relative;
-      width: 100px;
-      height: 100px;
-    }
+.notification-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff0000;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
 
-    .notification .bell {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 48px; height: 48px;
-      background: #222;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 24px;
-      z-index: 2;
-    }
+.notification-icon {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    /* rotating colored ring */
-    .notification .bell::before {
-      content: "";
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 90px; height: 90px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: conic-gradient(
-        from 0deg,
-        rgba(255, 165, 0, .8),
-        rgba(0, 191, 255, .8),
-        rgba(255, 165, 0, .8)
-      );
-      filter: blur(6px);
-      animation: spin 4s linear infinite;
-      z-index: 1;
-    }
+.notification-icon::before, .notification-icon::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  animation: ripple-wave 2s linear infinite;
+}
 
-    /* two pulsing ripples */
-    .notification .bell::after,
-    .notification .bell .ripple {
-      content: "";
-      position: absolute;
-      top: 50%; left: 50%;
-      border: 2px solid rgba(255,255,255,0.6);
-      border-radius: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 1;
-      animation: ripple 2.5s infinite ease-out;
-    }
+.notification-icon::after {
+  animation-delay: 1s;
+}
 
-    .notification .bell .ripple {
-      width: 70px; height: 70px;
-      animation-duration: 3.5s;
-    }
+@keyframes ripple-wave {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    border-color: #03a9f4;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+    border-color: #f7941d;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    border-color: #03a9f4;
+  }
+}
 
-    .notification .bell::after {
-      width: 50px; height: 50px;
-      animation-duration: 2s;
-    }
-
-    @keyframes spin {
-      to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    @keyframes ripple {
-      to {
-        transform: translate(-50%, -50%) scale(1.8);
-        opacity: 0;
-      }
-    }
+  
   </style>
 </head>
 <body>
 
-  <div class="notification">
-    <div class="bell">
-      🔔
-      <!-- second ripple layer -->
-      <div class="ripple"></div>
-    </div>
-  </div>
+  <div class="notification-icon">
+  <span class="bell-icon">&#128276;</span>
+  <span class="notification-count">26</span>
+</div>
 
 </body>
 </html>
