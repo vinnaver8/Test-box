@@ -6,19 +6,20 @@
   <title>Bell Ripple + Wave Animation</title>
   <style>
 body {
-  background: radial-gradient(circle at 30% 50%, #2c3e50 0%, #111 100%);
-  min-height: 100vh;
   margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
-.main {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-  transform: translate(-50%, -50%);
+.wave-container {
+  position: relative;
+  width: 400px;
+  height: 400px;
 }
 
 .wave {
@@ -26,57 +27,113 @@ body {
   top: 50%;
   left: 50%;
   border-radius: 50%;
-  border: 20px solid rgba(255, 255, 255, 0.07);
-  box-shadow:
-    0 0 60px 10px #23a6d5,
-    0 0 120px 30px #23a6d5 inset;
-  filter: blur(8px);
-  opacity: 0.8;
+  border: 3px solid;
   transform: translate(-50%, -50%) scale(0);
-  animation: ripple 3s infinite ease-in;
+  opacity: 0;
 }
 
 .wave1 {
-  width: 160px;
-  height: 160px;
+  width: 120px;
+  height: 120px;
+  border-color: rgba(59, 130, 246, 0.8);
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.6),
+    inset 0 0 20px rgba(59, 130, 246, 0.3);
+  animation: sequentialWave 4s infinite ease-out;
   animation-delay: 0s;
 }
 
 .wave2 {
-  width: 220px;
-  height: 220px;
-  animation-delay: 1s;
-  border-color: rgba(44, 62, 80, 0.12);
+  width: 200px;
+  height: 200px;
+  border-color: rgba(147, 51, 234, 0.6);
+  box-shadow: 
+    0 0 30px rgba(147, 51, 234, 0.4),
+    inset 0 0 30px rgba(147, 51, 234, 0.2);
+  animation: sequentialWave 4s infinite ease-out;
+  animation-delay: 1.3s;
 }
 
 .wave3 {
   width: 280px;
   height: 280px;
-  animation-delay: 2s;
-  border-color: rgba(255, 140, 0, 0.09);
+  border-color: rgba(251, 146, 60, 0.5);
+  box-shadow: 
+    0 0 40px rgba(251, 146, 60, 0.3),
+    inset 0 0 40px rgba(251, 146, 60, 0.1);
+  animation: sequentialWave 4s infinite ease-out;
+  animation-delay: 2.6s;
 }
 
-@keyframes ripple {
+.center-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  z-index: 10;
+}
+
+.notification-dot {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid #1a1a2e;
+}
+
+@keyframes sequentialWave {
   0% {
-    opacity: 0.8;
-    transform: translate(-50%, -50%) scale(0.7);
-  }
-  50% {
-    opacity: 0.5;
-    transform: translate(-50%, -50%) scale(1.1);
-  }
-  100% {
+    transform: translate(-50%, -50%) scale(0.3);
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.5);
+  }
+  
+  15% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.8;
+  }
+  
+  50% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  
+  85% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0.2;
+  }
+  
+  100% {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 0;
   }
 }
 </style>
 </head>
 <body>
-<div class="main">
+<div class="wave-container">
   <div class="wave wave1"></div>
   <div class="wave wave2"></div>
   <div class="wave wave3"></div>
+  <div class="center-icon">
+    <div class="notification-dot">20</div>
+  </div>
 </div>
 </body>
 </html>
