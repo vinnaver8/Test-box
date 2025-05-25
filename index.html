@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>CSS Floorplan Scaffold</title>
+  <title>Flat CSS Floorplan</title>
   <style>
     body, html { margin:0; padding:0; }
     section.hero {
@@ -11,123 +11,131 @@
       min-height: 2000px;
       background: #f7f7f8;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    /* Container for everything */
+
     .layout {
       position: relative;
       width: 90%;
       max-width: 1200px;
-      margin: 0 auto;
       height: 700px;
-      transform: perspective(1200px) rotateX(60deg);
-      transform-style: preserve-3d;
-      margin-top: 200px; /* push down a bit */
+      margin-top: 200px;
     }
 
-    /* Wall styles: white bar with shadow */
+    /* Maze walls: simple bars */
     .wall {
       position: absolute;
       background: #fff;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      border-radius: 0.25rem;
+      border-radius: 6px;
     }
-    /* Horizontal walls */
-    .wall.h1 { top:  0px;   left:  0px; width: 100%; height: 12px; }
-    .wall.h2 { top: 200px;  left:  0px; width: 100%; height: 12px; }
-    .wall.h3 { top: 400px;  left:  0px; width: 100%; height: 12px; }
-    .wall.h4 { bottom: 0px; left:  0px; width: 100%; height: 12px; }
+    /* Horizontal */
+    .h1 { top:  0;   left: 0; right: 0; height: 12px; }
+    .h2 { top: 200px; left: 0; right: 0; height: 12px; }
+    .h3 { top: 400px; left: 0; right: 0; height: 12px; }
+    .h4 { bottom:0;   left: 0; right: 0; height: 12px; }
+    /* Vertical */
+    .v1 { top: 0; bottom:0; left: 0;    width:12px; }
+    .v2 { top: 0; bottom:0; left:300px; width:12px; }
+    .v3 { top: 0; bottom:0; left:900px; width:12px; }
+    .v4 { top: 0; bottom:0; right:0;    width:12px; }
 
-    /* Vertical walls */
-    .wall.v1 { top:   0px;   left:   0px; height: 100%; width: 12px; }
-    .wall.v2 { top:   0px;   left: 300px; height: 100%; width: 12px; }
-    .wall.v3 { top:   0px;   left: 900px; height: 100%; width: 12px; }
-    .wall.v4 { top:   0px;   right:  0px; height: 100%; width: 12px; }
-
-    /* Central “building” panel */
-    .panel {
-      position: absolute;
-      width: 680px; height: 420px;
-      top: 50%; left: 50%;
-      transform: translate(-50%,-50%) translateZ(50px);
-      background: #f0f2f5;
-      border-radius: 1rem;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    }
-
-    /* Room glow placeholders */
+    /* Room glows */
     .room {
       position: absolute;
       width: 240px; height: 240px;
-      transform: translateZ(1px);
     }
     .room::before {
-      content: "";
-      position: absolute; inset:0;
-      background: radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
-      filter: blur(8px);
+      content:"";
+      position:absolute; inset:0;
+      background:radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
+      filter:blur(8px);
       animation: pulse 6s ease-in-out infinite;
-    }
-    .room .label {
-      position: absolute;
-      top: 50%; left:50%;
-      transform: translate(-50%,-50%) rotateX(60deg);
-      color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      font-family: sans-serif;
     }
     @keyframes pulse {
       0%,100% { transform: scale(1); opacity:0.6; }
       50%      { transform: scale(1.15); opacity:0.3; }
     }
 
-    /* Example room positions */
-    .room.meeting  { top:  80px;  left:  80px; }
-    .room.design   { top: 300px;  left: 100px; }
-    .room.lounge   { top: 100px;  right: 80px; }
-    .room.allhands { top: 320px;  right:100px; }
+    /* Center panel */
+    .panel {
+      position:absolute;
+      width:680px; height:420px;
+      top:50%; left:50%;
+      transform: translate(-50%,-50%);
+      background:#f0f2f5;
+      border-radius:16px;
+      box-shadow:0 10px 40px rgba(0,0,0,0.1);
+    }
+    /* Panel edge glows */
+    .panel::before, .panel::after {
+      content:"";
+      position:absolute;
+      width:80px; height:10px;
+      background:rgba(255,255,255,0.6);
+      filter:blur(4px);
+      border-radius:4px;
+    }
+    .panel::before {
+      top:10px; left:20%;
+    }
+    .panel::after {
+      bottom:10px; right:20%;
+    }
+
+    /* Room positions */
+    .meeting  { top: 80px;  left:  80px; }
+    .design   { top: 300px; left: 100px; }
+    .lounge   { top: 100px; right: 80px; }
+    .allhands { top: 320px; right:100px; }
 
     /* Mobile fallback */
     @media (max-width:767px) {
       .layout, .wall, .room, .panel { display:none; }
-      .mobile-card { display:block; width:90%; max-width:400px; margin:40px auto; background:#fff; padding:24px; border-radius:1rem; box-shadow:0 8px 24px rgba(0,0,0,0.1); text-align:center; }
-    }
-    @media (min-width:768px) {
-      .mobile-card { display:none; }
-      .layout { display:block; }
+      .mobile-card {
+        display:block;
+        width:90%; max-width:400px;
+        margin:40px auto;
+        background:#fff; padding:24px;
+        border-radius:16px;
+        box-shadow:0 8px 24px rgba(0,0,0,0.1);
+        text-align:center;
+      }
     }
   </style>
 </head>
-<body>
 
+<body>
 <section class="hero">
-  <!-- Mobile fallback -->
+  <!-- Mobile -->
   <div class="mobile-card">
     <h2>Work together.<br>Like in the office.</h2>
     <p>Virtual rooms with high-quality audio & video conferencing.</p>
   </div>
 
-  <!-- Desktop 3D layout -->
+  <!-- Desktop layout -->
   <div class="layout">
     <!-- Walls -->
     <div class="wall h1"></div>
     <div class="wall h2"></div>
     <div class="wall h3"></div>
     <div class="wall h4"></div>
-
     <div class="wall v1"></div>
     <div class="wall v2"></div>
     <div class="wall v3"></div>
     <div class="wall v4"></div>
 
-    <!-- Rooms -->
-    <div class="room meeting"><div class="label">Meeting</div></div>
-    <div class="room design"><div class="label">Design</div></div>
-    <div class="room lounge"><div class="label">Lounge</div></div>
-    <div class="room allhands"><div class="label">All Hands</div></div>
+    <!-- Room glows -->
+    <div class="room meeting"></div>
+    <div class="room design"></div>
+    <div class="room lounge"></div>
+    <div class="room allhands"></div>
 
-    <!-- Central building panel -->
+    <!-- Center panel -->
     <div class="panel"></div>
   </div>
 </section>
-
 </body>
 </html>
