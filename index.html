@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vortex + Pulse + SVG Bell</title>
+  <title>Vortex + Waves + Spinner + SVG Bell</title>
   <style>
     :root {
       --dark-bg: #0d0d12;
@@ -28,14 +28,14 @@
       box-shadow: 0 0 2rem rgba(0,0,0,0.5);
     }
 
-    /* -- vortex swirl from before -- */
+    /* Vortex swirl */
     .vortex {
       position: absolute; inset: 0; border-radius: 50%; filter: blur(2vmin);
     }
     .vortex::before,
     .vortex::after {
-      content:""; position:absolute; inset:0; border-radius:50%;
-      mix-blend-mode: screen; opacity:0.7;
+      content: ""; position: absolute; inset: 0; border-radius: 50%;
+      mix-blend-mode: screen; opacity: 0.7;
       background: radial-gradient(circle at 30% 30%, var(--blue) 0%, transparent 70%);
       animation: spin-blue 20s linear infinite;
     }
@@ -46,7 +46,7 @@
     @keyframes spin-blue { from{transform:rotate(0)} to{transform:rotate(360deg)} }
     @keyframes spin-orange { from{transform:rotate(0)} to{transform:rotate(360deg)} }
 
-    /* -- pulsing ring behind bell -- */
+    /* Pulsing inner ring */
     .pulse {
       position: absolute;
       top: 50%; left: 50%;
@@ -63,7 +63,51 @@
       100% { transform: scale(4);   opacity: 0;   }
     }
 
-    /* -- Bell SVG centered -- */
+    /* Concentric “wave” rings */
+    .waves,
+    .waves::before,
+    .waves::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 8vmin; height: 8vmin;
+      margin: -4vmin 0 0 -4vmin;
+      border: 0.2vmin solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      animation: wave 3s ease-out infinite;
+      pointer-events: none;
+    }
+    .waves::before {
+      animation-delay: 1s;
+    }
+    .waves::after {
+      animation-delay: 2s;
+    }
+    @keyframes wave {
+      0%   { transform: scale(1);   opacity: 0.5; }
+      80%  { transform: scale(6);   opacity: 0;   }
+      100% { transform: scale(6);   opacity: 0;   }
+    }
+
+    /* Rotating spinner ring */
+    .spinner {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 14vmin; height: 14vmin;
+      margin: -7vmin 0 0 -7vmin;
+      border-radius: 50%;
+      border: 0.4vmin solid transparent;
+      border-top-color: var(--blue);
+      border-right-color: var(--orange);
+      animation: spin-spinner 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes spin-spinner {
+      from { transform: translate(-50%, -50%) rotate(0); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Bell SVG centered */
     .icon {
       position: absolute;
       top:50%; left:50%;
@@ -87,6 +131,8 @@
   <div class="scene">
     <div class="vortex"></div>
     <div class="pulse"></div>
+    <div class="waves"></div>
+    <div class="spinner"></div>
     <div class="icon">
       <!-- Heroicons Bell -->
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#fff">
