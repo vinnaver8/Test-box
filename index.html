@@ -1,301 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>3D Floorplan Hero</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>3D Floorplan Carousel</title>
   <style>
-    /* ===== SECTION SETUP ===== */
-    section.hero {
-      position: relative;
-      min-height: 2000px;
-      background: #f7f7f8;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    body, html { margin:0; padding:0; height:100%; overflow:hidden; font-family:sans-serif; }
+    section { position:relative; width:100vw; height:100vh; background:#f7f7f8; }
+    /* Container for floors */
+    .floors {
+      position:absolute;
+      top:50%; left:50%;
+      width:300vw; height:70vh;
+      transform: translate(-50%,-50%);
+      display:flex;
+      transition: transform 0.8s ease;
     }
-
-    /* ===== WAVE BACKGROUND ===== */
-    .hero .wave-bg {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 400px;
-      overflow: hidden;
-      transform: translateY(-50%);
-      z-index: 1;
-    }
-    .hero .wave-bg svg {
-      width: 200%; height: 200%;
-      animation: wave 8s ease-in-out infinite;
-    }
-    @keyframes wave {
-      0%   { transform: translateX(0)   translateY(0)   }
-      50%  { transform: translateX(-25%) translateY(10%) }
-      100% { transform: translateX(0)   translateY(0)   }
-    }
-
-    /* ===== 3D FLOOR PLAN WRAPPER ===== */
+    /* Individual floor */
     .floor {
-      position: relative;
-      width: 90%;
-      max-width: 1200px;
-      height: 700px;
-      perspective: 1200px;
-      z-index: 2;
-      display: none; /* hidden on mobile */
+      position:relative;
+      width:100vw; height:100%;
+      perspective:1200px;
+      flex-shrink:0;
     }
+    /* The 3D plane */
     .floor .plane {
-      width: 100%; height: 100%;
-      transform-style: preserve-3d;
+      position:absolute;
+      top:0; left:0; width:100%; height:100%;
+      transform-style:preserve-3d;
       transform: rotateX(60deg) translateZ(-100px);
     }
-
-    /* ===== WALLS ===== */
+    /* Walls */
     .wall {
-      position: absolute;
-      background: #fff;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      position:absolute; background:#fff;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);
     }
-    .wall.top    { top:  0; left:0; right:0; height: 20px; transform: rotateX(90deg) translateY(-10px); }
-    .wall.bottom { bottom:0; left:0; right:0; height: 20px; transform: rotateX(90deg) translateY(10px); }
-    .wall.left   { top:0; bottom:0; left:0; width: 20px;  transform: rotateY(90deg) translateX(-10px); }
-    .wall.right  { top:0; bottom:0; right:0; width: 20px;  transform: rotateY(90deg) translateX(10px); }
+    .wall.top    { top:0; left:0; right:0; height:20px; transform: rotateX(90deg) translateY(-10px); }
+    .wall.bottom { bottom:0; left:0; right:0; height:20px; transform: rotateX(90deg) translateY(10px); }
+    .wall.left   { top:0; bottom:0; left:0; width:20px; transform: rotateY(90deg) translateX(-10px); }
+    .wall.right  { top:0; bottom:0; right:0; width:20px; transform: rotateY(90deg) translateX(10px); }
 
-    /* ===== ROOMS ===== */
+    /* Rooms / hall / kitchen */
     .room {
-      position: absolute;
-      width: 240px; height: 240px;
-      transform: translateY(1px);
-      overflow: visible;
+      position:absolute;
+      width:200px; height:200px;
+      overflow:visible;
     }
     .room .glow {
-      position: absolute; inset:0;
-      background: radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
+      position:absolute; inset:0;
+      background:radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
       animation: pulse 6s ease-in-out infinite;
-      filter: blur(8px);
+      filter:blur(6px);
     }
     .room .label {
-      position: absolute; top: 50%; left:50%;
-      transform: translate(-50%,-50%) rotateX(60deg);
-      color: #fff; font-family: sans-serif; font-size: 14px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    }
-    .room .avatars {
-      position: absolute; bottom: 8px; right: 8px;
-      display: flex;
-    }
-    .room .avatars img {
-      width: 32px; height: 32px;
-      border-radius: 50%; border: 2px solid #fff;
-      margin-left: -10px;
-    }
-    @keyframes pulse {
-      0%,100% { transform: scale(1); opacity: 0.6; }
-      50%      { transform: scale(1.15); opacity: 0.3; }
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%) rotateX(60deg);
+      color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.3);
+      font-size:16px; font-weight:600;
     }
 
-    /* ===== CENTRAL PANEL ===== */
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity:0.6; }
+      50%      { transform: scale(1.1); opacity:0.3; }
+    }
+
+    /* Floor-specific placements */
+    /* Floor 1 */
+    #floor-1 .room.room1 { top:60px;  left:60px; }   /* room */
+    #floor-1 .room.room2 { top:60px;  right:60px; }  /* hall */
+    #floor-1 .room.room3 { bottom:60px; left:calc(50% - 100px); } /* kitchen */
+
+    /* Floor 2 */
+    #floor-2 .room.room1 { top:60px;  left:80px; }
+    #floor-2 .room.room2 { top:260px; left:60px; }
+    #floor-2 .room.room3 { top:260px; right:80px; }
+
+    /* Floor 3 */
+    #floor-3 .room.room1 { bottom:60px; right:60px; }
+    #floor-3 .room.room2 { top:80px;    left:calc(50% - 100px); }
+    #floor-3 .room.room3 { top:260px;   left:80px; }
+
+    /* Panel (3D building screen) */
     .panel {
-      position: absolute;
-      width: 680px; height: 400px;
+      position:absolute;
+      width:400px; height:260px;
       top:50%; left:50%;
       transform: translate(-50%,-50%) translateZ(50px) rotateX(60deg);
-      background: #f0f2f5;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-      overflow: hidden;
+      background:#f0f2f5; border-radius:12px;
+      box-shadow:0 10px 40px rgba(0,0,0,0.1);
     }
 
-    /* ===== RESPONSIVE ===== */
-    @media (min-width:768px) {
-      .floor   { display: block; }
+    /* Nav buttons */
+    .nav {
+      position:absolute; top:50%; width:100%;
+      transform:translateY(-50%);
+      display:flex; justify-content:space-between;
+      pointer-events:none;
     }
-    @media (max-width:767px) {
-      /* On mobile, stack everything */
-      .floor, .panel, .room, .wall { display: none; }
-      section.hero { flex-direction: column; padding: 40px 0; }
-      .mobile-card {
-        width: 90%; max-width: 400px; background: #fff; border-radius:16px;
-        box-shadow:0 8px 24px rgba(0,0,0,0.1); padding:24px; text-align:center;
-      }
+    .nav button {
+      pointer-events:all;
+      background:rgba(255,255,255,0.8);
+      border:none; padding:12px 16px; border-radius:6px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+      cursor:pointer; font-size:16px;
+      transition:background 0.2s;
     }
+    .nav button:hover { background:rgba(255,255,255,1); }
+
   </style>
 </head>
 <body>
 
-<section class="hero">
-  <!-- SVG Wave -->
-  <div class="wave-bg">
-    <svg viewBox="0 0 1440 320">
-      <path fill="#84D8FF" fill-opacity="0.4" d="M0,160 C480,320 960,0 1440,160 L1440,320 L0,320Z"></path>
-    </svg>
-  </div>
+<section>
+  <div class="floors" id="carousel">
+    <!-- Floor 1 -->
+    <div class="floor" id="floor-1">
+      <div class="plane">
+        <div class="wall top"></div>
+        <div class="wall bottom"></div>
+        <div class="wall left"></div>
+        <div class="wall right"></div>
 
-  <!-- 3D Floorplan (desktop) -->
-  <div class="floor">
-    <div class="plane">
-      <div class="wall top"></div>
-      <div class="wall bottom"></div>
-      <div class="wall left"></div>
-      <div class="wall right"></div>
-
-      <!-- Meeting Room (left-top) -->
-      <div class="room" style="top:80px; left:80px;">
-        <div class="glow"></div>
-        <div class="label">Meeting Room</div>
-        <div class="avatars">
-          <img src="https://i.pravatar.cc/32?img=1">
-          <img src="https://i.pravatar.cc/32?img=2">
-          <img src="https://i.pravatar.cc/32?img=3">
+        <div class="room room1">
+          <div class="glow"></div>
+          <div class="label">Room</div>
         </div>
-      </div>
-
-      <!-- Design Weekly (left-middle) -->
-      <div class="room" style="top:280px; left:100px;">
-        <div class="glow"></div>
-        <div class="label">Design Weekly</div>
-        <div class="avatars">
-          <img src="https://i.pravatar.cc/32?img=4">
-          <img src="https://i.pravatar.cc/32?img=5">
+        <div class="room room2">
+          <div class="glow"></div>
+          <div class="label">Hall</div>
         </div>
-      </div>
-
-      <!-- Lounge (right-top) -->
-      <div class="room" style="top:100px; right:80px;">
-        <div class="glow"></div>
-        <div class="label">Lounge</div>
-        <div class="avatars">
-          <img src="https://i.pravatar.cc/32?img=6">
-          <img src="https://i.pravatar.cc/32?img=7">
+        <div class="room room3">
+          <div class="glow"></div>
+          <div class="label">Kitchen</div>
         </div>
-      </div>
 
-      <!-- All Hands (right-middle) -->
-      <div class="room" style="top:300px; right:100px;">
-        <div class="glow"></div>
-        <div class="label">All Hands</div>
-        <div class="avatars">
-          <img src="https://i.pravatar.cc/32?img=8">
-          <img src="https://i.pravatar.cc/32?img=9">
+        <div class="panel"></div>
+      </div>
+    </div>
+
+    <!-- Floor 2 -->
+    <div class="floor" id="floor-2">
+      <div class="plane">
+        <div class="wall top"></div>
+        <div class="wall bottom"></div>
+        <div class="wall left"></div>
+        <div class="wall right"></div>
+
+        <div class="room room1">
+          <div class="glow"></div>
+          <div class="label">Office</div>
         </div>
-      </div>
+        <div class="room room2">
+          <div class="glow"></div>
+          <div class="label">Lounge</div>
+        </div>
+        <div class="room room3">
+          <div class="glow"></div>
+          <div class="label">Storage</div>
+        </div>
 
-      <!-- Central Building Panel -->
-      <div class="panel"></div>
+        <div class="panel"></div>
+      </div>
+    </div>
+
+    <!-- Floor 3 -->
+    <div class="floor" id="floor-3">
+      <div class="plane">
+        <div class="wall top"></div>
+        <div class="wall bottom"></div>
+        <div class="wall left"></div>
+        <div class="wall right"></div>
+
+        <div class="room room1">
+          <div class="glow"></div>
+          <div class="label">Conference</div>
+        </div>
+        <div class="room room2">
+          <div class="glow"></div>
+          <div class="label">Break</div>
+        </div>
+        <div class="room room3">
+          <div class="glow"></div>
+          <div class="label">Pantry</div>
+        </div>
+
+        <div class="panel"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Mobile fallback card -->
-  <div class="mobile-card">
-    <h2 style="margin-bottom:12px;">Work together.<br>Like in the office.</h2>
-    <p>Create virtual rooms with audio & video conferencing.</p>
+  <!-- Prev/Next -->
+  <div class="nav">
+    <button id="prev">&larr; Prev</button>
+    <button id="next">Next &rarr;</button>
   </div>
-
 </section>
-<section style="min-height:2000px; background:#f7f7f8; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-  <svg
-    width="1200"
-    height="700"
-    viewBox="0 0 1200 700"
-    xmlns="http://www.w3.org/2000/svg"
-    style="background:transparent;"
-  >
-    <!-- Filters & Gradients -->
-    <defs>
-      <!-- 3D wall shadow -->
-      <filter id="wallShadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.05"/>
-      </filter>
-      <!-- Room glow -->
-      <radialGradient id="roomGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="rgba(84,216,255,0.4)">
-          <animate attributeName="stop-color" dur="6s" values="rgba(84,216,255,0.4);rgba(84,216,255,0.2);rgba(84,216,255,0.4)" repeatCount="indefinite"/>
-        </stop>
-        <stop offset="70%" stop-color="rgba(84,216,255,0)" />
-      </radialGradient>
-      <!-- Wave swirl pattern -->
-      <pattern id="swirl" x="0" y="0" width="1" height="1" patternUnits="objectBoundingBox">
-        <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFklEQVQYV2NkYGD4z0AEYGJgGAUwFAAANSgGGbgwb9QAAAABJRU5ErkJggg==" 
-               width="200" height="200" preserveAspectRatio="xMidYMid slice">
-          <animateTransform attributeName="patternTransform" type="rotate" from="0 100 100" to="360 100 100" dur="20s" repeatCount="indefinite"/>
-        </image>
-      </pattern>
-      <!-- Panel glow spots -->
-      <linearGradient id="panelLights" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="10%" stop-color="#fff" stop-opacity="0.6"/>
-        <stop offset="12%" stop-color="#fff" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#fff" stop-opacity="0"/>
-        <stop offset="88%" stop-color="#fff" stop-opacity="0"/>
-        <stop offset="90%" stop-color="#fff" stop-opacity="0.6"/>
-      </linearGradient>
-    </defs>
 
-    <!-- Walls (extruded) -->
-    <g filter="url(#wallShadow)" fill="#fff">
-      <!-- outer rectangle frame -->
-      <rect x="50" y="50" width="1100" height="600" rx="0" ry="0"/>
-      <!-- inner horizontal corridors -->
-      <rect x="50" y="200" width="1100" height="20"/>
-      <rect x="50" y="400" width="1100" height="20"/>
-      <!-- inner vertical separators -->
-      <rect x="300" y="50" width="20" height="600"/>
-      <rect x="900" y="50" width="20" height="600"/>
-    </g>
+<script>
+  const carousel = document.getElementById('carousel');
+  const prevBtn  = document.getElementById('prev');
+  const nextBtn  = document.getElementById('next');
+  let idx = 0;        // current floor index
+  const max = 3;      // total floors
 
-    <!-- Room glows -->
-    <g>
-      <!-- Meeting Room -->
-      <circle cx="250" cy="150" r="120" fill="url(#roomGlow)" />
-      <rect x="130" y="30" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
+  function update() {
+    // translateX by -idx * 100vw
+    carousel.style.transform = `translate(-50%, -50%) translateX(${-idx*100}vw)`;
+  }
 
-      <!-- Design Weekly -->
-      <circle cx="250" cy="350" r="120" fill="url(#roomGlow)" />
-      <rect x="130" y="230" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
+  prevBtn.addEventListener('click', () => {
+    idx = (idx - 1 + max) % max;
+    update();
+  });
+  nextBtn.addEventListener('click', () => {
+    idx = (idx + 1) % max;
+    update();
+  });
+</script>
 
-      <!-- Lounge -->
-      <circle cx="950" cy="150" r="120" fill="url(#roomGlow)" />
-      <rect x="830" y="30" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
-
-      <!-- All Hands -->
-      <circle cx="950" cy="350" r="120" fill="url(#roomGlow)" />
-      <rect x="830" y="230" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
-    </g>
-
-    <!-- Central Panel -->
-    <g transform="translate(600,350) rotateX(0)">
-      <!-- Panel background -->
-      <rect x="-340" y="-200" width="680" height="400" rx="20" ry="20" fill="#f0f2f5" filter="url(#wallShadow)"/>
-
-      <!-- Decorative lights -->
-      <rect x="-340" y="-200" width="680" height="400" fill="none" stroke="url(#panelLights)" stroke-width="40" stroke-linecap="round"/>
-    </g>
-
-    <!-- Labels & Avatars -->
-    <g font-family="sans-serif" font-size="14" fill="#fff" text-anchor="middle">
-      <!-- Meeting Room label -->
-      <text x="250" y="150" dy="6">Meeting Room</text>
-      <!-- avatars under it -->
-      <image href="https://i.pravatar.cc/24?img=1" x="200" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-      <image href="https://i.pravatar.cc/24?img=2" x="224" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-      <image href="https://i.pravatar.cc/24?img=3" x="248" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-
-      <!-- Design Weekly label -->
-      <text x="250" y="350" dy="6">Design Weekly</text>
-      <image href="https://i.pravatar.cc/24?img=4" x="220" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-      <image href="https://i.pravatar.cc/24?img=5" x="244" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-
-      <!-- Lounge label -->
-      <text x="950" y="150" dy="6">Lounge</text>
-      <image href="https://i.pravatar.cc/24?img=6" x="900" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-      <image href="https://i.pravatar.cc/24?img=7" x="924" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-
-      <!-- All Hands label -->
-      <text x="950" y="350" dy="6">All Hands</text>
-      <image href="https://i.pravatar.cc/24?img=8" x="900" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-      <image href="https://i.pravatar.cc/24?img=9" x="924" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
-    </g>
-  </svg>
-</section>
 </body>
 </html>
