@@ -3,257 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pixi Wave + Bell + Wave SVG</title>
-
-  <!-- PIXI.js from CDN -->
-  <script src="https://unpkg.com/pixi.js@7.x/dist/browser/pixi.min.js"></script>
-
+  <title>Vortex Swirl with Bell</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #262626;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      text-align: center;
+    :root {
+      --dark-bg: #0d0d12;
+      --blue: #316aff;
+      --orange: #ff9831;
+      --dot-color: rgba(255,255,255,0.12);
     }
 
-    /* Container for PIXI canvas + overlays */
-    #box--poop {
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body {
+      width:100%; height:100%;
+      background: var(--dark-bg);
+      display:flex; justify-content:center; align-items:center;
+      font-family: sans-serif;
+    }
+
+    .scene {
       position: relative;
-      width: 1060px;
-      max-width: 100%;
-      height: 530px;
-      margin-top: 40px;
-      background-image: url("https://vietnd69.github.io/json-data/bg.png");
-      background-size: cover;
-      background-repeat: no-repeat;
+      width: 80vmin; height: 80vmin;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #000;
     }
 
-    /* placeholder for PIXI view */
-    .pool .ladi-box {
-      width: 100%;
-      height: 100%;
+    /* Vortex swirl: two rotating conic-gradient layers */
+    .scene::before,
+    .scene::after {
+      content:"";
+      position:absolute; inset:0;
+      border-radius:50%;
+      mix-blend-mode: screen;
+      opacity:0.6;
+      background: conic-gradient(from 0deg at 30% 30%, var(--blue) 0deg 120deg, transparent 120deg 360deg);
+      animation: spin-blue 20s linear infinite;
+      filter: blur(3vmin);
+    }
+    .scene::after {
+      background: conic-gradient(from 180deg at 70% 70%, var(--orange) 0deg 120deg, transparent 120deg 360deg);
+      animation: spin-orange 25s linear infinite reverse;
+    }
+    @keyframes spin-blue   { to { transform: rotate(360deg); } }
+    @keyframes spin-orange { to { transform: rotate(360deg); } }
+
+    /* Dot-pattern overlay */
+    .dots {
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(var(--dot-color) 1px, transparent 1px);
+      background-size: 8px 8px;
+      mask-image:
+        radial-gradient(circle at center, rgba(0,0,0,1) 40%, transparent 65%);
+      pointer-events:none;
     }
 
-    /* Bell + wave-SVG overlay */
-    #box--poop .overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+    /* Spinner ring */
+    .spinner {
+      position:absolute;
+      top:50%; left:50%;
+      width: 20vmin; height: 20vmin;
+      margin:-10vmin 0 0 -10vmin;
+      border-radius:50%;
+      border: 0.5vmin solid transparent;
+      border-top-color: var(--blue);
+      border-right-color: var(--orange);
+      animation: spin-ring 4s linear infinite;
+      pointer-events:none;
     }
-    #box--poop .overlay svg.bell {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 6vmin;
-      height: 6vmin;
-      fill: #fff;
-      z-index: 2;
+    @keyframes spin-ring { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    /* Wave rings (3 staggered) */
+    .wave,
+    .wave:nth-child(1),
+    .wave:nth-child(2),
+    .wave:nth-child(3) {
+      position:absolute;
+      top:50%; left:50%;
+      width: 6vmin; height: 6vmin;
+      margin:-3vmin 0 0 -3vmin;
+      border: 0.3vmin solid rgba(255,255,255,0.2);
+      border-radius:50%;
+      animation: wave 3s ease-out infinite;
+      pointer-events:none;
+    }
+    .wave:nth-child(2) { animation-delay:1s; }
+    .wave:nth-child(3) { animation-delay:2s; }
+    @keyframes wave {
+      0%   { transform: translate(-50%,-50%) scale(1);   opacity:0.5; }
+      80%  { transform: translate(-50%,-50%) scale(6);   opacity:0;   }
+      100% { transform: translate(-50%,-50%) scale(6);   opacity:0;   }
     }
 
-    /* animated wave-ring behind bell */
-    #box--poop .overlay svg.wave-ring {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%) rotate(0deg);
-      width: 14vmin;
-      height: 14vmin;
-      stroke: rgba(255,255,255,0.5);
-      stroke-width: 0.4vmin;
-      fill: none;
-      animation: spin 6s linear infinite;
-      z-index: 1;
+    /* Pulse circle behind bell */
+    .pulse {
+      position:absolute;
+      top:50%; left:50%;
+      width: 4vmin; height: 4vmin;
+      margin:-2vmin 0 0 -2vmin;
+      border: 0.4vmin solid rgba(255,255,255,0.3);
+      border-radius:50%;
+      animation: pulse 2s ease-out infinite;
+      pointer-events:none;
+    }
+    @keyframes pulse {
+      0%   { transform: translate(-50%,-50%) scale(1);   opacity:0.6; }
+      70%  { transform: translate(-50%,-50%) scale(4);   opacity:0;   }
+      100% { transform: translate(-50%,-50%) scale(4);   opacity:0;   }
     }
 
-    @keyframes spin {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    /* Center bell SVG + badge */
+    .bell {
+      position:absolute;
+      top:50%; left:50%;
+      transform: translate(-50%,-50%);
+      width: 6vmin; height: 6vmin;
+      z-index:2;
+      pointer-events:none;
+    }
+    .badge {
+      position:absolute;
+      top:0.2em; right:0.2em;
+      background:#ff4b4b; color:#fff;
+      width:1.5em; height:1.5em;
+      font-size:0.75em;
+      line-height:1.5em; text-align:center;
+      border-radius:50%;
     }
   </style>
 </head>
 <body>
 
-  <div id="box--poop" class="pool">
-    <div class="ladi-box"></div>
-
-    <!-- overlays: wave ring + bell -->
-    <div class="overlay">
-      <!-- wave ring SVG -->
-      <svg class="wave-ring" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="48" />
-      </svg>
-
-      <!-- bell icon SVG -->
-      <svg class="bell" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
-            c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68
-            C7.64 5.36 6 7.92 6 11v3.159c0 .538-.214 1.055-.595 1.436
-            L4 17h5m6 0a3 3 0 11-6 0h6z"/>
-      </svg>
-    </div>
+  <div class="scene">
+    <div class="dots"></div>
+    <div class="spinner"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="pulse"></div>
+    <!-- Bell SVG (Heroicons outline) -->
+    <svg class="bell" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 
+               14.158V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 
+               1.5 0 00-3 0v.68C7.64 5.36 6 7.92 6 
+               11v3.159c0 .538-.214 1.055-.595 1.436L4 
+               17h5m6 0a3 3 0 11-6 0h6z"/>
+      <text class="badge" x="100%" y="0%" dy="1.2em" dx="-1.2em">26</text>
+    </svg>
   </div>
 
-  <script>
-    // reference the container
-    const poolEle = document.querySelector(".pool");
-
-    // remove old PIXI interaction plugin
-    delete PIXI.Renderer.__plugins.interaction;
-
-    // create PIXI app
-    const app = new PIXI.Application({
-      antialias: true,
-      autoDensity: true,
-      resolution: 1,
-      autoResize: true,
-      width: poolEle.offsetWidth,
-      height: poolEle.offsetHeight,
-      backgroundColor: 0x1099bb,
-    });
-    document.querySelector(".pool .ladi-box").appendChild(app.view);
-
-    // add EventSystem (PIXI6+)
-    if (!("events" in app.renderer)) {
-      app.renderer.addSystem(PIXI.EventSystem, "events");
-    }
-
-    // setup containers & sprites
-    const container = new PIXI.Container();
-    const waveMs = new PIXI.Container();
-    app.stage.addChild(container, waveMs);
-
-    const urls = {
-      bg:       "https://vietnd69.github.io/json-data/bg.png",
-      wave:     "https://vietnd69.github.io/json-data/light.png",
-      pool:     "https://vietnd69.github.io/json-data/ok.png",
-      shadow:   "https://vietnd69.github.io/json-data/shadown.png",
-      light2:   "https://vietnd69.github.io/json-data/light-2.png",
-      disp:     "https://vietnd69.github.io/json-data/displace_v4.jpg",
-    };
-
-    const poolBG = PIXI.Sprite.from(urls.bg);
-    const pool    = PIXI.Sprite.from(urls.pool);
-    const shadow  = PIXI.Sprite.from(urls.shadow);
-    const wave    = PIXI.Sprite.from(urls.wave);
-    const light   = PIXI.Sprite.from(urls.light2);
-
-    // full-screen background
-    container.addChild(poolBG);
-    poolBG.width = app.renderer.width;
-    poolBG.height = app.renderer.height;
-
-    // central pool & shadow
-    [pool, shadow].forEach((spr) => {
-      container.addChild(spr);
-      spr.x = app.renderer.width*0.012;
-      spr.y = app.renderer.height*0.02;
-      spr.width  = app.renderer.width - spr.x*2;
-      spr.height = app.renderer.height - spr.y*2;
-    });
-
-    // mask for wave container
-    const rect = new PIXI.Graphics()
-      .beginFill(0xffffff)
-      .drawRect(
-        pool.x, pool.y,
-        pool.width, pool.height
-      );
-    container.addChild(rect);
-
-    // add wave + light inside masked container
-    waveMs.addChild(wave, light);
-    [wave, light].forEach((spr) => {
-      spr.x      = app.renderer.width*0.009;
-      spr.y      = app.renderer.height*0.016;
-      spr.width  = app.renderer.width - spr.x*2;
-      spr.height = app.renderer.height - spr.y*2;
-    });
-    // scale up the wave
-    wave.scale.set(3);
-
-    waveMs.mask = rect;
-
-    // displacement + shockwave + godray filters
-    const baseDisp = PIXI.Sprite.from(urls.disp);
-    baseDisp.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-    baseDisp.width  = app.renderer.width;
-    baseDisp.height = app.renderer.height;
-    app.stage.addChild(baseDisp);
-
-    const makeDisp = () => new PIXI.filters.DisplacementFilter(baseDisp);
-    const dispPool   = makeDisp(),
-          dispWave   = makeDisp(),
-          dispLight  = makeDisp(),
-          dispShadow = makeDisp();
-
-    // godray
-    const godray = new PIXI.filters.GodrayFilter({
-      gain: 0.8, lacunarity: 2.1, alpha: 0.2,
-      parallel: true, angle: 30
-    });
-
-    // shockwaves
-    const options = { amplitude:4, wavelength:85, speed:600, radius:750 };
-    const shockwaves = Array.from({ length: 35 }, () => new PIXI.filters.ShockwaveFilter([0,0], options, 0));
-    const active = Array(35).fill(false);
-    let idx = 0, counter = 0;
-
-    // assign filters
-    pool.filters    = [dispPool, ...shockwaves, godray];
-    wave.filters    = [dispWave, ...shockwaves];
-    light.filters   = [dispLight, ...shockwaves];
-    shadow.filters  = [dispShadow, ...shockwaves];
-
-    // animate displacement + godray + shockwaves
-    app.ticker.add(() => {
-      baseDisp.x = (baseDisp.x + 1) % baseDisp.width;
-      godray.time += 0.008;
-      counter = Math.min(counter+1, 101);
-      shockwaves.forEach((sw, i) => {
-        if (active[i]) {
-          sw.time += 0.01;
-          if (sw.time >= 1.9) active[i] = false;
-        }
-      });
-    });
-
-    // interactivity
-    app.stage.interactive = true;
-    app.stage.hitArea    = app.renderer.screen;
-    let last = [0,0];
-    function trigger(e, strong){
-      const x = e.data.global.x, y = e.data.global.y;
-      active[idx] = true;
-      shockwaves[idx].time = 0;
-      shockwaves[idx].center = [x,y];
-      shockwaves[idx].amplitude = strong ? 8:4;
-      shockwaves[idx].wavelength = strong ? 80:90;
-      shockwaves[idx].speed      = strong ? 700:550;
-      shockwaves[idx].radius     = strong ? 750:350;
-      idx = (idx+1)%shockwaves.length;
-      last = [x,y];
-      counter = 0;
-    }
-
-    app.stage.on("pointermove", (e) => {
-      const x = e.data.global.x, y = e.data.global.y;
-      if (Math.hypot(x-last[0], y-last[1]) > 50 || counter>5) {
-        trigger(e, counter<=5);
-      }
-    });
-    app.stage.on("pointerdown", (e) => trigger(e, true));
-
-    window.addEventListener("resize", () => {
-      app.renderer.resize(poolEle.offsetWidth, poolEle.offsetHeight);
-      baseDisp.width = poolEle.offsetWidth;
-      baseDisp.height= poolEle.offsetHeight;
-    });
-  </script>
 </body>
 </html>
