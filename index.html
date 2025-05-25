@@ -2,155 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>3D Floorplan Hero</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huly.io Style Layout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* 1. SECTION SETUP */
-    section.floorplan {
-      position: relative;
-      min-height: 2000px;
-      background: #f7f7f8;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 1200px;
-    }
-
-    /* 2. CONTAINER WITH PERSPECTIVE & 3D TRANSFORM */
-    .floor-wrapper {
-      position: relative;
-      width: 90%;
-      max-width: 1400px;
-      height: 800px;
-      transform-style: preserve-3d;
-      transform: rotateX(60deg) translateZ(-200px);
-      margin: auto;
-    }
-
-    /* 3. WALLS / CORRIDORS */
-    .wall {
-      position: absolute;
-      background: #ffffff;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    }
-
-    /* example: left vertical wall */
-    .wall.vert-left {
-      width: 20px;
-      height: 100%;
-      left: 0;
-      top: 0;
-      transform: rotateY(90deg) translateX(-10px);
-    }
-
-    /* top horizontal wall */
-    .wall.horiz-top {
-      height: 20px;
-      width: 100%;
-      top: 0;
-      left: 0;
-      transform: rotateX(90deg) translateY(-10px);
-    }
-
-    /* bottom horizontal wall */
-    .wall.horiz-bottom {
-      height: 20px;
-      width: 100%;
-      bottom: 0;
-      left: 0;
-      transform: rotateX(90deg) translateY(10px);
-    }
-
-    /* right vertical wall */
-    .wall.vert-right {
-      width: 20px;
-      height: 100%;
-      right: 0;
-      top: 0;
-      transform: rotateY(90deg) translateX(10px);
-    }
-
-    /* 4. ROOM GLOW BACKGROUNDS */
-    .room {
-      position: absolute;
-      width: 260px;
-      height: 260px;
-      pointer-events: none;
-    }
-    .room::before {
+    .grid-outline::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
-      animation: pulseWave 6s ease-in-out infinite;
-    }
-    @keyframes pulseWave {
-      0%,100% { transform: scale(0.9); opacity: 0.6; }
-      50%      { transform: scale(1.1); opacity: 0.3; }
-    }
-
-    /* Position three rooms */
-    .room.meeting   { top: 100px; left: 100px; }
-    .room.lounge    { top: 100px; right: 100px; }
-    .room.allhands  { bottom: 100px; right: 150px; }
-
-    /* 5. CENTER CARD */
-    .card {
-      position: absolute;
-      width: 700px;
-      height: 420px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%,-50%) translateZ(50px);
-      background: #f0f2f5;
+      box-shadow: 
+        0 0 20px #b3e5fc,
+        inset 0 0 30px #b3e5fc;
       border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-      overflow: hidden;
+      opacity: 0.3;
+      z-index: -1;
     }
-
-    /* 6. RESPONSIVE FALLBACK */
-    @media (max-width: 767px) {
-      .floor-wrapper {
-        transform: none;
-        height: auto;
-        perspective: none;
-        display: block;
-        margin: 0;
-      }
-      .wall, .room, .card {
-        position: static;
-        transform: none;
-        width: 90%;
-        max-width: 400px;
-        margin: 20px auto;
-        height: auto;
-      }
-      .room::before { display: none; }
+    .angled-shadows {
+      box-shadow: 
+        15px 15px 30px rgba(0, 255, 255, 0.1),
+        -15px -15px 30px rgba(255, 255, 255, 0.3),
+        inset 5px 5px 15px rgba(0, 255, 255, 0.2),
+        inset -5px -5px 15px rgba(255, 255, 255, 0.05);
+    }
+    .angled-bg {
+      background: radial-gradient(circle at center, #e0f7fa, #ffffff);
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen bg-[#f8fafa] flex items-center justify-center angled-bg p-4">
 
-<section class="floorplan">
-  <div class="floor-wrapper">
-    <!-- Walls -->
-    <div class="wall vert-left"></div>
-    <div class="wall horiz-top"></div>
-    <div class="wall vert-right"></div>
-    <div class="wall horiz-bottom"></div>
+  <div class="relative w-full max-w-6xl h-[500px] bg-white/40 backdrop-blur-lg rounded-[20px] angled-shadows grid-outline grid grid-cols-3 grid-rows-3 gap-4 p-6">
+    
+    <!-- Glow Rooms -->
+    <div class="col-span-1 row-span-1 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
+      Meeting Room
+    </div>
 
-    <!-- Glowing Room Areas -->
-    <div class="room meeting"></div>
-    <div class="room lounge"></div>
-    <div class="room allhands"></div>
+    <div class="col-span-1 row-start-2 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
+      Design Weekly
+    </div>
 
-    <!-- Central "screen" card -->
-    <div class="card">
-      <!-- insert your video / image here -->
+    <div class="col-span-1 col-start-3 row-span-1 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
+      Lounge
+    </div>
+
+    <div class="col-span-1 col-start-3 row-start-2 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
+      All Hands
+    </div>
+
+    <!-- Center White Panel -->
+    <div class="col-span-1 col-start-2 row-start-2 bg-white/60 rounded-xl shadow-2xl backdrop-blur-xl border border-white/20 p-8 flex items-center justify-center text-gray-700 font-medium text-lg">
+      Main Content Panel
     </div>
   </div>
-</section>
 
 </body>
 </html>
