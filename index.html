@@ -193,6 +193,109 @@
   </div>
 
 </section>
+<section style="min-height:2000px; background:#f7f7f8; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+  <svg
+    width="1200"
+    height="700"
+    viewBox="0 0 1200 700"
+    xmlns="http://www.w3.org/2000/svg"
+    style="background:transparent;"
+  >
+    <!-- Filters & Gradients -->
+    <defs>
+      <!-- 3D wall shadow -->
+      <filter id="wallShadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.05"/>
+      </filter>
+      <!-- Room glow -->
+      <radialGradient id="roomGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="rgba(84,216,255,0.4)">
+          <animate attributeName="stop-color" dur="6s" values="rgba(84,216,255,0.4);rgba(84,216,255,0.2);rgba(84,216,255,0.4)" repeatCount="indefinite"/>
+        </stop>
+        <stop offset="70%" stop-color="rgba(84,216,255,0)" />
+      </radialGradient>
+      <!-- Wave swirl pattern -->
+      <pattern id="swirl" x="0" y="0" width="1" height="1" patternUnits="objectBoundingBox">
+        <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFklEQVQYV2NkYGD4z0AEYGJgGAUwFAAANSgGGbgwb9QAAAABJRU5ErkJggg==" 
+               width="200" height="200" preserveAspectRatio="xMidYMid slice">
+          <animateTransform attributeName="patternTransform" type="rotate" from="0 100 100" to="360 100 100" dur="20s" repeatCount="indefinite"/>
+        </image>
+      </pattern>
+      <!-- Panel glow spots -->
+      <linearGradient id="panelLights" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="10%" stop-color="#fff" stop-opacity="0.6"/>
+        <stop offset="12%" stop-color="#fff" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#fff" stop-opacity="0"/>
+        <stop offset="88%" stop-color="#fff" stop-opacity="0"/>
+        <stop offset="90%" stop-color="#fff" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
 
+    <!-- Walls (extruded) -->
+    <g filter="url(#wallShadow)" fill="#fff">
+      <!-- outer rectangle frame -->
+      <rect x="50" y="50" width="1100" height="600" rx="0" ry="0"/>
+      <!-- inner horizontal corridors -->
+      <rect x="50" y="200" width="1100" height="20"/>
+      <rect x="50" y="400" width="1100" height="20"/>
+      <!-- inner vertical separators -->
+      <rect x="300" y="50" width="20" height="600"/>
+      <rect x="900" y="50" width="20" height="600"/>
+    </g>
+
+    <!-- Room glows -->
+    <g>
+      <!-- Meeting Room -->
+      <circle cx="250" cy="150" r="120" fill="url(#roomGlow)" />
+      <rect x="130" y="30" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
+
+      <!-- Design Weekly -->
+      <circle cx="250" cy="350" r="120" fill="url(#roomGlow)" />
+      <rect x="130" y="230" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
+
+      <!-- Lounge -->
+      <circle cx="950" cy="150" r="120" fill="url(#roomGlow)" />
+      <rect x="830" y="30" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
+
+      <!-- All Hands -->
+      <circle cx="950" cy="350" r="120" fill="url(#roomGlow)" />
+      <rect x="830" y="230" width="240" height="240" fill="url(#swirl)" opacity="0.2" />
+    </g>
+
+    <!-- Central Panel -->
+    <g transform="translate(600,350) rotateX(0)">
+      <!-- Panel background -->
+      <rect x="-340" y="-200" width="680" height="400" rx="20" ry="20" fill="#f0f2f5" filter="url(#wallShadow)"/>
+
+      <!-- Decorative lights -->
+      <rect x="-340" y="-200" width="680" height="400" fill="none" stroke="url(#panelLights)" stroke-width="40" stroke-linecap="round"/>
+    </g>
+
+    <!-- Labels & Avatars -->
+    <g font-family="sans-serif" font-size="14" fill="#fff" text-anchor="middle">
+      <!-- Meeting Room label -->
+      <text x="250" y="150" dy="6">Meeting Room</text>
+      <!-- avatars under it -->
+      <image href="https://i.pravatar.cc/24?img=1" x="200" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+      <image href="https://i.pravatar.cc/24?img=2" x="224" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+      <image href="https://i.pravatar.cc/24?img=3" x="248" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+
+      <!-- Design Weekly label -->
+      <text x="250" y="350" dy="6">Design Weekly</text>
+      <image href="https://i.pravatar.cc/24?img=4" x="220" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+      <image href="https://i.pravatar.cc/24?img=5" x="244" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+
+      <!-- Lounge label -->
+      <text x="950" y="150" dy="6">Lounge</text>
+      <image href="https://i.pravatar.cc/24?img=6" x="900" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+      <image href="https://i.pravatar.cc/24?img=7" x="924" y="160" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+
+      <!-- All Hands label -->
+      <text x="950" y="350" dy="6">All Hands</text>
+      <image href="https://i.pravatar.cc/24?img=8" x="900" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+      <image href="https://i.pravatar.cc/24?img=9" x="924" y="360" width="24" height="24" clip-path="circle(12px at 12px 12px)"/>
+    </g>
+  </svg>
+</section>
 </body>
 </html>
