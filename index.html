@@ -1,49 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Glowing Maze Layout</title>
-    <style>
-      @keyframes glowPulse {
-        0%, 100% {
-          box-shadow: 0 0 15px #f1c40f, 0 0 30px #D40511;
-        }
-        50% {
-          box-shadow: 0 0 30px #D40511, 0 0 60px #f1c40f;
-        }
-      }
-    </style>
-  </head>
-  <body class="bg-[#0D0D0D] min-h-screen flex items-center justify-center overflow-hidden">
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Flat CSS Floorplan with Colored Walls</title>
+  <style>
+    body, html { margin:0; padding:0; }
+    section.hero {
+      position: relative;
+      min-height: 2000px;
+      background: #f7f7f8;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }.hero-text {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  text-align: right;
+  font-family: sans-serif;
+  color: #111;
+}
+.hero-text h2 { font-size: 2rem; margin: 0 0 12px; }
+.hero-text p  { font-size: 1rem; margin: 0; color: #555; }
 
-    <div class="relative w-[800px] h-[500px] perspective-[1200px]">
-      <!-- 3D wrapper -->
-      <div class="relative w-full h-full transform rotate-x-60 origin-top">
+.layout {
+  position: relative;
+  width: 90%; max-width: 1200px;
+  height: 700px;
+  margin-top: 200px;
+}
 
-        <!-- Background Panel -->
-        <div class="absolute top-1/2 left-1/2 w-[380px] h-[240px] bg-[#1a1a1a] rounded-xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2 z-10"></div>
+/* Base wall style */
+.wall {
+  position: absolute;
+  height: 12px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border-radius: 6px;
+}
+/* Color overrides */
+.wall.red    { background: #f87171; } /* red-400 */
+.wall.blue   { background: #60a5fa; } /* blue-400 */
+.wall.yellow { background: #facc15; } /* yellow-400 */
 
-        <!-- Horizontal walls -->
-        <div class="absolute top-0 left-0 w-full h-2 bg-[#222]"></div>
-        <div class="absolute top-[130px] left-0 w-full h-2 bg-[#333]"></div>
-        <div class="absolute top-[260px] left-0 w-full h-2 bg-[#444]"></div>
-        <div class="absolute bottom-0 left-0 w-full h-2 bg-[#222]"></div>
+/* Horizontal walls (height stays 12px) */
+.h1 { top: 0;    left: 0; right: 0; }
+.h2 { top: 200px; left: 0; right: 0; }
+.h3 { top: 400px; left: 0; right: 0; }
+.h4 { bottom: 0; left: 0; right: 0; }
 
-        <!-- Vertical glowing walls -->
-        <div class="absolute top-0 left-0 h-full w-2 bg-[#f1c40f] animate-[glowPulse_4s_infinite]"></div>
-        <div class="absolute top-0 right-0 h-full w-2 bg-[#D40511] animate-[glowPulse_4s_infinite]"></div>
+/* Vertical walls (use width instead of height) */
+.v1, .v2, .v3, .v4 { width: 12px; height: 100%; }
+.v1 { top: 0; bottom: 0; left: 0; }
+.v2 { top: 0; bottom: 0; left: 300px; }
+.v3 { top: 0; bottom: 0; left: 900px; }
+.v4 { top: 0; bottom: 0; right: 0; }
 
-        <!-- Room labels (optional) -->
-        <div class="absolute top-[40px] left-[60px] w-[120px] h-[120px] flex items-center justify-center rounded-lg bg-[#222] shadow-lg">
-          <p class="text-white font-semibold text-sm text-center">Meeting Room</p>
-        </div>
+/* Room glows */
+.room {
+  position: absolute;
+  width: 240px; height: 240px;
+}
+.room::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
+  filter: blur(8px);
+  animation: pulse 6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity:0.6; }
+  50%      { transform: scale(1.15); opacity:0.3; }
+}
 
-        <div class="absolute bottom-[40px] right-[60px] w-[120px] h-[120px] flex items-center justify-center rounded-lg bg-[#222] shadow-lg">
-          <p class="text-white font-semibold text-sm text-center">All Hands</p>
-        </div>
-      </div>
-    </div>
+/* Center panel */
+.panel {
+  position: absolute;
+  width: 680px; height: 420px;
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  background: #f0f2f5;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+.panel::before, .panel::after {
+  content: ""; position: absolute;
+  width: 80px; height: 10px;
+  background: rgba(255,255,255,0.6);
+  filter: blur(4px); border-radius: 4px;
+}
+.panel::before { top: 10px; left: 20%; }
+.panel::after  { bottom: 10px; right:20%; }
 
-  </body>
+/* Room positions */
+.meeting  { top:  80px;  left:  80px; }
+.design   { top: 300px;  left: 100px; }
+.lounge   { top: 100px;  right: 80px; }
+.allhands { top: 320px;  right:100px; }
+
+/* Mobile fallback */
+@media (max-width:767px) {
+  .layout, .wall, .room, .panel { display:none; }
+  .hero-text            { display:none; }
+  .mobile-card {
+    display:block;
+    width:90%; max-width:400px;
+    margin:80px auto 0;
+    background:#fff; padding:24px;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.1);
+    text-align:center;
+  }
+}
+@media (min-width:768px) {
+  .mobile-card { display:none; }
+}
+
+  </style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-text">
+    <h2>Work together.<br>Like in the office.</h2>
+    <p>Virtual rooms with high-quality audio & video conferencing.</p>
+  </div>
+  <div class="mobile-card">
+    <h2>Work together.<br>Like in the office.</h2>
+    <p>Virtual rooms with high-quality audio & video conferencing.</p>
+  </div>
+  <div class="layout">
+    <!-- Assign colors by adding red/blue/yellow classes -->
+    <div class="wall h1 red"></div>
+    <div class="wall h2 blue"></div>
+    <div class="wall h3 yellow"></div>
+    <div class="wall h4 red"></div><div class="wall v1 blue"></div>
+<div class="wall v2 yellow"></div>
+<div class="wall v3 red"></div>
+
+
+<div class="room meeting"></div>
+<div class="room design"></div>
+<div class="room lounge"></div>
+<div class="room allhands"></div>
+
+<div class="panel"></div>
+
+  </div>
+</section>
+</body>
 </html>
