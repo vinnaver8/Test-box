@@ -3,151 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Boxed Bell Ripple</title>
+  <title>Auto-Swirl Vortex Bell</title>
   <style>
     :root {
-      --base: #DADCE8;
-      --light: #E9EAF1;
-      --dark: #BACED4;
-      --ease: cubic-bezier(0.165, 0.84, 0.44, 1);
-      --border-color: rgba(218,220,232,0.5);
+      --dark-bg: #0d0d12;
+      --blue: #316aff;
+      --orange: #ff9831;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; }
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: var(--base);
-      font-size: 18px;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; background: var(--dark-bg); display:flex; justify-content:center; align-items:center; }
 
-    /* The container box */
-    .box {
+    .scene {
       position: relative;
       width: 60vmin;
       height: 60vmin;
-      background: #FFF;
       border-radius: 1rem;
-      box-shadow: 0 .5rem 1rem rgba(0,0,0,0.1);
       overflow: hidden;
-      cursor: pointer;
+      background: #000;
+      box-shadow: 0 0 2rem rgba(0,0,0,0.5);
     }
 
-    /* Centered bell icon */
-    .box .icon {
+    /* Two rotating gradient rings */
+    .vortex {
       position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 6vmin;
-      color: var(--dark);
-      pointer-events: none;
-    }
-
-    /* Ripple drops inside the box */
-    .drop {
-      position: absolute;
-      top: 0; left: 0;
-      transform: translate(-50%, -50%);
-      width: 50vmin;
-      height: 50vmin;
+      inset: 0;
       border-radius: 50%;
-      filter: blur(1vmin);
-      box-shadow:
-        -5vmin -5vmin 5vmin var(--light),
-         5vmin  5vmin 5vmin var(--dark),
-        inset -5vmin -5vmin 5vmin var(--light),
-        inset  5vmin  5vmin 5vmin var(--dark);
-      border: 2vmin solid var(--border-color);
-      animation: ripple 4s var(--ease) forwards;
-      pointer-events: none;
+      filter: blur(2vmin);
+      /* we'll stack two pseudos */
     }
-    .drop::before {
-      content: '';
+    .vortex::before,
+    .vortex::after {
+      content: "";
       position: absolute;
-      inset: 0; margin: auto;
-      width: 0; height: 0;
+      inset: 0;
       border-radius: 50%;
-      box-shadow:
-        -5vmin -5vmin 5vmin var(--light),
-         5vmin  5vmin 5vmin var(--dark),
-        inset -5vmin -5vmin 5vmin var(--light),
-        inset  5vmin  5vmin 5vmin var(--dark);
-      border: 0 solid var(--base);
-      animation: inner-ripple 4s var(--ease) forwards;
+      mix-blend-mode: screen;
+      opacity: 0.7;
+      background: radial-gradient(circle at 30% 30%, var(--blue) 0%, transparent 70%);
+      animation: spin 20s linear infinite;
+    }
+    .vortex::after {
+      background: radial-gradient(circle at 70% 70%, var(--orange) 0%, transparent 70%);
+      animation-duration: 25s;
+      animation-direction: reverse;
     }
 
-    @keyframes ripple {
-      0% {
-        width: 0; height: 0;
-        border-color: var(--border-color);
-      }
-      5% {
-        width: 50vmin; height: 50vmin;
-        border-color: var(--border-color);
-      }
-      90% {
-        box-shadow: none;
-      }
-      100% {
-        width: 100vmin; height: 100vmin;
-        border-color: transparent;
-      }
+    /* subtle dotted overlay to emulate “pixel” texture */
+    .vortex::marker { /* trick to add a mask-pattern via mask-image */
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      mask-image: 
+        radial-gradient(circle at center, rgba(0,0,0,1) 3%, transparent 3%),
+        radial-gradient(circle at center, rgba(0,0,0,1) 3%, transparent 3%);
+      mask-size: 10px 10px;
+      mask-position: 0 0, 5px 5px;
+      mask-repeat: repeat;
     }
-    @keyframes inner-ripple {
-      0%, 20% {
-        box-shadow:
-          -5vmin -5vmin 5vmin var(--light),
-           5vmin  5vmin 5vmin var(--dark),
-          inset -5vmin -5vmin 5vmin var(--light),
-          inset  5vmin  5vmin 5vmin var(--dark);
-      }
-      100% {
-        width: 60%; height: 60%;
-        box-shadow: none;
-        border: 1vmin solid var(--base);
-      }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Bell icon */
+    .icon {
+      position: absolute;
+      top:50%; left:50%;
+      transform: translate(-50%, -50%);
+      font-size: 8vmin;
+      color: #fff;
+      z-index: 1;
+    }
+
+    .badge {
+      position: absolute;
+      top: -0.5em; right: -0.5em;
+      background: #ff4b4b;
+      color: #fff;
+      font-size: 0.6em;
+      width: 1.5em; height: 1.5em;
+      line-height: 1.5em;
+      text-align: center;
+      border-radius: 50%;
     }
   </style>
 </head>
 <body>
-  <div class="box" id="rippleBox">
-    <div class="icon">🔔</div>
+  <div class="scene">
+    <div class="vortex"></div>
+    <div class="icon">
+      🔔<span class="badge">26</span>
+    </div>
   </div>
-
-  <script>
-    console.clear();
-
-    class Drop {
-      constructor(x, y, container) {
-        this.el = document.createElement('div');
-        this.el.classList.add('drop');
-        this.el.style.left = x + 'px';
-        this.el.style.top  = y + 'px';
-        container.appendChild(this.el);
-
-        this.el.addEventListener('animationend', () => {
-          this.el.remove();
-        }, { once: true });
-      }
-    }
-
-    const box = document.getElementById('rippleBox');
-    box.addEventListener('pointerdown', e => {
-      // get coords relative to the box
-      const rect = box.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      new Drop(x, y, box);
-    });
-
-    // initial center drop if you like:
-    window.addEventListener('DOMContentLoaded', () => {
-      const cx = box.clientWidth/2;
-      const cy = box.clientHeight/2;
-      new Drop(cx, cy, box);
-    });
-  </script>
 </body>
 </html>
