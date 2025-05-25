@@ -1,26 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Virtual Office Layout</title>
+  <title>Work together. Like in the office.</title>
   <style>
-    /* Global styles */
+    /* Global resets */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #0D0D0D; /* dark background */
+      background-color: #0D0D0D;
       color: #FFFFFF;
       font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
     }
-    /* Ensure room labels and central panel are above background lines */
-    .room, .central-panel {
-      position: relative;
-      z-index: 1;
+    /* Header section */
+    header {
+      text-align: center;
+      max-width: 800px;
+      margin-bottom: 40px;
     }
-    /* Main container for office layout */
+    header h1 {
+      font-size: 2.5rem;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    header p {
+      font-size: 1rem;
+      color: #CCCCCC;
+    }
+    /* Office layout container */
     .office {
       position: relative;
+      width: 100%;
+      max-width: 1024px;
       display: grid;
       grid-template-columns: 1fr 600px 1fr;
       grid-template-rows: auto auto;
@@ -28,200 +41,138 @@
         "meeting central lounge"
         "design central allhands";
       gap: 20px;
-      padding: 50px 0;
+      padding-bottom: 60px;
     }
-    /* Room labels - styled text blocks on left/right walls */
-    .room {
-      color: #FFFFFF;
-      font-size: 1.2em;
-      padding: 10px;
-      text-align: center;
-    }
-    .meeting-room {
-      grid-area: meeting;
-      justify-self: center;
-      align-self: start;
-    }
-    .design-weekly {
-      grid-area: design;
-      justify-self: center;
-      align-self: end;
-    }
-    .lounge {
-      grid-area: lounge;
-      justify-self: center;
-      align-self: start;
-    }
-    .all-hands {
-      grid-area: allhands;
-      justify-self: center;
-      align-self: end;
-    }
-
-    /* Central panel with glowing orange border animation */
-    .central-panel {
-      grid-area: central;
-      background-color: #FFFFFF;
-      width: 600px;
-      height: 350px;
-      border: 4px solid #FF8C00; /* dark orange border */
-      border-radius: 10px;
-      animation: glow 2s infinite;
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
-    @keyframes glow {
-      0%, 100% {
-        box-shadow: 0 0 15px 5px rgba(255, 140, 0, 0.5);
-      }
-      50% {
-        box-shadow: 0 0 30px 10px rgba(255, 140, 0, 1);
-      }
-    }
-
-    /* Maze / corridor walls with glowing lines */
+    /* Wall segments without glow */
     .wall {
       position: absolute;
-      background-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 10px 2px #4FC3F7; /* blue glow */
+      background-color: #FFFFFF;
+      opacity: 0.2;
     }
     .horizontal { height: 4px; }
     .vertical { width: 4px; }
     /* Top-left corner */
-    .top-left-horizontal {
-      top: 10px; left: 30px;
-      width: 150px; height: 4px;
-    }
-    .top-left-vertical {
-      top: 10px; left: 180px;
-      height: 300px; width: 4px;
-    }
+    .top-left-horizontal { top: 20px; left: 40px; width: 160px; }
+    .top-left-vertical   { top: 20px; left: 200px; height: 320px; }
     /* Bottom-left corner */
-    .bottom-left-horizontal {
-      bottom: 10px; left: 30px;
-      width: 100px; height: 4px;
-    }
-    .bottom-left-vertical {
-      bottom: 10px; left: 130px;
-      height: 100px; width: 4px;
-    }
+    .bottom-left-horizontal { bottom: 20px; left: 40px; width: 120px; }
+    .bottom-left-vertical   { bottom: 20px; left: 160px; height: 120px; }
     /* Top-right corner */
-    .top-right-horizontal {
-      top: 10px; right: 30px;
-      width: 150px; height: 4px;
-    }
-    .top-right-vertical {
-      top: 10px; right: 180px;
-      height: 300px; width: 4px;
-    }
+    .top-right-horizontal { top: 20px; right: 40px; width: 160px; }
+    .top-right-vertical   { top: 20px; right: 200px; height: 320px; }
     /* Bottom-right corner */
-    .bottom-right-horizontal {
-      bottom: 10px; right: 30px;
-      width: 100px; height: 4px;
-    }
-    .bottom-right-vertical {
-      bottom: 10px; right: 130px;
-      height: 100px; width: 4px;
-    }
+    .bottom-right-horizontal { bottom: 20px; right: 40px; width: 120px; }
+    .bottom-right-vertical   { bottom: 20px; right: 160px; height: 120px; }/* Wi-Fi ripple animations (slower, smoother) */
+.wifi-wave {
+  position: absolute;
+  top: 50%;
+  width: 250px;
+  height: 250px;
+  transform: translateY(-50%);
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.wifi-wave.left { left: -125px; }
+.wifi-wave.right { right: -125px; }
+.wifi-wave .circle {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 100px; height: 100px;
+  margin: -50px 0 0 -50px;
+  border: 2px solid #4FC3F7;
+  border-radius: 50%;
+  opacity: 0;
+  animation: pulse-slow 5s infinite;
+}
+.wifi-wave .circle:nth-child(2) { animation-delay: 1.5s; }
+.wifi-wave .circle:nth-child(3) { animation-delay: 3s; }
+@keyframes pulse-slow {
+  0% { transform: scale(0.5); opacity: 0.4; }
+  50% { transform: scale(1.5); opacity: 0.2; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
 
-    /* Wi-Fi ripple wave animations */
-    .wifi-wave {
-      position: absolute;
-      top: 30%;
-      width: 200px;
-      height: 200px;
-      pointer-events: none; /* allow clicks through */
-    }
-    .wifi-wave.left { left: -100px; }
-    .wifi-wave.right { right: -100px; }
-    .wifi-wave .circle {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 100px; height: 100px;
-      margin: -50px 0 0 -50px;
-      border: 2px solid #4FC3F7;
-      border-radius: 50%;
-      opacity: 0;
-      animation: pulse 2s infinite;
-    }
-    .wifi-wave .circle:nth-child(1) {
-      animation-delay: 0s;
-    }
-    .wifi-wave .circle:nth-child(2) {
-      animation-delay: 0.6s;
-    }
-    .wifi-wave .circle:nth-child(3) {
-      animation-delay: 1.2s;
-    }
-    @keyframes pulse {
-      0% {
-        transform: scale(0.5);
-        opacity: 0.7;
-      }
-      50% {
-        transform: scale(1.5);
-        opacity: 0.1;
-      }
-      100% {
-        transform: scale(2.5);
-        opacity: 0;
-      }
-    }
+/* Room labels */
+.room {
+  font-size: 1.1rem;
+  color: #FFFFFF;
+  text-align: center;
+  z-index: 1;
+}
+.meeting-room   { grid-area: meeting; align-self: start; justify-self: center; }
+.design-weekly  { grid-area: design; align-self: end;   justify-self: center; }
+.lounge         { grid-area: lounge; align-self: start; justify-self: center; }
+.allhands       { grid-area: allhands; align-self: end; justify-self: center; }
 
-    /* Features section with icons */
-    .features {
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      padding: 50px;
-      min-height: 2000px;
-    }
-    .feature {
-      width: 30%;
-      text-align: center;
-      margin-bottom: 50px;
-    }
-    .feature svg {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
-    }
-    .feature h3 {
-      margin: 10px 0 10px;
-      font-size: 1.3em;
-    }
-    .feature p {
-      font-size: 0.95em;
-      line-height: 1.4em;
-      color: #DDDDDD;
-    }
+/* Central panel styling */
+.central-panel {
+  grid-area: central;
+  background-color: #1F1F1F;
+  border: 4px solid #FF8C00;
+  border-radius: 12px;
+  width: 600px;
+  height: 350px;
+  margin: 0 auto;
+  animation: border-glow 3s infinite alternate;
+  box-sizing: border-box;
+}
+@keyframes border-glow {
+  0% { box-shadow: 0 0 10px rgba(255,140,0,0.5); }
+  100% { box-shadow: 0 0 30px rgba(255,140,0,1); }
+}
 
-    /* Responsive: stack layout on small screens */
-    @media (max-width: 768px) {
-      .office {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 0;
-      }
-      .central-panel {
-        margin: 20px 0;
-      }
-      .meeting-room, .design-weekly,
-      .lounge, .all-hands {
-        margin: 10px 0;
-      }
-      .features .feature {
-        width: 80%;
-      }
-    }
+/* Description below central panel */
+.subtitle {
+  grid-column: 1 / -1;
+  text-align: center;
+  max-width: 800px;
+  justify-self: center;
+  color: #CCCCCC;
+  font-size: 1rem;
+  margin-top: 20px;
+}
+
+/* Features section */
+.features {
+  max-width: 1024px;
+  margin: 40px auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  min-height: 2000px;
+  padding: 0 20px;
+}
+.feature {
+  width: 30%;
+  text-align: center;
+  margin-bottom: 60px;
+}
+.feature svg { width: 80px; height: 80px; margin-bottom: 20px; }
+.feature h3 { color: #FFFFFF; margin-bottom: 10px; }
+.feature p { color: #AAAAAA; font-size: 0.95rem; line-height: 1.4; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .office {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .central-panel { width: 100%; max-width: 90%; }
+  .features { flex-direction: column; align-items: center; min-height: auto; }
+  .feature { width: 80%; }
+}
+
   </style>
 </head>
 <body>
-  <section class="relative items-center justify-center min-h-[2000px] min-w-[3000px] overflow-hidden"/>
-    <div class="office">
-    <!-- Maze / corridor walls with glowing lines -->
+  <!-- Header with title and subtitle -->
+  <header>
+    <h1>Work together. Like in the office.</h1>
+    <p>Create customized virtual office spaces for any department or event with high quality audio and video conferencing.</p>
+  </header>  <!-- Office layout -->  <div class="office">
+    <!-- Maze walls (solid white, no glow) -->
     <div class="wall horizontal top-left-horizontal"></div>
     <div class="wall vertical top-left-vertical"></div>
     <div class="wall horizontal bottom-left-horizontal"></div>
@@ -229,60 +180,48 @@
     <div class="wall horizontal top-right-horizontal"></div>
     <div class="wall vertical top-right-vertical"></div>
     <div class="wall horizontal bottom-right-horizontal"></div>
-    <div class="wall vertical bottom-right-vertical"></div>
+    <div class="wall vertical bottom-right-vertical"></div><!-- Wi-Fi wave animations (slower) -->
+<div class="wifi-wave left">
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+</div>
+<div class="wifi-wave right">
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+</div>
 
-    <!-- Animated Wi-Fi ripple waves -->
-    <div class="wifi-wave left">
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-    </div>
-    <div class="wifi-wave right">
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-    </div>
+<!-- Rooms -->
+<div class="meeting-room room">Meeting Room</div>
+<div class="design-weekly room">Design Weekly</div>
 
-    <!-- Room labels on left wall -->
-    <div class="meeting-room room">Meeting Room</div>
-    <div class="design-weekly room">Design Weekly</div>
+<!-- Central panel -->
+<div class="central-panel"></div>
 
-    <!-- Central panel (e.g., video conferencing frame) -->
-    <div class="central-panel"></div>
+<!-- Subtitle below panel -->
+<div class="subtitle">Collaborating with remote teams is easy in your virtual office environment. Enjoy real-time communication within your workspace without additional software hassle.</div>
 
-    <!-- Room labels on right wall -->
-    <div class="lounge room">Lounge</div>
-    <div class="all-hands room">All Hands</div>
-  </div>
-  <!-- Features section with icons and descriptions -->
-  <section class="features">
-    <!-- Customize workspace feature -->
+<!-- Right side rooms -->
+<div class="lounge room">Lounge</div>
+<div class="allhands room">All Hands</div>
+
+  </div>  <!-- Features section -->  <section class="features">
     <div class="feature">
-      <svg viewBox="0 0 24 24">
-        <!-- 3x3 grid icon -->
-        <path fill="#4FC3F7" d="M3 3h5v5H3z M10 3h5v5h-5z M17 3h4v5h-4z M3 10h5v5H3z M10 10h5v5h-5z M17 10h4v5h-4z M3 17h5v4H3z M10 17h5v4h-5z M17 17h4v4h-4z"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path fill="#4FC3F7" d="M3 3h5v5H3z M10 3h5v5H10z M17 3h4v5h-4z M3 10h5v5H3z M10 10h5v5H10z M17 10h4v5h-4z M3 17h5v4H3z M10 17h5v4H10z M17 17h4v4h-4z"/></svg>
       <h3>Customize workspace</h3>
       <p>Create your own offices and meeting rooms to suit your team’s needs.</p>
     </div>
-    <!-- Audio and video calls feature -->
     <div class="feature">
-      <svg viewBox="0 0 24 24">
-        <!-- Video camera icon -->
-        <path fill="#4FC3F7" d="M3 8h9v8H3z M12 8l6-4v16l-6-4z"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path fill="#4FC3F7" d="M3 8h9v8H3z M12 8l6-4v16l-6-4z"/></svg>
       <h3>Audio and video calls</h3>
       <p>Collaborate efficiently and seamlessly with high quality virtual conferencing.</p>
     </div>
-    <!-- Invite guests feature -->
     <div class="feature">
-      <svg viewBox="0 0 24 24">
-        <!-- Person add icon -->
-        <path fill="#4FC3F7" d="M15 12c2.21 0 4 1.79 4 4v6H5v-6c0-2.21 1.79-4 4-4h6z M12 4c1.38 0 2.5 1.12 2.5 2.5S13.38 9 12 9S9.5 7.88 9.5 6.5S10.62 4 12 4z M20 12v-2h-2V8h-2v2h-2v2h2v2h2v-2h2z"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path fill="#4FC3F7" d="M15 12c2.21 0 4 1.79 4 4v6H5v-6c0-2.21 1.79-4 4-4h6z M12 4c1.38 0 2.5 1.12 2.5 2.5S13.38 9 12 9S9.5 7.88 9.5 6.5S10.62 4 12 4z M20 12v-2h-2V8h-2v2h-2v2h2v2h2v-2h2z"/></svg>
       <h3>Invite guests</h3>
       <p>Meet with guests without ever needing to leave your workspace.</p>
     </div>
-  </section></section>
+  </section>
 </body>
 </html>
