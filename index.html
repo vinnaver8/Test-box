@@ -1,60 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Huly.io Style Layout</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .grid-outline::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      box-shadow: 
-        0 0 20px #b3e5fc,
-        inset 0 0 30px #b3e5fc;
-      border-radius: 16px;
-      opacity: 0.3;
-      z-index: -1;
-    }
-    .angled-shadows {
-      box-shadow: 
-        15px 15px 30px rgba(0, 255, 255, 0.1),
-        -15px -15px 30px rgba(255, 255, 255, 0.3),
-        inset 5px 5px 15px rgba(0, 255, 255, 0.2),
-        inset -5px -5px 15px rgba(255, 255, 255, 0.05);
-    }
-    .angled-bg {
-      background: radial-gradient(circle at center, #e0f7fa, #ffffff);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Layout</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, #ffffff, #e0f7fa);
+        }
+        .left-panel {
+            position: absolute;
+            top: 10%;
+            left: -20%;
+            width: 20%;
+            height: 80%;
+            background: linear-gradient(to right, #0d47a1, #1565c0);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            animation: slideInLeft 1s ease-in-out forwards;
+        }
+        .right-panel {
+            position: absolute;
+            top: 10%;
+            left: 100%;
+            width: 20%;
+            height: 80%;
+            background: linear-gradient(to right, #0d47a1, #1565c0);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            animation: slideInRight 1s ease-in-out forwards;
+        }
+        .central-frame {
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 60%;
+            height: 80%;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transform: scale(0.8);
+            animation: scaleUp 1s ease-in-out forwards;
+        }
+        .frame-content {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+            text-align: center;
+        }
+        .panel-content {
+            text-align: center;
+        }
+        h1, h2 {
+            margin: 10px 0;
+        }
+        p {
+            margin: 5px 0;
+        }
+        @keyframes slideInLeft {
+            from { left: -20%; }
+            to { left: 0; }
+        }
+        @keyframes slideInRight {
+            from { left: 100%; }
+            to { left: 80%; }
+        }
+        @keyframes scaleUp {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-[#f8fafa] flex items-center justify-center angled-bg p-4">
-
-  <div class="relative w-full max-w-6xl h-[500px] bg-white/40 backdrop-blur-lg rounded-[20px] angled-shadows grid-outline grid grid-cols-3 grid-rows-3 gap-4 p-6">
-    
-    <!-- Glow Rooms -->
-    <div class="col-span-1 row-span-1 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
-      Meeting Room
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="panel-content">
+                <h2>Meeting Room</h2>
+                <p>06:40</p>
+                <p>Design Week</p>
+            </div>
+        </div>
+        <div class="central-frame">
+            <div class="frame-content">
+                <h1>Welcome to Our Space</h1>
+                <p>This is a dynamic area where content can change.</p>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="panel-content">
+                <h2>Lounge</h2>
+                <p>All Hands</p>
+            </div>
+        </div>
     </div>
-
-    <div class="col-span-1 row-start-2 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
-      Design Weekly
-    </div>
-
-    <div class="col-span-1 col-start-3 row-span-1 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
-      Lounge
-    </div>
-
-    <div class="col-span-1 col-start-3 row-start-2 relative flex items-center justify-center text-center text-white font-semibold text-sm bg-cyan-400/30 rounded-lg backdrop-blur-sm shadow-inner shadow-cyan-300">
-      All Hands
-    </div>
-
-    <!-- Center White Panel -->
-    <div class="col-span-1 col-start-2 row-start-2 bg-white/60 rounded-xl shadow-2xl backdrop-blur-xl border border-white/20 p-8 flex items-center justify-center text-gray-700 font-medium text-lg">
-      Main Content Panel
-    </div>
-  </div>
-
 </body>
 </html>
