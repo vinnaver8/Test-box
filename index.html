@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -14,109 +13,129 @@
       display: flex;
       align-items: center;
       justify-content: center;
-    }
+    }/* Hero text at top-right */
+.hero-text {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  text-align: right;
+  font-family: sans-serif;
+  color: #111;
+}
+.hero-text h2 {
+  font-size: 2rem;
+  margin: 0 0 12px;
+}
+.hero-text p {
+  font-size: 1rem;
+  margin: 0;
+  color: #555;
+}
 
-    .layout {
-      position: relative;
-      width: 90%;
-      max-width: 1200px;
-      height: 700px;
-      margin-top: 200px;
-    }
+.layout {
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  height: 700px;
+  margin-top: 200px;
+}
 
-    /* Maze walls: simple bars */
-    .wall {
-      position: absolute;
-      background: #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      border-radius: 6px;
-    }
-    /* Horizontal */
-    .h1 { top:  0;   left: 0; right: 0; height: 12px; }
-    .h2 { top: 200px; left: 0; right: 0; height: 12px; }
-    .h3 { top: 400px; left: 0; right: 0; height: 12px; }
-    .h4 { bottom:0;   left: 0; right: 0; height: 12px; }
-    /* Vertical */
-    .v1 { top: 0; bottom:0; left: 0;    width:12px; }
-    .v2 { top: 0; bottom:0; left:300px; width:12px; }
-    .v3 { top: 0; bottom:0; left:900px; width:12px; }
-    .v4 { top: 0; bottom:0; right:0;    width:12px; }
+/* Maze walls: simple bars */
+.wall {
+  position: absolute;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border-radius: 6px;
+}
+/* Horizontal */
+.h1 { top:  0;   left: 0; right: 0; height: 12px; }
+.h2 { top: 200px; left: 0; right: 0; height: 12px; }
+.h3 { top: 400px; left: 0; right: 0; height: 12px; }
+.h4 { bottom:0;   left: 0; right: 0; height: 12px; }
+/* Vertical */
+.v1 { top: 0; bottom:0; left: 0;    width:12px; }
+.v2 { top: 0; bottom:0; left:300px; width:12px; }
+.v3 { top: 0; bottom:0; left:900px; width:12px; }
+.v4 { top: 0; bottom:0; right:0;    width:12px; }
 
-    /* Room glows */
-    .room {
-      position: absolute;
-      width: 240px; height: 240px;
-    }
-    .room::before {
-      content:"";
-      position:absolute; inset:0;
-      background:radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
-      filter:blur(8px);
-      animation: pulse 6s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { transform: scale(1); opacity:0.6; }
-      50%      { transform: scale(1.15); opacity:0.3; }
-    }
+/* Room glows */
+.room {
+  position: absolute;
+  width: 240px; height: 240px;
+}
+.room::before {
+  content:"";
+  position:absolute; inset:0;
+  background:radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
+  filter:blur(8px);
+  animation: pulse 6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity:0.6; }
+  50%      { transform: scale(1.15); opacity:0.3; }
+}
 
-    /* Center panel */
-    .panel {
-      position:absolute;
-      width:680px; height:420px;
-      top:50%; left:50%;
-      transform: translate(-50%,-50%);
-      background:#f0f2f5;
-      border-radius:16px;
-      box-shadow:0 10px 40px rgba(0,0,0,0.1);
-    }
-    /* Panel edge glows */
-    .panel::before, .panel::after {
-      content:"";
-      position:absolute;
-      width:80px; height:10px;
-      background:rgba(255,255,255,0.6);
-      filter:blur(4px);
-      border-radius:4px;
-    }
-    .panel::before {
-      top:10px; left:20%;
-    }
-    .panel::after {
-      bottom:10px; right:20%;
-    }
+/* Center panel */
+.panel {
+  position:absolute;
+  width:680px; height:420px;
+  top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  background:#f0f2f5;
+  border-radius:16px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.1);
+}
+/* Panel edge glows */
+.panel::before, .panel::after {
+  content:"";
+  position:absolute;
+  width:80px; height:10px;
+  background:rgba(255,255,255,0.6);
+  filter:blur(4px);
+  border-radius:4px;
+}
+.panel::before {
+  top:10px; left:20%;
+}
+.panel::after {
+  bottom:10px; right:20%;
+}
 
-    /* Room positions */
-    .meeting  { top: 80px;  left:  80px; }
-    .design   { top: 300px; left: 100px; }
-    .lounge   { top: 100px; right: 80px; }
-    .allhands { top: 320px; right:100px; }
+/* Room positions */
+.meeting  { top: 80px;  left:  80px; }
+.design   { top: 300px; left: 100px; }
+.lounge   { top: 100px; right: 80px; }
+.allhands { top: 320px; right:100px; }
 
-    /* Mobile fallback */
-    @media (max-width:767px) {
-      .layout, .wall, .room, .panel { display:none; }
-      .mobile-card {
-        display:block;
-        width:90%; max-width:400px;
-        margin:40px auto;
-        background:#fff; padding:24px;
-        border-radius:16px;
-        box-shadow:0 8px 24px rgba(0,0,0,0.1);
-        text-align:center;
-      }
-    }
+/* Mobile fallback */
+@media (max-width:767px) {
+  .layout, .wall, .room, .panel { display:none; }
+  .hero-text { display:none; }
+  .mobile-card {
+    display:block;
+    width:90%; max-width:400px;
+    margin:80px auto 0;
+    background:#fff; padding:24px;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.1);
+    text-align:center;
+  }
+}
+@media (min-width:768px) {
+  .mobile-card { display:none; }
+}
+
   </style>
-</head>
-
-<body>
+</head><body>
 <section class="hero">
-  <!-- Mobile -->
-  <div class="mobile-card">
+  <!-- Hero text top-right -->
+  <div class="hero-text">
     <h2>Work together.<br>Like in the office.</h2>
     <p>Virtual rooms with high-quality audio & video conferencing.</p>
-  </div>
-
-  <!-- Desktop layout -->
-  <div class="layout">
+  </div>  <!-- Mobile fallback -->  <div class="mobile-card">
+    <h2>Work together.<br>Like in the office.</h2>
+    <p>Virtual rooms with high-quality audio & video conferencing.</p>
+  </div>  <!-- Desktop layout -->  <div class="layout">
     <!-- Walls -->
     <div class="wall h1"></div>
     <div class="wall h2"></div>
@@ -125,16 +144,15 @@
     <div class="wall v1"></div>
     <div class="wall v2"></div>
     <div class="wall v3"></div>
-    <div class="wall v4"></div>
+    <div class="wall v4"></div><!-- Room glows -->
+<div class="room meeting"></div>
+<div class="room design"></div>
+<div class="room lounge"></div>
+<div class="room allhands"></div>
 
-    <!-- Room glows -->
-    <div class="room meeting"></div>
-    <div class="room design"></div>
-    <div class="room lounge"></div>
-    <div class="room allhands"></div>
+<!-- Center panel -->
+<div class="panel"></div>
 
-    <!-- Center panel -->
-    <div class="panel"></div>
   </div>
 </section>
 </body>
