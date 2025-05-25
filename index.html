@@ -38,32 +38,12 @@
         radial-gradient(circle at center, rgba(0,0,0,1) 40%, transparent 65%);
       pointer-events:none;
     }
-
-      /* Center bell SVG + badge */
-    .bell {
-      position:absolute;
-      top:50%; left:50%;
-      transform: translate(-50%,-50%);
-      width: 6vmin; height: 6vmin;
-      z-index:2;
-      pointer-events:none;
-    }
-    .badge {
-      position:absolute;
-      top:0.2em; right:0.2em;
-      background:#ff4b4b; color:red;
-      width:1.5em; height:1.5em;
-      font-size:0.75em;
-      line-height:1.5em; text-align:center;
-      border-radius:50%;
-    }
+    
   </style>
 </head>
 <body>
-<div class="scene">
-  <div class="dots"></div>
-  <div class="pulse"></div>
-    <!-- Bell SVG (Heroicons outline) -->
+ <div class="dots"></div>
+  <!-- Bell SVG (Heroicons outline) -->
     <svg class="bell" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
          stroke-linecap="round" stroke-linejoin="round">
       <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 
