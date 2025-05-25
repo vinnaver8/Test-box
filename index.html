@@ -3,46 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smooth Drop Animation</title>
+  <title>Boxed Bell Ripple</title>
   <style>
-    /* CSS Variables */
     :root {
       --base: #DADCE8;
-      --light: #E9EAF1; /* lighten(#DADCE8,5%) */
-      --dark: #BACED4;  /* darken(#DADCE8,10%) */
+      --light: #E9EAF1;
+      --dark: #BACED4;
       --ease: cubic-bezier(0.165, 0.84, 0.44, 1);
-      --size-start: 0;
-      --size-mid: 50vmin;
-      --size-end: 100vmin;
-      --blur: 1vmin;
       --border-color: rgba(218,220,232,0.5);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
     body {
-      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       background: var(--base);
-      overflow: hidden;
       font-size: 18px;
     }
 
+    /* The container box */
+    .box {
+      position: relative;
+      width: 60vmin;
+      height: 60vmin;
+      background: #FFF;
+      border-radius: 1rem;
+      box-shadow: 0 .5rem 1rem rgba(0,0,0,0.1);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    /* Centered bell icon */
+    .box .icon {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 6vmin;
+      color: var(--dark);
+      pointer-events: none;
+    }
+
+    /* Ripple drops inside the box */
     .drop {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       transform: translate(-50%, -50%);
-      width: var(--size-mid);
-      height: var(--size-mid);
-      filter: blur(var(--blur));
+      width: 50vmin;
+      height: 50vmin;
       border-radius: 50%;
+      filter: blur(1vmin);
       box-shadow:
         -5vmin -5vmin 5vmin var(--light),
          5vmin  5vmin 5vmin var(--dark),
@@ -50,14 +61,13 @@
         inset  5vmin  5vmin 5vmin var(--dark);
       border: 2vmin solid var(--border-color);
       animation: ripple 4s var(--ease) forwards;
+      pointer-events: none;
     }
     .drop::before {
       content: '';
       position: absolute;
-      inset: 0;
-      margin: auto;
-      width: 0;
-      height: 0;
+      inset: 0; margin: auto;
+      width: 0; height: 0;
       border-radius: 50%;
       box-shadow:
         -5vmin -5vmin 5vmin var(--light),
@@ -70,43 +80,23 @@
 
     @keyframes ripple {
       0% {
-        width: var(--size-start);
-        height: var(--size-start);
-        box-shadow:
-          -5vmin -5vmin 5vmin var(--light),
-           5vmin  5vmin 5vmin var(--dark),
-          inset -5vmin -5vmin 5vmin var(--light),
-          inset  5vmin  5vmin 5vmin var(--dark);
+        width: 0; height: 0;
         border-color: var(--border-color);
       }
       5% {
-        width: var(--size-mid);
-        height: var(--size-mid);
+        width: 50vmin; height: 50vmin;
         border-color: var(--border-color);
       }
       90% {
         box-shadow: none;
-        border-color: var(--border-color);
       }
       100% {
-        width: var(--size-end);
-        height: var(--size-end);
-        box-shadow: none;
+        width: 100vmin; height: 100vmin;
         border-color: transparent;
       }
     }
-
     @keyframes inner-ripple {
-      0% {
-        width: 0;
-        height: 0;
-        box-shadow:
-          -5vmin -5vmin 5vmin var(--light),
-           5vmin  5vmin 5vmin var(--dark),
-          inset -5vmin -5vmin 5vmin var(--light),
-          inset  5vmin  5vmin 5vmin var(--dark);
-      }
-      20% {
+      0%, 20% {
         box-shadow:
           -5vmin -5vmin 5vmin var(--light),
            5vmin  5vmin 5vmin var(--dark),
@@ -114,8 +104,7 @@
           inset  5vmin  5vmin 5vmin var(--dark);
       }
       100% {
-        width: 60%;
-        height: 60%;
+        width: 60%; height: 60%;
         box-shadow: none;
         border: 1vmin solid var(--base);
       }
@@ -123,35 +112,41 @@
   </style>
 </head>
 <body>
+  <div class="box" id="rippleBox">
+    <div class="icon">🔔</div>
+  </div>
+
   <script>
     console.clear();
 
     class Drop {
-      constructor(x, y) {
+      constructor(x, y, container) {
         this.el = document.createElement('div');
         this.el.classList.add('drop');
         this.el.style.left = x + 'px';
         this.el.style.top  = y + 'px';
-        document.body.appendChild(this.el);
+        container.appendChild(this.el);
 
-        // Once the animation finishes, remove this element
         this.el.addEventListener('animationend', () => {
           this.el.remove();
         }, { once: true });
       }
     }
 
-    // Use pointerdown for smooth touch/mouse handling
-    function spawn(e) {
-      // Only one drop per event
-      new Drop(e.clientX, e.clientY);
-    }
+    const box = document.getElementById('rippleBox');
+    box.addEventListener('pointerdown', e => {
+      // get coords relative to the box
+      const rect = box.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      new Drop(x, y, box);
+    });
 
-    document.addEventListener('pointerdown', spawn);
-
-    // Optional: initial drop in center on load
+    // initial center drop if you like:
     window.addEventListener('DOMContentLoaded', () => {
-      new Drop(window.innerWidth/2, window.innerHeight/2);
+      const cx = box.clientWidth/2;
+      const cy = box.clientHeight/2;
+      new Drop(cx, cy, box);
     });
   </script>
 </body>
