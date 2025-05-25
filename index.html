@@ -1,54 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glowing Maze Interface</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="ocean">
-        <div class="wave"></div>
-        <div class="wave"></div>
-    </div>
-    
-    <div class="container">
-        <div class="maze-grid">
-            <div class="maze-cell" data-room="meeting">
-                <div class="avatar-preview">
-                    <div class="avatar-content">MR</div>
-                </div>
-                <div class="room-info">
-                    <h3>Meeting Room</h3>
-                    <span>4 people</span>
-                </div>
-            </div>
-            
-            <div class="maze-cell central-building">
-                <img src="building.jpg" alt="Central Building">
-                <div class="glow-overlay"></div>
-            </div>
-            
-            <div class="maze-cell" data-room="allhands">
-                <div class="avatar-preview">
-                    <div class="avatar-content">AH</div>
-                </div>
-                <div class="room-info">
-                    <h3>All Hands</h3>
-                    <span>12 people</span>
-                </div>
-            </div>
-            
-            <div class="maze-cell" data-room="design">
-                <div class="avatar-preview">
-                    <div class="avatar-content">DW</div>
-                </div>
-                <div class="room-info">
-                    <h3>Design Weekly</h3>
-                    <span>8 people</span>
-                </div>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Glowing Maze Layout</title>
+    <style>
+      @keyframes glowPulse {
+        0%, 100% {
+          box-shadow: 0 0 15px #f1c40f, 0 0 30px #D40511;
+        }
+        50% {
+          box-shadow: 0 0 30px #D40511, 0 0 60px #f1c40f;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-[#0D0D0D] min-h-screen flex items-center justify-center overflow-hidden">
+
+    <div class="relative w-[800px] h-[500px] perspective-[1200px]">
+      <!-- 3D wrapper -->
+      <div class="relative w-full h-full transform rotate-x-60 origin-top">
+
+        <!-- Background Panel -->
+        <div class="absolute top-1/2 left-1/2 w-[380px] h-[240px] bg-[#1a1a1a] rounded-xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2 z-10"></div>
+
+        <!-- Horizontal walls -->
+        <div class="absolute top-0 left-0 w-full h-2 bg-[#222]"></div>
+        <div class="absolute top-[130px] left-0 w-full h-2 bg-[#333]"></div>
+        <div class="absolute top-[260px] left-0 w-full h-2 bg-[#444]"></div>
+        <div class="absolute bottom-0 left-0 w-full h-2 bg-[#222]"></div>
+
+        <!-- Vertical glowing walls -->
+        <div class="absolute top-0 left-0 h-full w-2 bg-[#f1c40f] animate-[glowPulse_4s_infinite]"></div>
+        <div class="absolute top-0 right-0 h-full w-2 bg-[#D40511] animate-[glowPulse_4s_infinite]"></div>
+
+        <!-- Room labels (optional) -->
+        <div class="absolute top-[40px] left-[60px] w-[120px] h-[120px] flex items-center justify-center rounded-lg bg-[#222] shadow-lg">
+          <p class="text-white font-semibold text-sm text-center">Meeting Room</p>
         </div>
+
+        <div class="absolute bottom-[40px] right-[60px] w-[120px] h-[120px] flex items-center justify-center rounded-lg bg-[#222] shadow-lg">
+          <p class="text-white font-semibold text-sm text-center">All Hands</p>
+        </div>
+      </div>
     </div>
-</body>
+
+  </body>
 </html>
