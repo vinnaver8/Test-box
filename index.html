@@ -13,7 +13,7 @@
       font-family: Arial, sans-serif;
     }
     /* Ensure room labels and central panel are above background lines */
-    .room, .central-panel {
+    .room, .central-panel, .subtitle {
       position: relative;
       z-index: 1;
     }
@@ -22,10 +22,11 @@
       position: relative;
       display: grid;
       grid-template-columns: 1fr 600px 1fr;
-      grid-template-rows: auto auto;
+      grid-template-rows: auto auto auto;
       grid-template-areas:
         "meeting central lounge"
-        "design central allhands";
+        "design central allhands"
+        ". subtitle .";
       gap: 20px;
       padding: 50px 0;
     }
@@ -33,13 +34,25 @@
     .room {
       color: #FFFFFF;
       font-size: 1.2em;
-      padding: 10px;
       text-align: center;
+      padding: 10px;
     }
-    .meeting-room   { grid-area: meeting; justify-self: center; align-self: start; }
-    .design-weekly  { grid-area: design;  justify-self: center; align-self: end;   }
-    .lounge         { grid-area: lounge;  justify-self: center; align-self: start; }
-    .all-hands      { grid-area: allhands;justify-self: center; align-self: end;   }/* Central panel with glowing orange border animation */
+    .meeting-room   { grid-area: meeting;   justify-self: center; align-self: start; }
+    .design-weekly  { grid-area: design;    justify-self: center; align-self: end;   }
+    .lounge         { grid-area: lounge;    justify-self: center; align-self: start; }
+    .all-hands      { grid-area: allhands;  justify-self: center; align-self: end;   }/* Subtitle beneath panel */
+.subtitle {
+  grid-area: subtitle;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #CCCCCC;
+  font-size: 1rem;
+  line-height: 1.4;
+  padding-top: 20px;
+}
+
+/* Central panel with glowing orange border animation */
 .central-panel {
   grid-area: central;
   background-color: #FFFFFF;
@@ -52,8 +65,8 @@
   box-sizing: border-box;
 }
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 15px 5px rgba(255, 140, 0, 0.5); }
-  50%      { box-shadow: 0 0 30px 10px rgba(255, 140, 0, 1); }
+  0%,100% { box-shadow: 0 0 15px 5px rgba(255,140,0,0.5); }
+  50%     { box-shadow: 0 0 30px 10px rgba(255,140,0,1); }
 }
 
 /* Maze / corridor walls without glow */
@@ -69,12 +82,18 @@
 /* Bottom-left corner */
 .bottom-left-horizontal { bottom: 10px; left: 30px;  width: 100px; }
 .bottom-left-vertical   { bottom: 10px; left: 130px; height: 100px; }
+/* Mid-left cross */
+.mid-left-horizontal { top: 50%; left: 30px; width: 100px; transform: translateY(-50%); }
+.mid-left-vertical   { top: 30%; left: 130px; height: 150px; }
 /* Top-right corner */
 .top-right-horizontal { top: 10px; right: 30px; width: 150px; }
 .top-right-vertical   { top: 10px; right: 180px; height: 300px; }
 /* Bottom-right corner */
 .bottom-right-horizontal { bottom: 10px; right: 30px; width: 100px; }
 .bottom-right-vertical   { bottom: 10px; right: 130px; height: 100px; }
+/* Mid-right cross */
+.mid-right-horizontal { top: 50%; right: 30px; width: 100px; transform: translateY(-50%); }
+.mid-right-vertical   { top: 30%; right: 130px; height: 150px; }
 
 /* Wi-Fi ripple wave animations (slower, smoother) */
 .wifi-wave {
@@ -83,6 +102,7 @@
   width: 200px;
   height: 200px;
   pointer-events: none;
+  opacity: 0.5;
 }
 .wifi-wave.left  { left: -100px; }
 .wifi-wave.right { right: -100px; }
@@ -141,7 +161,8 @@
     align-items: center;
     padding: 20px 0;
   }
-  .central-panel { margin: 20px 0; }
+  .central-panel { margin: 20px 0; width: 90%; }
+  .subtitle { width: 90%; }
   .meeting-room, .design-weekly,
   .lounge, .all-hands { margin: 10px 0; }
   .features .feature { width: 80%; }
@@ -156,10 +177,14 @@
     <div class="wall vertical top-left-vertical"></div>
     <div class="wall horizontal bottom-left-horizontal"></div>
     <div class="wall vertical bottom-left-vertical"></div>
+    <div class="wall horizontal mid-left-horizontal"></div>
+    <div class="wall vertical mid-left-vertical"></div>
     <div class="wall horizontal top-right-horizontal"></div>
     <div class="wall vertical top-right-vertical"></div>
     <div class="wall horizontal bottom-right-horizontal"></div>
-    <div class="wall vertical bottom-right-vertical"></div><!-- Wi-Fi waves -->
+    <div class="wall vertical bottom-right-vertical"></div>
+    <div class="wall horizontal mid-right-horizontal"></div>
+    <div class="wall vertical mid-right-vertical"></div><!-- Wi-Fi waves -->
 <div class="wifi-wave left">
   <div class="circle"></div>
   <div class="circle"></div>
@@ -177,6 +202,9 @@
 
 <!-- Central panel -->
 <div class="central-panel"></div>
+
+<!-- Subtitle -->
+<div class="subtitle">Collaborating with remote teams is easy in your virtual office environment. Enjoy real-time communication within your workspace without additional software hassle.</div>
 
 <!-- Room labels -->
 <div class="lounge room">Lounge</div>
