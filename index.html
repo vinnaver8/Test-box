@@ -73,28 +73,6 @@
     }
     @keyframes spin-ring { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
-    /* Wave rings (3 staggered) */
-    .wave,
-    .wave:nth-child(1),
-    .wave:nth-child(2),
-    .wave:nth-child(3) {
-      position:absolute;
-      top:50%; left:50%;
-      width: 6vmin; height: 6vmin;
-      margin:-3vmin 0 0 -3vmin;
-      border: 0.3vmin solid rgba(255,255,255,0.2);
-      border-radius:50%;
-      animation: wave 3s ease-out infinite;
-      pointer-events:none;
-    }
-    .wave:nth-child(2) { animation-delay:1s; }
-    .wave:nth-child(3) { animation-delay:2s; }
-    @keyframes wave {
-      0%   { transform: translate(-50%,-50%) scale(1);   opacity:0.5; }
-      80%  { transform: translate(-50%,-50%) scale(6);   opacity:0;   }
-      100% { transform: translate(-50%,-50%) scale(6);   opacity:0;   }
-    }
-
     /* Pulse circle behind bell */
     .pulse {
       position:absolute;
@@ -133,14 +111,9 @@
   </style>
 </head>
 <body>
-
-  <div class="scene">
-    <div class="dots"></div>
-    <div class="spinner"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="pulse"></div>
+<div class="scene">
+  <div class="dots"></div>
+  <div class="pulse"></div>
     <!-- Bell SVG (Heroicons outline) -->
     <svg class="bell" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
          stroke-linecap="round" stroke-linejoin="round">
