@@ -3,221 +3,144 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>3D Floorplan Carousel</title>
+  <title>Pure CSS 3D Floorplan</title>
   <style>
-    body, html { margin:0; padding:0; height:100%; overflow:hidden; font-family:sans-serif; }
-    section { position:relative; width:100vw; height:100vh; background:#f7f7f8; }
-    /* Container for floors */
-    .floors {
-      position:absolute;
-      top:50%; left:50%;
-      width:300vw; height:70vh;
-      transform: translate(-50%,-50%);
-      display:flex;
-      transition: transform 0.8s ease;
+    body, html { margin:0; padding:0; height:100%; }
+    section.hero {
+      position: relative;
+      min-height: 2000px;
+      background: #f7f7f8;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    /* Individual floor */
+
+    /* Desktop: show 3D layout */
     .floor {
-      position:relative;
-      width:100vw; height:100%;
-      perspective:1200px;
-      flex-shrink:0;
+      display: none;
+      width: 90vw;
+      max-width: 1200px;
+      height: 700px;
+      perspective: 1200px;
     }
-    /* The 3D plane */
-    .floor .plane {
-      position:absolute;
-      top:0; left:0; width:100%; height:100%;
-      transform-style:preserve-3d;
-      transform: rotateX(60deg) translateZ(-100px);
+    .floor .scene {
+      position: relative;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transform: rotateX(60deg) translateZ(-150px);
     }
+
     /* Walls */
     .wall {
-      position:absolute; background:#fff;
-      box-shadow:0 4px 12px rgba(0,0,0,0.05);
+      position: absolute;
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
     }
-    .wall.top    { top:0; left:0; right:0; height:20px; transform: rotateX(90deg) translateY(-10px); }
+    .wall.top    { top:   0; left:0; right:0; height:20px; transform: rotateX(90deg) translateY(-10px); }
     .wall.bottom { bottom:0; left:0; right:0; height:20px; transform: rotateX(90deg) translateY(10px); }
-    .wall.left   { top:0; bottom:0; left:0; width:20px; transform: rotateY(90deg) translateX(-10px); }
-    .wall.right  { top:0; bottom:0; right:0; width:20px; transform: rotateY(90deg) translateX(10px); }
+    .wall.left   { top:0; bottom:0; left:0; width:20px;  transform: rotateY(90deg) translateX(-10px); }
+    .wall.right  { top:0; bottom:0; right:0; width:20px;  transform: rotateY(90deg) translateX(10px); }
 
-    /* Rooms / hall / kitchen */
+    /* Rooms */
     .room {
-      position:absolute;
-      width:200px; height:200px;
-      overflow:visible;
+      position: absolute;
+      width: 240px; height: 240px;
+      transform: translateZ(1px);
     }
-    .room .glow {
-      position:absolute; inset:0;
-      background:radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
+    .room::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(84,216,255,0.4), transparent 70%);
+      filter: blur(8px);
       animation: pulse 6s ease-in-out infinite;
-      filter:blur(6px);
     }
     .room .label {
-      position:absolute;
+      position: absolute;
       top:50%; left:50%;
-      transform:translate(-50%,-50%) rotateX(60deg);
-      color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.3);
-      font-size:16px; font-weight:600;
+      transform: translate(-50%,-50%) rotateX(60deg);
+      font-family: sans-serif;
+      color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     @keyframes pulse {
       0%,100% { transform: scale(1); opacity:0.6; }
-      50%      { transform: scale(1.1); opacity:0.3; }
+      50%      { transform: scale(1.15); opacity:0.3; }
     }
 
-    /* Floor-specific placements */
-    /* Floor 1 */
-    #floor-1 .room.room1 { top:60px;  left:60px; }   /* room */
-    #floor-1 .room.room2 { top:60px;  right:60px; }  /* hall */
-    #floor-1 .room.room3 { bottom:60px; left:calc(50% - 100px); } /* kitchen */
-
-    /* Floor 2 */
-    #floor-2 .room.room1 { top:60px;  left:80px; }
-    #floor-2 .room.room2 { top:260px; left:60px; }
-    #floor-2 .room.room3 { top:260px; right:80px; }
-
-    /* Floor 3 */
-    #floor-3 .room.room1 { bottom:60px; right:60px; }
-    #floor-3 .room.room2 { top:80px;    left:calc(50% - 100px); }
-    #floor-3 .room.room3 { top:260px;   left:80px; }
-
-    /* Panel (3D building screen) */
+    /* Center “building” panel */
     .panel {
-      position:absolute;
-      width:400px; height:260px;
+      position: absolute;
+      width: 680px; height: 420px;
       top:50%; left:50%;
-      transform: translate(-50%,-50%) translateZ(50px) rotateX(60deg);
-      background:#f0f2f5; border-radius:12px;
-      box-shadow:0 10px 40px rgba(0,0,0,0.1);
+      transform: translate(-50%,-50%) translateZ(80px) rotateX(60deg);
+      background: #f0f2f5;
+      border-radius: 16px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.12);
     }
 
-    /* Nav buttons */
-    .nav {
-      position:absolute; top:50%; width:100%;
-      transform:translateY(-50%);
-      display:flex; justify-content:space-between;
-      pointer-events:none;
-    }
-    .nav button {
-      pointer-events:all;
-      background:rgba(255,255,255,0.8);
-      border:none; padding:12px 16px; border-radius:6px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.1);
-      cursor:pointer; font-size:16px;
-      transition:background 0.2s;
-    }
-    .nav button:hover { background:rgba(255,255,255,1); }
+    /* Room positions for desktop */
+    .room.meeting  { top: 80px;  left: 80px; }
+    .room.design   { top: 300px; left: 100px; }
+    .room.lounge   { top: 100px; right:80px; }
+    .room.allhands { top: 320px; right:100px; }
 
+    /* Mobile fallback */
+    .mobile-panel {
+      width: 90%; max-width: 400px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding: 32px;
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    @media (min-width: 768px) {
+      .floor         { display: block; }
+      .mobile-panel  { display: none; }
+    }
+    @media (max-width: 767px) {
+      .floor         { display: none; }
+      .mobile-panel  { display: block; }
+    }
   </style>
 </head>
 <body>
 
-<section>
-  <div class="floors" id="carousel">
-    <!-- Floor 1 -->
-    <div class="floor" id="floor-1">
-      <div class="plane">
-        <div class="wall top"></div>
-        <div class="wall bottom"></div>
-        <div class="wall left"></div>
-        <div class="wall right"></div>
+<section class="hero">
+  <!-- Desktop 3D floorplan -->
+  <div class="floor">
+    <div class="scene">
+      <div class="wall top"></div>
+      <div class="wall bottom"></div>
+      <div class="wall left"></div>
+      <div class="wall right"></div>
 
-        <div class="room room1">
-          <div class="glow"></div>
-          <div class="label">Room</div>
-        </div>
-        <div class="room room2">
-          <div class="glow"></div>
-          <div class="label">Hall</div>
-        </div>
-        <div class="room room3">
-          <div class="glow"></div>
-          <div class="label">Kitchen</div>
-        </div>
-
-        <div class="panel"></div>
+      <div class="room meeting">
+        <div class="label">Meeting Room</div>
       </div>
-    </div>
-
-    <!-- Floor 2 -->
-    <div class="floor" id="floor-2">
-      <div class="plane">
-        <div class="wall top"></div>
-        <div class="wall bottom"></div>
-        <div class="wall left"></div>
-        <div class="wall right"></div>
-
-        <div class="room room1">
-          <div class="glow"></div>
-          <div class="label">Office</div>
-        </div>
-        <div class="room room2">
-          <div class="glow"></div>
-          <div class="label">Lounge</div>
-        </div>
-        <div class="room room3">
-          <div class="glow"></div>
-          <div class="label">Storage</div>
-        </div>
-
-        <div class="panel"></div>
+      <div class="room design">
+        <div class="label">Design Weekly</div>
       </div>
-    </div>
-
-    <!-- Floor 3 -->
-    <div class="floor" id="floor-3">
-      <div class="plane">
-        <div class="wall top"></div>
-        <div class="wall bottom"></div>
-        <div class="wall left"></div>
-        <div class="wall right"></div>
-
-        <div class="room room1">
-          <div class="glow"></div>
-          <div class="label">Conference</div>
-        </div>
-        <div class="room room2">
-          <div class="glow"></div>
-          <div class="label">Break</div>
-        </div>
-        <div class="room room3">
-          <div class="glow"></div>
-          <div class="label">Pantry</div>
-        </div>
-
-        <div class="panel"></div>
+      <div class="room lounge">
+        <div class="label">Lounge</div>
       </div>
+      <div class="room allhands">
+        <div class="label">All Hands</div>
+      </div>
+
+      <div class="panel"></div>
     </div>
   </div>
 
-  <!-- Prev/Next -->
-  <div class="nav">
-    <button id="prev">&larr; Prev</button>
-    <button id="next">Next &rarr;</button>
+  <!-- Mobile fallback panel -->
+  <div class="mobile-panel">
+    <h2>Work together.<br>Like in the office.</h2>
+    <p>Create virtual rooms for any department or event with high-quality audio & video conferencing.</p>
   </div>
 </section>
-
-<script>
-  const carousel = document.getElementById('carousel');
-  const prevBtn  = document.getElementById('prev');
-  const nextBtn  = document.getElementById('next');
-  let idx = 0;        // current floor index
-  const max = 3;      // total floors
-
-  function update() {
-    // translateX by -idx * 100vw
-    carousel.style.transform = `translate(-50%, -50%) translateX(${-idx*100}vw)`;
-  }
-
-  prevBtn.addEventListener('click', () => {
-    idx = (idx - 1 + max) % max;
-    update();
-  });
-  nextBtn.addEventListener('click', () => {
-    idx = (idx + 1) % max;
-    update();
-  });
-</script>
 
 </body>
 </html>
