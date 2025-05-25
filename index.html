@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vortex Swirl with Bell</title>
+  <title>Dot Ripple Interaction</title>
   <style>
     :root {
       --dark-bg: #0d0d12;
-      --blue: #316aff;
-      --orange: #ff9831;
       --dot-color: rgba(255,255,255,0.12);
     }
-
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
       width:100%; height:100%;
       background: var(--dark-bg);
       display:flex; justify-content:center; align-items:center;
-      font-family: sans-serif;
     }
 
     .scene {
@@ -26,22 +22,104 @@
       border-radius: 1rem;
       overflow: hidden;
       background: #000;
+      cursor: pointer;
     }
 
-    /* Dot-pattern overlay */
-    .dots {
-      position:absolute; inset:0;
-      background-image:
-        radial-gradient(var(--dot-color) 1px, transparent 1px);
-      background-size: 8px 8px;
-      mask-image:
-        radial-gradient(circle at center, rgba(0,0,0,1) 40%, transparent 65%);
-      pointer-events:none;
+    /* each dot */
+    .dot {
+      position: absolute;
+      width: 4px; height: 4px;
+      background: var(--dot-color);
+      border-radius: 50%;
+      transform: scale(1);
+      transition: transform 0.3s ease-out;
+      pointer-events: none;
     }
-    
+    .dot.grow {
+      transform: scale(2);
+    }
   </style>
 </head>
 <body>
- <div class="dots"></div>
+  <div class="scene" id="scene"></div>
+
+  <script>
+    const scene = document.getElementById('scene');
+    const spacing = 8; // match your background-size
+    let dots = [];
+
+    // 1) Populate dots grid
+    function createDots() {
+      const w = scene.clientWidth;
+      const h = scene.clientHeight;
+      const cols = Math.ceil(w / spacing);
+      const rows = Math.ceil(h / spacing);
+
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          const d = document.createElement('div');
+          d.className = 'dot';
+          const x = i * spacing;
+          const y = j * spacing;
+          d.style.left = x + 'px';
+          d.style.top  = y + 'px';
+          scene.appendChild(d);
+          dots.push({ el: d, x: x + 2, y: y + 2 }); // center offset
+        }
+      }
+    }
+
+    // 2) On click, launch a ripple
+    scene.addEventListener('click', e => {
+      const rect = scene.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      ripple(cx, cy);
+    });
+
+    // 3) Ripple logic: expand a circle and trigger dots
+    function ripple(cx, cy) {
+      const start = performance.now();
+      const maxRadius = Math.hypot(scene.clientWidth, scene.clientHeight);
+      const speed = 0.5; // px per ms
+
+      function frame(now) {
+        const t = now - start;
+        const radius = t * speed;
+        // tolerance band ~ speed * frame time (~16ms)
+        const tol = speed * 16;
+
+        dots.forEach(dot => {
+          const dx = dot.x - cx;
+          const dy = dot.y - cy;
+          const dist = Math.hypot(dx, dy);
+          if (!dot.triggered && Math.abs(dist - radius) < tol) {
+            dot.triggered = true;
+            dot.el.classList.add('grow');
+            setTimeout(() => {
+              dot.el.classList.remove('grow');
+            }, 300);
+          }
+        });
+
+        if (radius < maxRadius) {
+          requestAnimationFrame(frame);
+        } else {
+          // reset for next ripple
+          dots.forEach(d => d.triggered = false);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // init
+    createDots();
+    // adjust on resize
+    window.addEventListener('resize', () => {
+      scene.innerHTML = '';
+      dots = [];
+      createDots();
+    });
+  </script>
 </body>
 </html>
