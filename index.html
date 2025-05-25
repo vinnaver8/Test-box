@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vortex Swirl with Bell</title>
+  <title>Vortex Swirl with Bell + Dot‐Wave</title>
   <style>
     :root {
       --dark-bg: #0d0d12;
       --blue: #316aff;
       --orange: #ff9831;
-      --dot-color: rgba(255,255,255,0.12);
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -28,41 +27,65 @@
       background: #000;
     }
 
-    /* Dot-pattern overlay */
+    /* Dot‐pattern overlay, now animating both its color and its “mask” radius */
     .dots {
       position:absolute; inset:0;
+      /* dot color var */
+      --dot-col: rgba(255,255,255,0.12);
+      /* mask stops */
+      --r1: 40%;
+      --r2: 65%;
+
       background-image:
-        radial-gradient(var(--dot-color) 1px, transparent 1px);
+        radial-gradient(var(--dot-col) 1px, transparent 1px);
       background-size: 8px 8px;
-      mask-image:
-        radial-gradient(circle at center, rgba(0,0,0,1) 40%, transparent 65%);
-      pointer-events:none;
+      /* circular mask that grows/shrinks */
+      -webkit-mask-image: radial-gradient(circle at center, black var(--r1), transparent var(--r2));
+              mask-image: radial-gradient(circle at center, black var(--r1), transparent var(--r2));
+
+      animation: dotWave 3s ease-in-out infinite;
+      pointer-events: none;
     }
 
-      /* Center bell SVG + badge */
+    @keyframes dotWave {
+      0%, 100% {
+        /* small mask, original color */
+        --r1: 40%;
+        --r2: 65%;
+        --dot-col: rgba(255,255,255,0.12);
+      }
+      50% {
+        /* mask expands, dots switch to orange */
+        --r1: 20%;
+        --r2: 90%;
+        --dot-col: var(--orange);
+      }
+    }
+
+    /* Center bell SVG + badge */
     .bell {
       position:absolute;
       top:50%; left:50%;
       transform: translate(-50%,-50%);
-      width: 6vmin; height: 6vmin;
+      width: 8vmin; height: 8vmin;  /* increased size */
       z-index:2;
       pointer-events:none;
     }
     .badge {
       position:absolute;
       top:0.2em; right:0.2em;
-      background:#ff4b4b; color:red;
-      width:1.5em; height:1.5em;
-      font-size:0.75em;
-      line-height:1.5em; text-align:center;
+      background:#ff4b4b;
+      color:#fff;
+      width:1.6em; height:1.6em;
+      font-size:0.8em;
+      line-height:1.6em; text-align:center;
       border-radius:50%;
     }
   </style>
 </head>
 <body>
-<div class="scene">
-  <div class="dots"></div>
-  <div class="pulse"></div>
+  <div class="scene">
+    <div class="dots"></div>
     <!-- Bell SVG (Heroicons outline) -->
     <svg class="bell" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
          stroke-linecap="round" stroke-linejoin="round">
@@ -74,6 +97,5 @@
       <text class="badge" x="100%" y="0%" dy="1.2em" dx="-1.2em">26</text>
     </svg>
   </div>
-
 </body>
 </html>
