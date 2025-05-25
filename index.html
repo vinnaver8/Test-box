@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vortex Swirl with Bell</title>
+  <title>Animated Dots + Big Bell</title>
   <style>
     :root {
       --dark-bg: #0d0d12;
@@ -28,7 +28,7 @@
       background: #000;
     }
 
-    /* Vortex swirl: two rotating conic-gradient layers */
+    /* Vortex swirl retained */
     .scene::before,
     .scene::after {
       content:"";
@@ -36,63 +36,53 @@
       border-radius:50%;
       mix-blend-mode: screen;
       opacity:0.6;
-      background: conic-gradient(from 0deg at 30% 30%, var(--blue) 0deg 120deg, transparent 120deg 360deg);
-      animation: spin-blue 20s linear infinite;
       filter: blur(3vmin);
     }
+    .scene::before {
+      background: conic-gradient(from 0deg at 30% 30%, var(--blue) 0deg 120deg, transparent 120deg);
+      animation: spin-blue 20s linear infinite;
+    }
     .scene::after {
-      background: conic-gradient(from 180deg at 70% 70%, var(--orange) 0deg 120deg, transparent 120deg 360deg);
+      background: conic-gradient(from 180deg at 70% 70%, var(--orange) 0deg 120deg, transparent 120deg);
       animation: spin-orange 25s linear infinite reverse;
     }
     @keyframes spin-blue   { to { transform: rotate(360deg); } }
     @keyframes spin-orange { to { transform: rotate(360deg); } }
 
-    /* Dot-pattern overlay */
-    .dots {
-      position:absolute; inset:0;
-      background-image:
-        radial-gradient(var(--dot-color) 1px, transparent 1px);
-      background-size: 8px 8px;
-      mask-image:
-        radial-gradient(circle at center, rgba(0,0,0,1) 40%, transparent 65%);
-      pointer-events:none;
+    /* Four corner dots, each animating to opposite corner */
+    .corner-dot {
+      position: absolute;
+      width: 0.8vmin; height: 0.8vmin;
+      border-radius: 50%;
+      background: var(--dot-color);
+      animation-duration: 8s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
     }
+    .dot-tl { top: 5%;  left: 5%;  animation-name: move-tl; }
+    .dot-tr { top: 5%;  right: 5%; animation-name: move-tr; }
+    .dot-bl { bottom: 5%; left: 5%;  animation-name: move-bl; }
+    .dot-br { bottom: 5%; right: 5%; animation-name: move-br; }
 
-    /* Spinner ring */
-    .spinner {
-      position:absolute;
-      top:50%; left:50%;
-      width: 20vmin; height: 20vmin;
-      margin:-10vmin 0 0 -10vmin;
-      border-radius:50%;
-      border: 0.5vmin solid transparent;
-      border-top-color: var(--blue);
-      border-right-color: var(--orange);
-      animation: spin-ring 4s linear infinite;
-      pointer-events:none;
+    @keyframes move-tl {
+      0%   { top:5%; left:5%;   background:var(--dot-color); }
+      50%  { top:95%; left:95%; background:var(--orange);      }
+      100% { top:5%; left:5%;   background:var(--dot-color); }
     }
-    @keyframes spin-ring { to { transform: translate(-50%,-50%) rotate(360deg); } }
-
-    /* Wave rings (3 staggered) */
-    .wave,
-    .wave:nth-child(1),
-    .wave:nth-child(2),
-    .wave:nth-child(3) {
-      position:absolute;
-      top:50%; left:50%;
-      width: 6vmin; height: 6vmin;
-      margin:-3vmin 0 0 -3vmin;
-      border: 0.3vmin solid rgba(255,255,255,0.2);
-      border-radius:50%;
-      animation: wave 3s ease-out infinite;
-      pointer-events:none;
+    @keyframes move-tr {
+      0%   { top:5%; right:5%;  background:var(--dot-color); }
+      50%  { bottom:95%; right:95%; background:var(--blue);    transform: translateY(0) translateX(0); }
+      100% { top:5%; right:5%;  background:var(--dot-color); }
     }
-    .wave:nth-child(2) { animation-delay:1s; }
-    .wave:nth-child(3) { animation-delay:2s; }
-    @keyframes wave {
-      0%   { transform: translate(-50%,-50%) scale(1);   opacity:0.5; }
-      80%  { transform: translate(-50%,-50%) scale(6);   opacity:0;   }
-      100% { transform: translate(-50%,-50%) scale(6);   opacity:0;   }
+    @keyframes move-bl {
+      0%   { bottom:5%; left:5%;  background:var(--dot-color); }
+      50%  { top:95%; left:95%;   background:var(--blue);      }
+      100% { bottom:5%; left:5%;  background:var(--dot-color); }
+    }
+    @keyframes move-br {
+      0%   { bottom:5%; right:5%; background:var(--dot-color); }
+      50%  { top:95%; right:95%;  background:var(--orange);    }
+      100% { bottom:5%; right:5%; background:var(--dot-color); }
     }
 
     /* Pulse circle behind bell */
@@ -112,45 +102,58 @@
       100% { transform: translate(-50%,-50%) scale(4);   opacity:0;   }
     }
 
-    /* Center bell SVG + badge */
-    .bell {
+    /* Big Bell SVG centered */
+    .bell-container {
       position:absolute;
       top:50%; left:50%;
       transform: translate(-50%,-50%);
-      width: 6vmin; height: 6vmin;
       z-index:2;
+      text-align: center;
       pointer-events:none;
     }
+    .bell-container svg {
+      width: 12vmin;
+      height: 12vmin;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2;
+    }
     .badge {
-      position:absolute;
-      top:0.2em; right:0.2em;
-      background:#ff4b4b; color:#fff;
-      width:1.5em; height:1.5em;
-      font-size:0.75em;
-      line-height:1.5em; text-align:center;
-      border-radius:50%;
+      margin-top: 0.4em;
+      display: inline-block;
+      background: #ff4b4b;
+      color: #fff;
+      width: 2.4em; height: 2.4em;
+      line-height: 2.4em;
+      font-size: 1em;
+      border-radius: 50%;
     }
   </style>
 </head>
 <body>
 
   <div class="scene">
-    <div class="dots"></div>
-    <div class="spinner"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
+    <!-- Animated corner dots -->
+    <div class="corner-dot dot-tl"></div>
+    <div class="corner-dot dot-tr"></div>
+    <div class="corner-dot dot-bl"></div>
+    <div class="corner-dot dot-br"></div>
+
+    <!-- Pulse ring -->
     <div class="pulse"></div>
-    <!-- Bell SVG (Heroicons outline) -->
-    <svg class="bell" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
-         stroke-linecap="round" stroke-linejoin="round">
-      <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 
-               14.158V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 
-               1.5 0 00-3 0v.68C7.64 5.36 6 7.92 6 
-               11v3.159c0 .538-.214 1.055-.595 1.436L4 
-               17h5m6 0a3 3 0 11-6 0h6z"/>
-      <text class="badge" x="100%" y="0%" dy="1.2em" dx="-1.2em">26</text>
-    </svg>
+
+    <!-- Bell + badge -->
+    <div class="bell-container">
+      <!-- Heroicons Bell SVG -->
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 
+                 14.158V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 
+                 1.5 0 00-3 0v.68C7.64 5.36 6 7.92 6 
+                 11v3.159c0 .538-.214 1.055-.595 1.436L4 
+                 17h5m6 0a3 3 0 11-6 0h6z"/>
+      </svg>
+      <div class="badge">26</div>
+    </div>
   </div>
 
 </body>
