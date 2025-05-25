@@ -3,122 +3,162 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dot Ripple Interaction</title>
+  <title>Interactive Dot Ripple & Glow with Bell</title>
   <style>
     :root {
       --dark-bg: #0d0d12;
       --dot-color: rgba(255,255,255,0.12);
+      --glow-color: rgba(49,106,255,0.8);
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
       width:100%; height:100%;
       background: var(--dark-bg);
       display:flex; justify-content:center; align-items:center;
+      font-family:sans-serif;
     }
 
     .scene {
       position: relative;
       width: 80vmin; height: 80vmin;
+      background: #000;
       border-radius: 1rem;
       overflow: hidden;
-      background: #000;
       cursor: pointer;
     }
 
-    /* each dot */
+    /* Individual dots */
     .dot {
       position: absolute;
       width: 4px; height: 4px;
       background: var(--dot-color);
       border-radius: 50%;
       transform: scale(1);
-      transition: transform 0.3s ease-out;
+      transition: transform 0.3s ease-out, background 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
       pointer-events: none;
     }
     .dot.grow {
       transform: scale(2);
     }
+
+    /* glowing reflection on random dots */
+    .dot.glow {
+      background: var(--glow-color);
+      box-shadow: 0 0 8px var(--glow-color), 0 0 16px var(--glow-color);
+    }
+
+    /* Bell + badge */
+    .bell-container {
+      position: absolute;
+      top:50%; left:50%;
+      transform: translate(-50%,-50%);
+      text-align: center;
+      z-index:2;
+      pointer-events: none;
+    }
+    .bell-container svg {
+      width: 12vmin; height: 12vmin;
+      stroke: #fff; fill: none; stroke-width: 2;
+    }
+    .badge {
+      margin-top: 0.6em;
+      display: inline-block;
+      background: #ff4b4b; color: #fff;
+      width: 2.8em; height: 2.8em;
+      line-height: 2.8em; font-size: 1em;
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body>
-  <div class="scene" id="scene"></div>
+  <div class="scene" id="scene">
+    <div class="bell-container">
+      <!-- Heroicons Bell -->
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 
+                 14.158V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 
+                 1.5 0 00-3 0v.68C7.64 5.36 6 7.92 6 
+                 11v3.159c0 .538-.214 1.055-.595 1.436L4 
+                 17h5m6 0a3 3 0 11-6 0h6z"/>
+      </svg>
+      <div class="badge">26</div>
+    </div>
+  </div>
 
   <script>
     const scene = document.getElementById('scene');
-    const spacing = 8; // match your background-size
+    const spacing = 8;
     let dots = [];
 
-    // 1) Populate dots grid
+    // 1) Create grid of dot elements
     function createDots() {
-      const w = scene.clientWidth;
-      const h = scene.clientHeight;
-      const cols = Math.ceil(w / spacing);
-      const rows = Math.ceil(h / spacing);
+      const w = scene.clientWidth, h = scene.clientHeight;
+      const cols = Math.ceil(w/spacing), rows = Math.ceil(h/spacing);
 
-      for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
+      for (let i=0; i<cols; i++) {
+        for (let j=0; j<rows; j++) {
           const d = document.createElement('div');
           d.className = 'dot';
-          const x = i * spacing;
-          const y = j * spacing;
-          d.style.left = x + 'px';
-          d.style.top  = y + 'px';
+          const x = i*spacing, y = j*spacing;
+          d.style.left = x+'px';
+          d.style.top  = y+'px';
           scene.appendChild(d);
-          dots.push({ el: d, x: x + 2, y: y + 2 }); // center offset
+          dots.push({el:d, x:x+2, y:y+2, triggered:false});
         }
       }
     }
 
-    // 2) On click, launch a ripple
-    scene.addEventListener('click', e => {
+    // 2) On click/tap: start ripple
+    scene.addEventListener('pointerdown', e => {
       const rect = scene.getBoundingClientRect();
       const cx = e.clientX - rect.left;
       const cy = e.clientY - rect.top;
-      ripple(cx, cy);
+      ripple(cx,cy);
     });
 
-    // 3) Ripple logic: expand a circle and trigger dots
     function ripple(cx, cy) {
       const start = performance.now();
-      const maxRadius = Math.hypot(scene.clientWidth, scene.clientHeight);
+      const maxR = Math.hypot(scene.clientWidth, scene.clientHeight);
       const speed = 0.5; // px per ms
 
       function frame(now) {
         const t = now - start;
-        const radius = t * speed;
-        // tolerance band ~ speed * frame time (~16ms)
+        const r = t * speed;
         const tol = speed * 16;
-
-        dots.forEach(dot => {
-          const dx = dot.x - cx;
-          const dy = dot.y - cy;
-          const dist = Math.hypot(dx, dy);
-          if (!dot.triggered && Math.abs(dist - radius) < tol) {
-            dot.triggered = true;
-            dot.el.classList.add('grow');
-            setTimeout(() => {
-              dot.el.classList.remove('grow');
-            }, 300);
+        dots.forEach(d => {
+          const dist = Math.hypot(d.x - cx, d.y - cy);
+          if (!d.triggered && Math.abs(dist - r) < tol) {
+            d.triggered = true;
+            d.el.classList.add('grow');
+            setTimeout(()=> d.el.classList.remove('grow'), 300);
           }
         });
-
-        if (radius < maxRadius) {
+        if (r < maxR) {
           requestAnimationFrame(frame);
         } else {
-          // reset for next ripple
-          dots.forEach(d => d.triggered = false);
+          dots.forEach(d=> d.triggered = false);
         }
       }
       requestAnimationFrame(frame);
     }
 
-    // init
+    // 3) Random glow effect: pick a dot every 200ms
+    setInterval(() => {
+      const idx = Math.floor(Math.random()*dots.length);
+      const d = dots[idx];
+      d.el.classList.add('glow');
+      setTimeout(()=> d.el.classList.remove('glow'), 1000);
+    }, 200);
+
+    // init and handle resize
     createDots();
-    // adjust on resize
     window.addEventListener('resize', () => {
       scene.innerHTML = '';
       dots = [];
       createDots();
+      // re-add bell
+      const bell = document.querySelector('.bell-container');
+      scene.appendChild(bell);
     });
   </script>
 </body>
