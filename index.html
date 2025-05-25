@@ -28,25 +28,6 @@
       background: #000;
     }
 
-    /* Vortex swirl: two rotating conic-gradient layers */
-    .scene::before,
-    .scene::after {
-      content:"";
-      position:absolute; inset:0;
-      border-radius:50%;
-      mix-blend-mode: screen;
-      opacity:0.6;
-      background: conic-gradient(from 0deg at 30% 30%, var(--blue) 0deg 120deg, transparent 120deg 360deg);
-      animation: spin-blue 20s linear infinite;
-      filter: blur(3vmin);
-    }
-    .scene::after {
-      background: conic-gradient(from 180deg at 70% 70%, var(--orange) 0deg 120deg, transparent 120deg 360deg);
-      animation: spin-orange 25s linear infinite reverse;
-    }
-    @keyframes spin-blue   { to { transform: rotate(360deg); } }
-    @keyframes spin-orange { to { transform: rotate(360deg); } }
-
     /* Dot-pattern overlay */
     .dots {
       position:absolute; inset:0;
@@ -58,39 +39,7 @@
       pointer-events:none;
     }
 
-    /* Spinner ring */
-    .spinner {
-      position:absolute;
-      top:50%; left:50%;
-      width: 20vmin; height: 20vmin;
-      margin:-10vmin 0 0 -10vmin;
-      border-radius:50%;
-      border: 0.5vmin solid transparent;
-      border-top-color: var(--blue);
-      border-right-color: var(--orange);
-      animation: spin-ring 4s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes spin-ring { to { transform: translate(-50%,-50%) rotate(360deg); } }
-
-    /* Pulse circle behind bell */
-    .pulse {
-      position:absolute;
-      top:50%; left:50%;
-      width: 4vmin; height: 4vmin;
-      margin:-2vmin 0 0 -2vmin;
-      border: 0.4vmin solid rgba(255,255,255,0.3);
-      border-radius:50%;
-      animation: pulse 2s ease-out infinite;
-      pointer-events:none;
-    }
-    @keyframes pulse {
-      0%   { transform: translate(-50%,-50%) scale(1);   opacity:0.6; }
-      70%  { transform: translate(-50%,-50%) scale(4);   opacity:0;   }
-      100% { transform: translate(-50%,-50%) scale(4);   opacity:0;   }
-    }
-
-    /* Center bell SVG + badge */
+      /* Center bell SVG + badge */
     .bell {
       position:absolute;
       top:50%; left:50%;
@@ -102,7 +51,7 @@
     .badge {
       position:absolute;
       top:0.2em; right:0.2em;
-      background:#ff4b4b; color:#fff;
+      background:#ff4b4b; color:red;
       width:1.5em; height:1.5em;
       font-size:0.75em;
       line-height:1.5em; text-align:center;
