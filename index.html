@@ -1,179 +1,43 @@
+Okay, here's the HTML and CSS code to create a similar wall effect. Please note that achieving the exact 3D illusion of the image with pure CSS can be complex and might not look identical. This code provides a good starting point for a layered and slightly extruded effect.
+HTML (index.html):
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>3D Floorplan</title>
-  <style>
-    :root {
-      --bg: #e9dfd7;
-      --wall: #f0e7df;
-      --wall-outline: #d8cfc7;
-      --highlight: #f5c17f;
-      --text: #fff;
-      --shadow-color: rgba(0,0,0,0.2);
-      --bevel-light: rgba(255,255,255,0.8);
-      --bevel-dark: rgba(0,0,0,0.1);
-    }
-
-    * { box-sizing: border-box; margin:0; padding:0; }
-
-    body {
-      background: var(--bg);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: "Arial", sans-serif;
-    }
-
-    .floorplan {
-      position: relative;
-      width: 768px;
-      height: 768px;
-      background: var(--bg);
-    }
-
-    .room {
-      position: absolute;
-      background: var(--wall);
-      border: 2px solid var(--wall-outline);
-      border-radius: 8px;
-      /* outer drop shadow */
-      box-shadow:
-        0 4px 6px var(--shadow-color),
-        inset 2px 2px 4px var(--bevel-light),
-        inset -2px -2px 4px var(--bevel-dark);
-      padding: 16px;
-      color: var(--text);
-      font-weight: bold;
-      text-shadow: 0 1px 2px var(--shadow-color);
-    }
-
-    .room h2 {
-      font-size: 24px;
-      line-height: 1.1;
-    }
-
-    .room .avatars {
-      margin-top: 12px;
-      display: flex;
-      gap: 8px;
-    }
-
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background-size: cover;
-      background-position: center;
-      /* give each avatar a little drop shadow */
-      filter: drop-shadow(0 2px 2px var(--shadow-color));
-    }
-
-    /* Big central card */
-    .room.big {
-      width: 440px;
-      height: 440px;
-      left: 160px;
-      top: 160px;
-      padding: 24px;
-      background: var(--bg);
-      border-radius: 16px;
-      border: 16px solid var(--wall);
-      box-shadow:
-        0 8px 12px var(--shadow-color),
-        inset 4px 4px 8px var(--bevel-light),
-        inset -4px -4px 8px var(--bevel-dark);
-    }
-    .room.big::before {
-      content:"";
-      position:absolute;
-      top:12px; left:12px; right:12px; bottom:12px;
-      border: 8px solid var(--highlight);
-      border-radius: 8px;
-      pointer-events:none;
-    }
-
-    /* Layout positions */
-    .meeting { top: 40px; left: 40px; width: 200px; height: 200px; }
-    .design-top { top: 270px; left: 40px; width: 200px; height: 200px; }
-    .design-bottom { top: 500px; left: 40px; width: 200px; height: 200px; }
-    .all-hands { top: 500px; left: 280px; width: 360px; height: 200px; }
-    .lounge { top: 280px; left: 640px; width: 200px; height: 200px; }
-
-    /* Simple wall outlines */
-    .wall-line {
-      position: absolute;
-      background: var(--wall);
-      box-shadow: 
-        0 2px 2px var(--shadow-color),
-        inset 1px 1px 2px var(--bevel-light),
-        inset -1px -1px 2px var(--bevel-dark);
-    }
-    .wall-line.hz { height: 16px; }
-    .wall-line.vt { width: 16px; }
-
-    /* Example wall bars */
-    .wall1 { top: 0; left: 360px; width: 16px; height: 768px; }
-    .wall2 { top: 360px; left: 0; width: 768px; height: 16px; }
-    /* ...add more wall segments positioned per your original image */
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Wall Effect</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="floorplan">
-
-    <!-- Walls (example) -->
-    <div class="wall-line vt wall1"></div>
-    <div class="wall-line hz wall2"></div>
-    <!-- you can replicate/add all the T-junctions in the same way -->
-
-    <!-- Rooms -->
-    <div class="room meeting">
-      <h2>Meeting<br/>Room</h2>
-      <div class="avatars">
-        <div class="avatar" style="background-image:url(avatar1.jpg)"></div>
-        <div class="avatar" style="background-image:url(avatar2.jpg)"></div>
-        <div class="avatar" style="background-image:url(avatar3.jpg)"></div>
-      </div>
-    </div>
-
-    <div class="room design-top">
-      <h2>Design<br/>Weekly</h2>
-      <div class="avatars">
-        <div class="avatar" style="background-image:url(avatar4.jpg)"></div>
-        <div class="avatar" style="background-image:url(avatar5.jpg)"></div>
-      </div>
-    </div>
-
-    <div class="room design-bottom">
-      <h2>Design<br/>Weekly</h2>
-      <div class="avatars">
-        <div class="avatar" style="background-image:url(avatar6.jpg)"></div>
-        <div class="avatar" style="background-image:url(avatar7.jpg)"></div>
-      </div>
-    </div>
-
-    <div class="room all-hands">
-      <h2>All Hands</h2>
-      <div class="avatars">
-        <div class="avatar" style="background-image:url(avatar8.jpg)"></div>
-        <div class="avatar" style="background-image:url(avatar9.jpg)"></div>
-      </div>
-    </div>
-
-    <div class="room big"></div>
-
-    <div class="room lounge">
-      <h2>Lounge</h2>
-      <div class="avatars">
-        <div class="avatar" style="background-image:url(avatar10.jpg)"></div>
-        <div class="avatar" style="background-image:url(avatar11.jpg)"></div>
-      </div>
-    </div>
-
-  </div>
-
+<div class="wall-container">
+<div class="central-area"></div>
+<div class="room meeting-room">
+Meeting Room
+<div class="avatars">👤👤👤</div>
+</div>
+<div class="room design-weekly-top">
+Design Weekly
+<div class="avatars">👤👤</div>
+</div>
+<div class="room design-weekly-bottom">
+Design Weekly
+<div class="avatars">👤👤</div>
+</div>
+<div class="room lounge">
+Lounge
+<div class="avatars">👤👤</div>
+</div>
+<div class="room all-hands">
+All Hands
+<div class="avatars">👤👤</div>
+</div>
+<div class="connector horizontal-top"></div>
+<div class="connector horizontal-middle-left"></div>
+<div class="connector horizontal-middle-right"></div>
+<div class="connector horizontal-bottom"></div>
+<div class="connector vertical-left-top"></div>
+<div class="connector vertical-left-bottom"></div>
+<div class="connector vertical-right"></div>
+</div>
 </body>
 </html>
