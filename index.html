@@ -69,60 +69,11 @@
   50%     { box-shadow: 0 0 30px 10px rgba(255,140,0,1); }
 }
 
-/* Maze / corridor walls without glow */
-.wall {
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.2);
-}
-.horizontal { height: 8px; }
-.vertical   { width: 8px; }
-/* Top-left corner */
-.top-left-horizontal { top: 10px; left: 30px;  width: 150px; }
-.top-left-vertical   { top: 10px; left: 180px; height: 300px; }
-/* Bottom-left corner */
-.bottom-left-horizontal { bottom: 10px; left: 30px;  width: 100px; }
-.bottom-left-vertical   { bottom: 10px; left: 130px; height: 100px; }
-/* Mid-left cross */
-.mid-left-horizontal { top: 50%; left: 30px; width: 100px; transform: translateY(-50%); }
-.mid-left-vertical   { top: 30%; left: 130px; height: 150px; }
-/* Top-right corner */
-.top-right-horizontal { top: 10px; right: 30px; width: 150px; }
-.top-right-vertical   { top: 10px; right: 180px; height: 300px; }
-/* Bottom-right corner */
-.bottom-right-horizontal { bottom: 10px; right: 30px; width: 100px; }
-.bottom-right-vertical   { bottom: 10px; right: 130px; height: 100px; }
-/* Mid-right cross */
-.mid-right-horizontal { top: 50%; right: 30px; width: 100px; transform: translateY(-50%); }
-.mid-right-vertical   { top: 30%; right: 130px; height: 150px; }
+/* Maze / corridor walls with 3D extruded look */
 
-/* Wi-Fi ripple wave animations (slower, smoother) */
-.wifi-wave {
-  position: absolute;
-  top: 30%;
-  width: 200px;
-  height: 200px;
-  pointer-events: none;
-  opacity: 0.5;
-}
-.wifi-wave.left  { left: -100px; }
-.wifi-wave.right { right: -100px; }
-.wifi-wave .circle {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 100px; height: 100px;
-  margin: -50px 0 0 -50px;
-  border: 2px solid #4FC3F7;
-  border-radius: 50%;
-  opacity: 0;
-  animation: pulse-slow 5s infinite;
-}
-.wifi-wave .circle:nth-child(2) { animation-delay: 1.5s; }
-.wifi-wave .circle:nth-child(3) { animation-delay: 3s; }
-@keyframes pulse-slow {
-  0%   { transform: scale(0.5); opacity: 0.7; }
-  50%  { transform: scale(1.5); opacity: 0.1; }
-  100% { transform: scale(2.5); opacity: 0; }
-}
+.wall { position: absolute; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); } .horizontal { height: 8px; } .vertical { width: 8px; } /* Add 3D face using pseudo-elements / .wall::after { content: ''; position: absolute; background: #dee2e6; } / Horizontal walls: bottom face / .wall.horizontal::after { height: 4px; width: 100%; top: 100%; left: 0; } / Vertical walls: right face / .wall.vertical::after { width: 4px; height: 100%; top: 0; left: 100%; } / Top-left corner / .top-left-horizontal { top: 10px; left: 30px; width: 150px; } .top-left-vertical   { top: 10px; left: 180px; height: 300px; } / Bottom-left corner / .bottom-left-horizontal { bottom: 10px; left: 30px; width: 100px; } .bottom-left-vertical   { bottom: 10px; left: 130px; height: 100px; } / Mid-left cross / .mid-left-horizontal { top: 50%; left: 30px; width: 100px; transform: translateY(-50%); } .mid-left-vertical   { top: 30%; left: 130px; height: 150px; } / Top-right corner / .top-right-horizontal { top: 10px; right: 30px; width: 150px; } .top-right-vertical   { top: 10px; right: 180px; height: 300px; } / Bottom-right corner / .bottom-right-horizontal { bottom: 10px; right: 30px; width: 100px; } .bottom-right-vertical   { bottom: 10px; right: 130px; height: 100px; } / Mid-right cross */ .mid-right-horizontal { top: 50%; right: 30px; width: 100px; transform: translateY(-50%); } .mid-right-vertical   { top: 30%; right: 130px; height: 150px; }
+
+/* Wi-Fi ripple wave animations (slower, smoother) */ wave animations (slower, smoother) */ .wifi-wave { position: absolute; top: 30%; width: 200px; height: 200px; pointer-events: none; opacity: 0.5; } .wifi-wave.left  { left: -100px; } .wifi-wave.right { right: -100px; } .wifi-wave .circle { position: absolute; top: 50%; left: 50%; width: 100px; height: 100px; margin: -50px 0 0 -50px; border: 2px solid #4FC3F7; border-radius: 50%; opacity: 0; animation: pulse-slow 5s infinite; } .wifi-wave .circle:nth-child(2) { animation-delay: 1.5s; } .wifi-wave .circle:nth-child(3) { animation-delay: 3s; } @keyframes pulse-slow { 0%   { transform: scale(0.5); opacity: 0.7; } 50%  { transform: scale(1.5); opacity: 0.1; } 100% { transform: scale(2.5); opacity: 0; } }
 
 /* Features section with icons */
 .features {
@@ -171,7 +122,6 @@
   </style>
 </head>
 <body>
-  <section class="relative min-h-[2000px] overflow-visible pt-32">
   <div class="office">
     <!-- Maze / corridor walls -->
     <div class="wall horizontal top-left-horizontal"></div>
@@ -227,6 +177,6 @@
       <h3>Invite guests</h3>
       <p>Meet with guests without ever needing to leave your workspace.</p>
     </div>
-  </section></section>
+  </section>
 </body>
 </html>
