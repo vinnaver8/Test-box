@@ -1,182 +1,179 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Virtual Office Layout</title>
+  <meta charset="UTF-8" />
+  <title>3D Floorplan</title>
   <style>
-    /* Global styles */
+    :root {
+      --bg: #e9dfd7;
+      --wall: #f0e7df;
+      --wall-outline: #d8cfc7;
+      --highlight: #f5c17f;
+      --text: #fff;
+      --shadow-color: rgba(0,0,0,0.2);
+      --bevel-light: rgba(255,255,255,0.8);
+      --bevel-dark: rgba(0,0,0,0.1);
+    }
+
+    * { box-sizing: border-box; margin:0; padding:0; }
+
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #0D0D0D; /* dark background */
-      color: #FFFFFF;
-      font-family: Arial, sans-serif;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: "Arial", sans-serif;
     }
-    /* Ensure room labels and central panel are above background lines */
-    .room, .central-panel, .subtitle {
+
+    .floorplan {
       position: relative;
-      z-index: 1;
+      width: 768px;
+      height: 768px;
+      background: var(--bg);
     }
-    /* Main container for office layout */
-    .office {
-      position: relative;
-      display: grid;
-      grid-template-columns: 1fr 600px 1fr;
-      grid-template-rows: auto auto auto;
-      grid-template-areas:
-        "meeting central lounge"
-        "design central allhands"
-        ". subtitle .";
-      gap: 20px;
-      padding: 50px 0;
-    }
-    /* Room labels - styled text blocks on left/right walls */
+
     .room {
-      color: #FFFFFF;
-      font-size: 1.2em;
-      text-align: center;
-      padding: 10px;
+      position: absolute;
+      background: var(--wall);
+      border: 2px solid var(--wall-outline);
+      border-radius: 8px;
+      /* outer drop shadow */
+      box-shadow:
+        0 4px 6px var(--shadow-color),
+        inset 2px 2px 4px var(--bevel-light),
+        inset -2px -2px 4px var(--bevel-dark);
+      padding: 16px;
+      color: var(--text);
+      font-weight: bold;
+      text-shadow: 0 1px 2px var(--shadow-color);
     }
-    .meeting-room   { grid-area: meeting;   justify-self: center; align-self: start; }
-    .design-weekly  { grid-area: design;    justify-self: center; align-self: end;   }
-    .lounge         { grid-area: lounge;    justify-self: center; align-self: start; }
-    .all-hands      { grid-area: allhands;  justify-self: center; align-self: end;   }/* Subtitle beneath panel */
-.subtitle {
-  grid-area: subtitle;
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-  color: #CCCCCC;
-  font-size: 1rem;
-  line-height: 1.4;
-  padding-top: 20px;
-}
 
-/* Central panel with glowing orange border animation */
-.central-panel {
-  grid-area: central;
-  background-color: #FFFFFF;
-  width: 600px;
-  height: 350px;
-  border: 4px solid #FF8C00; /* dark orange border */
-  border-radius: 10px;
-  animation: glow 2s infinite;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-@keyframes glow {
-  0%,100% { box-shadow: 0 0 15px 5px rgba(255,140,0,0.5); }
-  50%     { box-shadow: 0 0 30px 10px rgba(255,140,0,1); }
-}
+    .room h2 {
+      font-size: 24px;
+      line-height: 1.1;
+    }
 
-/* Maze / corridor walls with 3D extruded look */
+    .room .avatars {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
 
-.wall { position: absolute; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); } .horizontal { height: 8px; } .vertical { width: 8px; } /* Add 3D face using pseudo-elements / .wall::after { content: ''; position: absolute; background: #dee2e6; } / Horizontal walls: bottom face / .wall.horizontal::after { height: 4px; width: 100%; top: 100%; left: 0; } / Vertical walls: right face / .wall.vertical::after { width: 4px; height: 100%; top: 0; left: 100%; } / Top-left corner / .top-left-horizontal { top: 10px; left: 30px; width: 150px; } .top-left-vertical   { top: 10px; left: 180px; height: 300px; } / Bottom-left corner / .bottom-left-horizontal { bottom: 10px; left: 30px; width: 100px; } .bottom-left-vertical   { bottom: 10px; left: 130px; height: 100px; } / Mid-left cross / .mid-left-horizontal { top: 50%; left: 30px; width: 100px; transform: translateY(-50%); } .mid-left-vertical   { top: 30%; left: 130px; height: 150px; } / Top-right corner / .top-right-horizontal { top: 10px; right: 30px; width: 150px; } .top-right-vertical   { top: 10px; right: 180px; height: 300px; } / Bottom-right corner / .bottom-right-horizontal { bottom: 10px; right: 30px; width: 100px; } .bottom-right-vertical   { bottom: 10px; right: 130px; height: 100px; } / Mid-right cross */ .mid-right-horizontal { top: 50%; right: 30px; width: 100px; transform: translateY(-50%); } .mid-right-vertical   { top: 30%; right: 130px; height: 150px; }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      /* give each avatar a little drop shadow */
+      filter: drop-shadow(0 2px 2px var(--shadow-color));
+    }
 
-/* Wi-Fi ripple wave animations (slower, smoother) */ wave animations (slower, smoother) */ .wifi-wave { position: absolute; top: 30%; width: 200px; height: 200px; pointer-events: none; opacity: 0.5; } .wifi-wave.left  { left: -100px; } .wifi-wave.right { right: -100px; } .wifi-wave .circle { position: absolute; top: 50%; left: 50%; width: 100px; height: 100px; margin: -50px 0 0 -50px; border: 2px solid #4FC3F7; border-radius: 50%; opacity: 0; animation: pulse-slow 5s infinite; } .wifi-wave .circle:nth-child(2) { animation-delay: 1.5s; } .wifi-wave .circle:nth-child(3) { animation-delay: 3s; } @keyframes pulse-slow { 0%   { transform: scale(0.5); opacity: 0.7; } 50%  { transform: scale(1.5); opacity: 0.1; } 100% { transform: scale(2.5); opacity: 0; } }
+    /* Big central card */
+    .room.big {
+      width: 440px;
+      height: 440px;
+      left: 160px;
+      top: 160px;
+      padding: 24px;
+      background: var(--bg);
+      border-radius: 16px;
+      border: 16px solid var(--wall);
+      box-shadow:
+        0 8px 12px var(--shadow-color),
+        inset 4px 4px 8px var(--bevel-light),
+        inset -4px -4px 8px var(--bevel-dark);
+    }
+    .room.big::before {
+      content:"";
+      position:absolute;
+      top:12px; left:12px; right:12px; bottom:12px;
+      border: 8px solid var(--highlight);
+      border-radius: 8px;
+      pointer-events:none;
+    }
 
-/* Features section with icons */
-.features {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  padding: 50px;
-  min-height: 2000px;
-}
-.feature {
-  width: 30%;
-  text-align: center;
-  margin-bottom: 50px;
-}
-.feature svg {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 20px;
-}
-.feature h3 {
-  margin: 10px 0 10px;
-  font-size: 1.3em;
-}
-.feature p {
-  font-size: 0.95em;
-  line-height: 1.4em;
-  color: #DDDDDD;
-}
+    /* Layout positions */
+    .meeting { top: 40px; left: 40px; width: 200px; height: 200px; }
+    .design-top { top: 270px; left: 40px; width: 200px; height: 200px; }
+    .design-bottom { top: 500px; left: 40px; width: 200px; height: 200px; }
+    .all-hands { top: 500px; left: 280px; width: 360px; height: 200px; }
+    .lounge { top: 280px; left: 640px; width: 200px; height: 200px; }
 
-/* Responsive: stack layout on small screens */
-@media (max-width: 768px) {
-  .office {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-  }
-  .central-panel { margin: 20px 0; width: 90%; }
-  .subtitle { width: 90%; }
-  .meeting-room, .design-weekly,
-  .lounge, .all-hands { margin: 10px 0; }
-  .features .feature { width: 80%; }
-}
+    /* Simple wall outlines */
+    .wall-line {
+      position: absolute;
+      background: var(--wall);
+      box-shadow: 
+        0 2px 2px var(--shadow-color),
+        inset 1px 1px 2px var(--bevel-light),
+        inset -1px -1px 2px var(--bevel-dark);
+    }
+    .wall-line.hz { height: 16px; }
+    .wall-line.vt { width: 16px; }
+
+    /* Example wall bars */
+    .wall1 { top: 0; left: 360px; width: 16px; height: 768px; }
+    .wall2 { top: 360px; left: 0; width: 768px; height: 16px; }
+    /* ...add more wall segments positioned per your original image */
 
   </style>
 </head>
 <body>
-  <div class="office">
-    <!-- Maze / corridor walls -->
-    <div class="wall horizontal top-left-horizontal"></div>
-    <div class="wall vertical top-left-vertical"></div>
-    <div class="wall horizontal bottom-left-horizontal"></div>
-    <div class="wall vertical bottom-left-vertical"></div>
-    <div class="wall horizontal mid-left-horizontal"></div>
-    <div class="wall vertical mid-left-vertical"></div>
-    <div class="wall horizontal top-right-horizontal"></div>
-    <div class="wall vertical top-right-vertical"></div>
-    <div class="wall horizontal bottom-right-horizontal"></div>
-    <div class="wall vertical bottom-right-vertical"></div>
-    <div class="wall horizontal mid-right-horizontal"></div>
-    <div class="wall vertical mid-right-vertical"></div><!-- Wi-Fi waves -->
-<div class="wifi-wave left">
-  <div class="circle"></div>
-  <div class="circle"></div>
-  <div class="circle"></div>
-</div>
-<div class="wifi-wave right">
-  <div class="circle"></div>
-  <div class="circle"></div>
-  <div class="circle"></div>
-</div>
 
-<!-- Room labels -->
-<div class="meeting-room room">Meeting Room</div>
-<div class="design-weekly room">Design Weekly</div>
+  <div class="floorplan">
 
-<!-- Central panel -->
-<div class="central-panel"></div>
+    <!-- Walls (example) -->
+    <div class="wall-line vt wall1"></div>
+    <div class="wall-line hz wall2"></div>
+    <!-- you can replicate/add all the T-junctions in the same way -->
 
-<!-- Subtitle -->
-<div class="subtitle">Collaborating with remote teams is easy in your virtual office environment. Enjoy real-time communication within your workspace without additional software hassle.</div>
-
-<!-- Room labels -->
-<div class="lounge room">Lounge</div>
-<div class="all-hands room">All Hands</div>
-
-  </div>  <!-- Features section -->  <section class="features">
-    <div class="feature">
-      <svg viewBox="0 0 24 24"><path fill="#4FC3F7" d="M3 3h5v5H3z M10 3h5v5h-5z M17 3h4v5h-4z M3 10h5v5H3z M10 10h5v5h-5z M17 10h4v5h-4z M3 17h5v4H3z M10 17h5v4h-5z M17 17h4v4h-4z"/></svg>
-      <h3>Customize workspace</h3>
-      <p>Create your own offices and meeting rooms to suit your team’s needs.</p>
+    <!-- Rooms -->
+    <div class="room meeting">
+      <h2>Meeting<br/>Room</h2>
+      <div class="avatars">
+        <div class="avatar" style="background-image:url(avatar1.jpg)"></div>
+        <div class="avatar" style="background-image:url(avatar2.jpg)"></div>
+        <div class="avatar" style="background-image:url(avatar3.jpg)"></div>
+      </div>
     </div>
-    <div class="feature">
-      <svg viewBox="0 0 24 24"><path fill="#4FC3F7" d="M3 8h9v8H3z M12 8l6-4v16l-6-4z"/></svg>
-      <h3>Audio and video calls</h3>
-      <p>Collaborate efficiently and seamlessly with high quality virtual conferencing.</p>
+
+    <div class="room design-top">
+      <h2>Design<br/>Weekly</h2>
+      <div class="avatars">
+        <div class="avatar" style="background-image:url(avatar4.jpg)"></div>
+        <div class="avatar" style="background-image:url(avatar5.jpg)"></div>
+      </div>
     </div>
-    <div class="feature">
-      <svg viewBox="0 0 24 24"><path fill="#4FC3F7" d="M15 12c2.21 0 4 1.79 4 4v6H5v-6c0-2.21 1.79-4 4-4h6z M12 4c1.38 0 2.5 1.12 2.5 2.5S13.38 9 12 9S9.5 7.88 9.5 6.5S10.62 4 12 4z M20 12v-2h-2V8h-2v2h-2v2h2v2h2v-2h2z"/></svg>
-      <h3>Invite guests</h3>
-      <p>Meet with guests without ever needing to leave your workspace.</p>
+
+    <div class="room design-bottom">
+      <h2>Design<br/>Weekly</h2>
+      <div class="avatars">
+        <div class="avatar" style="background-image:url(avatar6.jpg)"></div>
+        <div class="avatar" style="background-image:url(avatar7.jpg)"></div>
+      </div>
     </div>
-  </section>
+
+    <div class="room all-hands">
+      <h2>All Hands</h2>
+      <div class="avatars">
+        <div class="avatar" style="background-image:url(avatar8.jpg)"></div>
+        <div class="avatar" style="background-image:url(avatar9.jpg)"></div>
+      </div>
+    </div>
+
+    <div class="room big"></div>
+
+    <div class="room lounge">
+      <h2>Lounge</h2>
+      <div class="avatars">
+        <div class="avatar" style="background-image:url(avatar10.jpg)"></div>
+        <div class="avatar" style="background-image:url(avatar11.jpg)"></div>
+      </div>
+    </div>
+
+  </div>
+
 </body>
 </html>
