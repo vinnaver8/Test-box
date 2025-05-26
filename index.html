@@ -1,41 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSS Wall Effect</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Virtual Office Layout</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #f8f9fb, #e9ebf0);
+      color: #111;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .subhead {
+      font-size: 1.1em;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    .office-layout {
+      position: relative;
+      background: url('https://i.imgur.com/yO7QUNj.jpeg') no-repeat center;
+      background-size: cover;
+      height: 500px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      margin-bottom: 40px;
+    }
+
+    .video-call {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .video-main {
+      width: 100%;
+      height: 280px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background: #ccc url('https://i.imgur.com/3V5xKJp.jpeg') center/cover no-repeat;
+    }
+
+    .participants {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+    }
+
+    .participant {
+      flex: 1;
+      height: 80px;
+      border-radius: 12px;
+      background: #eee;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .controls {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+
+    .btn.end {
+      background: #e5484d;
+      color: #fff;
+    }
+
+    .features {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .feature {
+      max-width: 220px;
+    }
+
+    .feature img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+    }
+
+    .feature h3 {
+      font-size: 1.1em;
+      margin-bottom: 8px;
+    }
+
+    .feature p {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .features {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .video-call {
+        width: 90%;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="wall-container">
-<div class="central-area"></div>
-<div class="room meeting-room">
-Meeting Room
-<div class="avatars">👤👤👤</div>
-</div>
-<div class="room design-weekly-top">
-Design Weekly
-<div class="avatars">👤👤</div>
-</div>
-<div class="room design-weekly-bottom">
-Design Weekly
-<div class="avatars">👤👤</div>
-</div>
-<div class="room lounge">
-Lounge
-<div class="avatars">👤👤</div>
-</div>
-<div class="room all-hands">
-All Hands
-<div class="avatars">👤👤</div>
-</div>
-<div class="connector horizontal-top"></div>
-<div class="connector horizontal-middle-left"></div>
-<div class="connector horizontal-middle-right"></div>
-<div class="connector horizontal-bottom"></div>
-<div class="connector vertical-left-top"></div>
-<div class="connector vertical-left-bottom"></div>
-<div class="connector vertical-right"></div>
-</div>
+
+  <div class="container">
+    <h1>Work together.<br>Like in the office.</h1>
+    <p class="subhead">
+      Create customized virtual office spaces for any department or event with high quality audio and video conferencing.
+    </p>
+
+    <div class="office-layout">
+      <div class="video-call">
+        <div class="video-main"></div>
+        <div class="participants">
+          <div class="participant" style="background-image:url('https://i.imgur.com/ZE0gUu1.jpeg')"></div>
+          <div class="participant" style="background-image:url('https://i.imgur.com/CM3F3Hg.jpeg')"></div>
+          <div class="participant" style="background-image:url('https://i.imgur.com/SZ6t4y0.jpeg')"></div>
+        </div>
+        <div class="controls">
+          <div class="btn">Mic</div>
+          <div class="btn">Cam</div>
+          <div class="btn end">X</div>
+          <div class="btn">Share</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <img src="https://img.icons8.com/fluency/48/customize.png" alt="Customize">
+        <h3>Customize workspace</h3>
+        <p>Create your own offices and meeting rooms to suit your team's needs.</p>
+      </div>
+      <div class="feature">
+        <img src="https://img.icons8.com/fluency/48/video-call.png" alt="Video">
+        <h3>Audio and video calls</h3>
+        <p>Collaborate efficiently and seamlessly with high quality virtual conferencing.</p>
+      </div>
+      <div class="feature">
+        <img src="https://img.icons8.com/fluency/48/add-user-group-man-man.png" alt="Guests">
+        <h3>Invite guests</h3>
+        <p>Meet with guests without ever needing to leave your workspace.</p>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
