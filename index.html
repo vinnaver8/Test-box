@@ -1,196 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Virtual Office Layout</title>
+  <meta charset="UTF-8">
+  <title>AI Home Control Center</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #f0f3f8;
+      --chip-bg: #1f2937;
+      --chip-glow: rgba(99, 102, 241, 0.4);
+      --module-bg: #fff;
+      --module-shadow: rgba(0,0,0,0.1);
+      --line: #6b7280;
+      --accent: #6366f1;
+      --text: #374151;
+      --radius: 12px;
+      --gap: 20px;
     }
 
+    * { box-sizing: border-box; margin:0; padding:0; }
+
     body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: var(--bg);
       font-family: 'Arial', sans-serif;
-      background: linear-gradient(to bottom, #f8f9fb, #e9ebf0);
-      color: #111;
-      padding: 40px;
+      color: var(--text);
     }
 
     .container {
-      max-width: 1200px;
-      margin: auto;
+      position: relative;
+      width: 800px; height: 600px;
+    }
+
+    /* Central AI Chip */
+    .chip {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px; height: 160px;
+      background: var(--chip-bg);
+      border-radius: var(--radius);
+      box-shadow:
+        0 0 0 8px var(--chip-glow),
+        inset 0 0 8px rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: pulse 2s infinite;
+    }
+    .chip h2 {
+      color: #fff;
+      font-size: 1.2em;
       text-align: center;
     }
 
-    h1 {
-      font-size: 2.8em;
-      font-weight: 700;
-      margin-bottom: 10px;
+    @keyframes pulse {
+      0%,100% { box-shadow:
+        0 0 0 8px var(--chip-glow),
+        inset 0 0 8px rgba(0,0,0,0.5);
+      }
+      50% { box-shadow:
+        0 0 0 20px rgba(99,102,241,0.15),
+        inset 0 0 12px rgba(0,0,0,0.7);
+      }
     }
 
-    .subhead {
-      font-size: 1.1em;
-      color: #555;
-      margin-bottom: 40px;
-    }
-
-    .office-layout {
-      position: relative;
-      background: url('https://i.imgur.com/yO7QUNj.jpeg') no-repeat center;
-      background-size: cover;
-      height: 500px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      margin-bottom: 40px;
-    }
-
-    .video-call {
+    /* Modules around */
+    .module {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 500px;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      padding: 20px;
+      width: 180px; height: 100px;
+      background: var(--module-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px var(--module-shadow);
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-    }
-
-    .video-main {
-      width: 100%;
-      height: 280px;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 12px;
-      background: #ccc url('https://i.imgur.com/3V5xKJp.jpeg') center/cover no-repeat;
-    }
-
-    .participants {
-      display: flex;
-      justify-content: space-around;
-      gap: 10px;
-    }
-
-    .participant {
-      flex: 1;
-      height: 80px;
-      border-radius: 12px;
-      background: #eee;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .controls {
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #eee;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      font-weight: bold;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      cursor: pointer;
-    }
-
-    .btn.end {
-      background: #e5484d;
-      color: #fff;
-    }
-
-    .features {
-      display: flex;
-      justify-content: space-around;
+      align-items: center;
       text-align: center;
-      margin-top: 20px;
     }
-
-    .feature {
-      max-width: 220px;
+    .module h3 {
+      margin-bottom: 6px;
+      font-size: 1em;
+      color: var(--accent);
     }
-
-    .feature img {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 10px;
-    }
-
-    .feature h3 {
-      font-size: 1.1em;
-      margin-bottom: 8px;
-    }
-
-    .feature p {
+    .module p {
       font-size: 0.9em;
-      color: #666;
+      line-height: 1.2;
     }
 
-    @media (max-width: 768px) {
-      .features {
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .video-call {
-        width: 90%;
-      }
+    /* Connection lines */
+    .line {
+      position: absolute;
+      background: var(--line);
+      transform-origin: top left;
     }
+
+    /* Positioning modules and lines */
+    /* Cooking */
+    .mod-cook { top: 40px; left: 310px; }
+    .line-cook {
+      top: 200px; left: 390px;
+      width: 2px; height: 108px;
+    }
+    /* Scheduling */
+    .mod-sched { top: 230px; left: 700px; }
+    .line-sched {
+      top: 330px; left: 470px;
+      width: 2px; height: 168px;
+      transform: rotate(20deg);
+    }
+    /* Health */
+    .mod-health { top: 430px; left: 430px; }
+    .line-health {
+      top: 430px; left: 440px;
+      width: 150px; height: 2px;
+    }
+    /* Reminders */
+    .mod-rem { top: 430px; left: 40px; }
+    .line-rem {
+      top: 430px; left: 200px;
+      width: 2px; height: 180px;
+      transform: rotate(-80deg);
+    }
+    /* Entertainment */
+    .mod-ent { top: 230px; left: -10px; }
+    .line-ent {
+      top: 290px; left: 200px;
+      width: 2px; height: 168px;
+      transform: rotate(-20deg);
+    }
+    /* Security */
+    .mod-sec { top: 40px; left: 160px; }
+    .line-sec {
+      top: 200px; left: 270px;
+      width: 2px; height: 108px;
+      transform: rotate(-40deg);
+    }
+
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Work together.<br>Like in the office.</h1>
-    <p class="subhead">
-      Create customized virtual office spaces for any department or event with high quality audio and video conferencing.
-    </p>
 
-    <div class="office-layout">
-      <div class="video-call">
-        <div class="video-main"></div>
-        <div class="participants">
-          <div class="participant" style="background-image:url('https://i.imgur.com/ZE0gUu1.jpeg')"></div>
-          <div class="participant" style="background-image:url('https://i.imgur.com/CM3F3Hg.jpeg')"></div>
-          <div class="participant" style="background-image:url('https://i.imgur.com/SZ6t4y0.jpeg')"></div>
-        </div>
-        <div class="controls">
-          <div class="btn">Mic</div>
-          <div class="btn">Cam</div>
-          <div class="btn end">X</div>
-          <div class="btn">Share</div>
-        </div>
-      </div>
+    <div class="chip">
+      <h2>AI Home<br>Control</h2>
     </div>
 
-    <div class="features">
-      <div class="feature">
-        <img src="https://img.icons8.com/fluency/48/customize.png" alt="Customize">
-        <h3>Customize workspace</h3>
-        <p>Create your own offices and meeting rooms to suit your team's needs.</p>
-      </div>
-      <div class="feature">
-        <img src="https://img.icons8.com/fluency/48/video-call.png" alt="Video">
-        <h3>Audio and video calls</h3>
-        <p>Collaborate efficiently and seamlessly with high quality virtual conferencing.</p>
-      </div>
-      <div class="feature">
-        <img src="https://img.icons8.com/fluency/48/add-user-group-man-man.png" alt="Guests">
-        <h3>Invite guests</h3>
-        <p>Meet with guests without ever needing to leave your workspace.</p>
-      </div>
+    <!-- Cooking module -->
+    <div class="module mod-cook">
+      <h3>Smart Cooking</h3>
+      <p>Plans meals,<br>adjusts oven<br>temperature</p>
     </div>
+    <div class="line line-cook"></div>
+
+    <!-- Scheduling module -->
+    <div class="module mod-sched">
+      <h3>Family Scheduler</h3>
+      <p>Keeps track of<br>events & reminders</p>
+    </div>
+    <div class="line line-sched"></div>
+
+    <!-- Health module -->
+    <div class="module mod-health">
+      <h3>Health Monitor</h3>
+      <p>Tracks vitals,<br>suggests exercise</p>
+    </div>
+    <div class="line line-health"></div>
+
+    <!-- Reminders module -->
+    <div class="module mod-rem">
+      <h3>Instant Reminders</h3>
+      <p>Alerts for<br>chores & meds</p>
+    </div>
+    <div class="line line-rem"></div>
+
+    <!-- Entertainment module -->
+    <div class="module mod-ent">
+      <h3>Entertainment</h3>
+      <p>Recommends<br>movies & games</p>
+    </div>
+    <div class="line line-ent"></div>
+
+    <!-- Security module -->
+    <div class="module mod-sec">
+      <h3>Home Security</h3>
+      <p>Monitors doors,<br>faces & alerts</p>
+    </div>
+    <div class="line line-sec"></div>
+
   </div>
 
 </body>
