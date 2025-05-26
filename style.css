@@ -5,10 +5,10 @@
     --room-color: #ffffff; /* White for rooms */
     --central-color: #fce2bd; /* Orange border for central square */
     --text-color: #4a4a4a;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --light-shadow-color: rgba(0, 0, 0, 0.05);
-    --wall-thickness: 15px; /* Adjust for desired wall depth */
-    --element-lift: 20px; /* How far elements pop out */
+    --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly stronger shadows */
+    --light-shadow-color: rgba(0, 0, 0, 0.08); /* Slightly stronger light shadows */
+    --wall-thickness: 20px; /* Increased for better frontal visibility */
+    --element-lift: 25px; /* Increased for better frontal visibility */
 }
 
 body {
@@ -30,7 +30,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    perspective: 1200px; /* Stronger perspective for the 3D effect */
+    perspective: 1000px; /* Perspective can be adjusted */
     perspective-origin: center center;
 }
 
@@ -39,8 +39,9 @@ body {
     width: 600px; /* Adjust overall size */
     height: 600px; /* Adjust overall size */
     transform-style: preserve-3d;
-    /* Initial tilt to match the image's overall perspective */
-    transform: rotateX(55deg) rotateZ(45deg) scale(0.9);
+    /* --- MODIFIED FOR FRONT LOOK --- */
+    /* Rotate slightly on X to show the top depth, Z is nearly 0 for front view */
+    transform: rotateX(15deg) rotateZ(0deg) scale(0.9);
     box-shadow: 0 50px 100px var(--shadow-color); /* Overall scene shadow */
 }
 
@@ -102,6 +103,7 @@ body {
 }
 
 /* Room specific positioning (relative to office-layout) */
+/* These positions might need slight tweaks based on the new perspective */
 .meeting-room {
     top: 40px;
     left: 40px;
@@ -136,7 +138,7 @@ body {
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Inner shadow for depth */
 }
 
-/* Top side */
+/* Top side (visible from front-top view) */
 .room::before {
     top: 0;
     left: 0;
@@ -146,13 +148,14 @@ body {
     transform-origin: bottom;
 }
 
-/* Right side */
+/* Right side (visible from front-right view, if any slight Y rotation) */
 .room::after {
     top: 0;
     right: 0;
     height: 100%;
     width: var(--wall-thickness);
-    transform: translateX(var(--wall-thickness)) rotateY(90deg) translateZ(calc(var(--wall-thickness) / 2));
+    /* No rotateY needed for perfect front, but slight allows small side reveal */
+    transform: translateX(var(--wall-thickness)) rotateY(0deg) translateZ(calc(var(--wall-thickness) / 2));
     transform-origin: left;
 }
 
@@ -172,7 +175,7 @@ body {
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Horizontal wall segments */
+/* Horizontal wall segments - positioning remains same as structure is fixed */
 .wall.h-top-left { width: 100px; height: 30px; top: 125px; left: 190px; }
 .wall.h-top-right { width: 150px; height: 30px; top: 125px; right: 190px; }
 .wall.h-middle-left { width: 100px; height: 30px; top: 335px; left: 190px; }
@@ -181,14 +184,14 @@ body {
 .wall.h-bottom-right { width: 150px; height: 30px; top: 545px; right: 190px; }
 
 
-/* Vertical wall segments */
+/* Vertical wall segments - positioning remains same as structure is fixed */
 .wall.v-left-top { width: 30px; height: 100px; top: 125px; left: 190px; }
 .wall.v-left-bottom { width: 30px; height: 100px; top: 445px; left: 190px; }
 .wall.v-right-top { width: 30px; height: 100px; top: 125px; right: 190px; }
 .wall.v-right-bottom { width: 30px; height: 100px; top: 445px; right: 190px; }
 
 
-/* Generic pseudo for horizontal walls */
+/* Generic pseudo for horizontal walls - now more prominent */
 .wall[class*="h-"]::before { /* Top surface for thickness */
     top: 0;
     left: 0;
@@ -197,16 +200,17 @@ body {
     transform: translateY(calc(-1 * var(--wall-thickness))) rotateX(90deg) translateZ(calc(var(--wall-thickness) / 2));
     transform-origin: bottom;
 }
-.wall[class*="h-"]::after { /* Side surface for thickness */
+.wall[class*="h-"]::after { /* Side surface for thickness (right side) */
     top: 0;
     right: 0;
     width: var(--wall-thickness);
     height: 100%;
-    transform: translateX(var(--wall-thickness)) rotateY(90deg) translateZ(calc(var(--wall-thickness) / 2));
+    /* No rotateY needed for perfect front, but slight allows small side reveal */
+    transform: translateX(var(--wall-thickness)) rotateY(0deg) translateZ(calc(var(--wall-thickness) / 2));
     transform-origin: left;
 }
 
-/* Generic pseudo for vertical walls */
+/* Generic pseudo for vertical walls - now more prominent */
 .wall[class*="v-"]::before { /* Top surface for thickness */
     top: 0;
     left: 0;
@@ -215,16 +219,17 @@ body {
     transform: translateY(calc(-1 * var(--wall-thickness))) rotateX(90deg) translateZ(calc(var(--wall-thickness) / 2));
     transform-origin: bottom;
 }
-.wall[class*="v-"]::after { /* Side surface for thickness */
+.wall[class*="v-"]::after { /* Side surface for thickness (right side) */
     top: 0;
     right: 0;
     width: var(--wall-thickness);
     height: 100%;
-    transform: translateX(var(--wall-thickness)) rotateY(90deg) translateZ(calc(var(--wall-thickness) / 2));
+    /* No rotateY needed for perfect front, but slight allows small side reveal */
+    transform: translateX(var(--wall-thickness)) rotateY(0deg) translateZ(calc(var(--wall-thickness) / 2));
     transform-origin: left;
 }
 
-/* Smaller connecting wall segments - precise positioning */
+/* Smaller connecting wall segments - positioning remains same as structure is fixed */
 .wall.small-h-1 { width: 80px; height: 20px; top: 140px; left: 140px; }
 .wall.small-v-1 { width: 20px; height: 80px; top: 140px; left: 140px; }
 
@@ -243,6 +248,7 @@ body {
 .wall.small-h-6 { width: 80px; height: 20px; bottom: 100px; right: 140px; }
 .wall.small-v-6 { width: 20px; height: 80px; bottom: 100px; right: 140px; }
 
+/* Adjusted small connections to central area if needed for new perspective */
 .wall.small-h-7 { width: 20px; height: 80px; top: 100px; right: 100px; transform: rotate(90deg) translateZ(calc(var(--element-lift) - 5px));} /* Connects lounge to central */
 .wall.small-v-7 { width: 80px; height: 20px; top: 250px; right: 100px; transform: rotate(90deg) translateZ(calc(var(--element-lift) - 5px));} /* Connects lounge to central */
 
@@ -251,30 +257,6 @@ body {
 
 
 /* Specific pseudo for small walls (adjust as needed for accurate 3D) */
-.wall[class*="small-h-"]::before,
-.wall[class*="small-v-"]::before {
-    content: '';
-    position: absolute;
-    background-color: var(--wall-side-color);
-    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: var(--wall-thickness);
-    transform: translateY(calc(-1 * var(--wall-thickness))) rotateX(90deg) translateZ(calc(var(--wall-thickness) / 2));
-    transform-origin: bottom;
-}
+/* The general `::before` and `::after` rules for .wall[class*="h-"] and .wall[class*="v-"] should cover these too. */
+/* If specific small segments need different side angles, you'd add overrides here. */
 
-.wall[class*="small-h-"]::after,
-.wall[class*="small-v-"]::after {
-    content: '';
-    position: absolute;
-    background-color: var(--wall-side-color);
-    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
-    top: 0;
-    right: 0;
-    width: var(--wall-thickness);
-    height: 100%;
-    transform: translateX(var(--wall-thickness)) rotateY(90deg) translateZ(calc(var(--wall-thickness) / 2));
-    transform-origin: left;
-}
