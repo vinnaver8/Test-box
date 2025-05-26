@@ -1,84 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced CSS 3D Wall Effect</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>CSS Floorplan Walls</title>
+  <style>
+    :root {
+      --wall-color: #fff;
+      --glow-color: rgba(99, 102, 241, 0.3);
+      --shadow: rgba(0,0,0,0.1);
+      --thickness: 16px;
+    }
+
+    * { box-sizing: border-box; margin:0; padding:0; }
+
+    body {
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .floorplan {
+      position: relative;
+      width: 768px;
+      height: 768px;
+      background: #fafafa;
+      border-radius: 12px;
+      overflow: hidden;
+      filter: drop-shadow(0 8px 16px var(--shadow));
+    }
+
+    /* Generic wall */
+    .wall {
+      position: absolute;
+      background: var(--wall-color);
+      box-shadow:
+        0 0 12px var(--glow-color),
+        inset 1px 1px 2px #fff,
+        inset -1px -1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* Horizontal walls */
+    .wall.hz {
+      height: var(--thickness);
+      width: 100%;
+    }
+
+    /* Vertical walls */
+    .wall.vt {
+      width: var(--thickness);
+      height: 100%;
+    }
+
+    /* Now position each segment */
+    /* Top horizontal */
+    .w1 { top: 0;    left: 0;   }
+    /* Middle horizontal */
+    .w2 { top: 200px; left: 0;   }
+    .w3 { top: 400px; left: 0;   }
+    /* Bottom horizontal */
+    .w4 { top: 768px; left: 0;   transform: translateY(-100%); }
+
+    /* Left vertical */
+    .w5 { top: 0;    left: 0;    }
+    /* Center vertical */
+    .w6 { top: 0;    left: 384px; }
+    /* Right vertical */
+    .w7 { top: 0;    left: 768px; transform: translateX(-100%); }
+
+    /* T-junction “stubs” */
+    .stub {
+      position: absolute;
+      background: var(--wall-color);
+      box-shadow:
+        0 0 12px var(--glow-color),
+        inset 1px 1px 2px #fff,
+        inset -1px -1px 2px rgba(0,0,0,0.05);
+    }
+    .stub.h { height: var(--thickness); width: 80px; }
+    .stub.v { width: var(--thickness); height: 80px; }
+
+    /* Place T-junctions around */
+    .s1 { top: 200px; left: 384px; /* horizontal stub */ }
+    .s2 { top: 384px; left: 200px; transform: rotate(90deg); /* vertical stub */ }
+    .s3 { top: 400px; left: 384px; /* horizontal stub */ }
+    .s4 { top: 600px; left: 384px; transform: rotate(-90deg); /* vertical stub */ }
+
+  </style>
 </head>
+
 <body>
-    <div class="scene">
-        <div class="office-layout">
-            <div class="central-square">
-                </div>
+  <div class="floorplan">
+    <!-- full-length walls -->
+    <div class="wall hz w1"></div>
+    <div class="wall hz w2"></div>
+    <div class="wall hz w3"></div>
+    <div class="wall hz w4"></div>
 
-            <div class="room meeting-room">
-                <span class="room-text">Meeting Room</span>
-                <div class="avatars">
-                    <div class="avatar"></div>
-                    <div class="avatar"></div>
-                    <div class="avatar"></div>
-                </div>
-            </div>
-            <div class="room design-weekly top">
-                <span class="room-text">Design Weekly</span>
-                <div class="avatars">
-                    <div class="avatar"></div>
-                    <div class="avatar"></div>
-                </div>
-            </div>
-            <div class="room design-weekly bottom">
-                <span class="room-text">Design Weekly</span>
-                <div class="avatars">
-                    <div class="avatar"></div>
-                    <div class="avatar"></div>
-                </div>
-            </div>
-            <div class="room lounge">
-                <span class="room-text">Lounge</span>
-                <div class="avatars">
-                    <div class="avatar"></div>
-                    <div class="avatar"></div>
-                </div>
-            </div>
-            <div class="room all-hands">
-                <span class="room-text">All Hands</span>
-                <div class="avatars">
-                    <div class="avatar"></div>
-                    <div class="avatar"></div>
-                </div>
-            </div>
+    <div class="wall vt w5"></div>
+    <div class="wall vt w6"></div>
+    <div class="wall vt w7"></div>
 
-            <div class="wall h-top-left"></div>
-            <div class="wall h-top-right"></div>
-            <div class="wall h-middle-left"></div>
-            <div class="wall h-middle-right"></div>
-            <div class="wall h-bottom-left"></div>
-            <div class="wall h-bottom-right"></div>
-
-            <div class="wall v-left-top"></div>
-            <div class="wall v-left-bottom"></div>
-            <div class="wall v-right-top"></div>
-            <div class="wall v-right-bottom"></div>
-
-            <div class="wall small-h-1"></div>
-            <div class="wall small-v-1"></div>
-            <div class="wall small-h-2"></div>
-            <div class="wall small-v-2"></div>
-            <div class="wall small-h-3"></div>
-            <div class="wall small-v-3"></div>
-            <div class="wall small-h-4"></div>
-            <div class="wall small-v-4"></div>
-            <div class="wall small-h-5"></div>
-            <div class="wall small-v-5"></div>
-            <div class="wall small-h-6"></div>
-            <div class="wall small-v-6"></div>
-            <div class="wall small-h-7"></div>
-            <div class="wall small-v-7"></div>
-            <div class="wall small-h-8"></div>
-            <div class="wall small-v-8"></div>
-
-        </div>
-    </div>
+    <!-- T-junction stubs -->
+    <div class="stub h s1"></div>
+    <div class="stub v s2"></div>
+    <div class="stub h s3"></div>
+    <div class="stub v s4"></div>
+  </div>
 </body>
 </html>
