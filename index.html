@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Box with T-extensions</title>
+  <title>Box with T-extensions & rounded-xl corners</title>
   <style>
     body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; }
     svg  { overflow: visible; }
@@ -10,9 +10,12 @@
 </head>
 <body>
   <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-    <!-- main rectangle -->
-    <rect x="150" y="100" width="500" height="200"
-          fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/>
+    <!-- main rectangle with rounded-xl corners -->
+    <rect 
+      x="150" y="100" width="500" height="200"
+      rx="24" ry="24"
+      fill="none" stroke="#000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"
+    />
 
     <!-- ——— left side T’s ——— -->
     <!-- top-left -->
