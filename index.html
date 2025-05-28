@@ -4,34 +4,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChatGPT Mockup Interface</title>
   <style>
-    /* Reset & base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0c10; color: #e5e5e5; display: flex; justify-content: center; align-items: center; height: 100vh; }/* Chat container */
-.chat-wrapper { width: 100%; max-width: 600px; height: 90vh; background: #11151a; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 15px rgba(0,0,0,0.7); }
-
-/* Header */
-.chat-header { padding: 16px; background: #161a1f; text-align: center; font-size: 1.1rem; font-weight: 600; }
-
-/* Messages area */
-.messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-.message { max-width: 75%; padding: 12px 16px; border-radius: 12px; position: relative; opacity: 0; transform: translateY(10px); animation: fadeInUp 0.4s forwards; }
-.user { align-self: flex-end; background: #2a3942; }
-.ai { align-self: flex-start; background: #1f2933; box-shadow: 0 0 8px rgba(94, 138, 255, 0.7); }
-
-/* Typing / loading indicator */
-.typing-indicator { display: flex; gap: 4px; margin-left: 4px; }
-.typing-indicator span { width: 6px; height: 6px; background: #5e8aff; border-radius: 50%; animation: blink 1s infinite; }
-.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-/* Shine effect on AI image generation box */
-.ai-image-box { width: 200px; height: 150px; background: #27303d; border-radius: 8px; margin-top: 8px; position: relative; overflow: hidden; }
-.ai-image-box::before { content: ''; position: absolute; top: -100%; left: -100%; width: 200%; height: 200%; background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.06) 100%); transform: rotate(25deg); animation: shimmer 2s infinite; }
-
-/* Animations */
-@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0c10; color: #e5e5e5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .chat-wrapper { width: 100%; max-width: 600px; height: 90vh; background: #11151a; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 15px rgba(0,0,0,0.7); }
+    .chat-header { padding: 16px; background: #161a1f; text-align: center; font-size: 1.1rem; font-weight: 600; }
+    .messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .message { max-width: 75%; padding: 12px 16px; border-radius: 12px; position: relative; opacity: 0; transform: translateY(10px); animation: fadeInUp 0.4s forwards; }
+    .user { align-self: flex-end; background: #2a3942; }
+    .ai { align-self: flex-start; background: #1f2933; box-shadow: 0 0 8px rgba(94, 138, 255, 0.7); }
+    .typing-indicator { display: flex; gap: 4px; margin-left: 4px; }
+    .typing-indicator span { width: 6px; height: 6px; background: #5e8aff; border-radius: 50%; animation: blink 1s infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    .ai-image-box { width: 200px; height: 150px; background: #27303d; border-radius: 8px; margin-top: 8px; position: relative; overflow: hidden; }
+    .ai-image-box::before { content: ''; position: absolute; top: -100%; left: -100%; width: 200%; height: 200%; background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.06) 100%); transform: rotate(25deg); animation: shimmer 2s infinite; }
+    .thinking { font-style: italic; color: #aaa; animation: pulse 1.5s infinite; }
+    .source-icon { display: inline-block; width: 14px; height: 14px; background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/Globe_icon.svg') no-repeat center/cover; vertical-align: middle; margin-left: 8px; }
+    .deep-search { width: 100%; max-width: 200px; height: 10px; margin-top: 8px; background: #333; border-radius: 50px; overflow: hidden; position: relative; }
+    .deep-search::before { content: ''; position: absolute; width: 60px; height: 10px; background: linear-gradient(to right, #5e8aff, #a28bff); animation: searchMove 1.5s infinite; border-radius: 50px; }@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 @keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
 @keyframes shimmer { 0% { transform: translate(-100%, -100%) rotate(25deg); } 100% { transform: translate(100%, 100%) rotate(25deg); } }
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframes searchMove { 0% { left: -60px; } 100% { left: 100%; } }
 
   </style>
 </head>
@@ -39,68 +33,88 @@
   <div class="chat-wrapper">
     <div class="chat-header">ChatGPT Mockup</div>
     <div class="messages" id="messages"></div>
-  </div>  <script>
+  </div>
+  <script>
     const messagesContainer = document.getElementById('messages');
     const mockConvo = [
       { from: 'user', text: 'Hello, ChatGPT! Can you show me how the interface works?' },
-      { from: 'ai', text: 'Sure! Here is a mock of the conversation with animations.' },
+      { from: 'ai', text: 'Sure! Here is a mock of the conversation with animations. <span class="source-icon"></span>' },
       { from: 'user', text: 'Great! Can I also see an image generation example?' },
       { from: 'ai', text: 'Absolutely, generating the image now...' },
+      { from: 'thinking', text: 'Thinking...' },
       { from: 'ai-image', text: '' },
       { from: 'user', text: 'Looks amazing! Thanks.' },
-      { from: 'ai', text: 'You’re welcome! Let me know if you need anything else.' }
-    ];
+      { from: 'ai', text: 'You’re welcome! Let me know if you need anything else. <span class="source-icon"></span>' },
+      { from: 'deep', text: '' }
+    ];let idx = 0;
+function showNext() {
+  if (idx >= mockConvo.length) { idx = 0; messagesContainer.innerHTML = ''; }
+  const msg = mockConvo[idx++];
 
-    let idx = 0;
-    function showNext() {
-      if (idx >= mockConvo.length) { idx = 0; messagesContainer.innerHTML = ''; }
-      const msg = mockConvo[idx++];
+  if (msg.from === 'ai') {
+    const typingEl = document.createElement('div');
+    typingEl.classList.add('message', 'ai');
+    const dots = document.createElement('div'); dots.classList.add('typing-indicator');
+    for (let i = 0; i < 3; i++) { const span = document.createElement('span'); dots.appendChild(span); }
+    typingEl.appendChild(dots);
+    messagesContainer.appendChild(typingEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-      if (msg.from === 'ai') {
-        // show typing indicator first
-        const typingEl = document.createElement('div');
-        typingEl.classList.add('message', 'ai');
-        const dots = document.createElement('div'); dots.classList.add('typing-indicator');
-        for (let i = 0; i < 3; i++) { const span = document.createElement('span'); dots.appendChild(span); }
-        typingEl.appendChild(dots);
-        messagesContainer.appendChild(typingEl);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    setTimeout(() => {
+      typingEl.remove();
+      appendMessage('ai', msg.text);
+      showNext();
+    }, 1500);
 
-        setTimeout(() => {
-          typingEl.remove();
-          appendMessage('ai', msg.text);
-          showNext();
-        }, 1500);
-      } else if (msg.from === 'ai-image') {
-        appendImageBox();
-        setTimeout(showNext, 2000);
-      } else {
-        appendMessage(msg.from, msg.text);
-        setTimeout(showNext, 1000);
-      }
-    }
+  } else if (msg.from === 'thinking') {
+    appendMessage('ai', `<span class="thinking">${msg.text}</span>`);
+    setTimeout(showNext, 1500);
 
-    function appendMessage(type, text) {
-      const el = document.createElement('div');
-      el.classList.add('message', type === 'user' ? 'user' : 'ai');
-      el.textContent = text;
-      messagesContainer.appendChild(el);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+  } else if (msg.from === 'ai-image') {
+    appendImageBox();
+    setTimeout(showNext, 2000);
 
-    function appendImageBox() {
-      const el = document.createElement('div');
-      el.classList.add('message', 'ai');
-      const box = document.createElement('div');
-      box.classList.add('ai-image-box');
-      el.appendChild(box);
-      messagesContainer.appendChild(el);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+  } else if (msg.from === 'deep') {
+    appendDeepSearch();
+    setTimeout(showNext, 3000);
 
-    // Kick off loop
+  } else {
+    appendMessage(msg.from, msg.text);
     setTimeout(showNext, 1000);
-    // Repeat infinitely
-    setInterval(() => { if (idx === 0) setTimeout(showNext, 1000); }, 10000);
-  </script></body>
+  }
+}
+
+function appendMessage(type, text) {
+  const el = document.createElement('div');
+  el.classList.add('message', type === 'user' ? 'user' : 'ai');
+  el.innerHTML = text;
+  messagesContainer.appendChild(el);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function appendImageBox() {
+  const el = document.createElement('div');
+  el.classList.add('message', 'ai');
+  const box = document.createElement('div');
+  box.classList.add('ai-image-box');
+  el.appendChild(box);
+  messagesContainer.appendChild(el);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function appendDeepSearch() {
+  const el = document.createElement('div');
+  el.classList.add('message', 'ai');
+  const bar = document.createElement('div');
+  bar.classList.add('deep-search');
+  el.appendChild(bar);
+  messagesContainer.appendChild(el);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+setTimeout(showNext, 1000);
+setInterval(() => { if (idx === 0) setTimeout(showNext, 1000); }, 10000);
+
+  </script>
+</body>
 </html>
