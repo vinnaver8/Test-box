@@ -5,7 +5,6 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Shimmer effect */
     .shimmer {
       background: linear-gradient(to right, #f6f7f8 8%, #eaeaea 18%, #f6f7f8 33%);
       background-size: 1000px 100%;
@@ -15,165 +14,108 @@
       0% { background-position: -1000px 0; }
       100% { background-position: 1000px 0; }
     }
-    /* Blinking/pulsing dots */
     @keyframes blink { 0%,100%{opacity:0}50%{opacity:1} }
     .blinking-dots { display:inline-block; animation:blink 1.2s ease-in-out infinite; }
     .dot { width:6px; height:6px; background:#5e8aff; border-radius:50%; display:inline-block; margin:0 3px; }
-    /* Center panels vertically */
     .panel-center { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; }
+    .typing-box { display:flex; align-items:center; gap:4px; background:#e2e8f0; padding:6px 12px; border-radius:12px; }
   </style>
 </head>
 <body class="flex items-center justify-center h-screen bg-gray-100">
   <div class="flex w-[700px] h-[500px] border rounded-lg overflow-hidden shadow-lg">
-    <!-- Chat Panel -->
-    <div id="chatPanel" class="w-1/2 bg-white p-4 flex flex-col gap-2 overflow-y-auto"></div><!-- DeepSearch Panel -->
-<div id="deepSearchPanel" class="w-1/2 bg-gray-50 p-4 relative overflow-hidden">
-  <!-- Text-Search -->
-  <div id="searchPanel" class="panel-center hidden space-y-3"></div>
-  <!-- Image Mode -->
-  <div id="imagePanel" class="panel-center hidden">
-    <div id="shimmerOverlay" class="absolute inset-0 shimmer"></div>
-    <div id="imagePlaceholder" class="relative w-2/3 h-2/3 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 text-xl">
-      🎨 Image Preview
+    <div id="chatPanel" class="w-1/2 bg-white p-4 flex flex-col gap-2 overflow-y-auto"></div>
+    <div id="deepSearchPanel" class="w-1/2 bg-gray-50 p-4 relative overflow-hidden">
+      <div id="searchPanel" class="panel-center hidden space-y-3"></div>
+      <div id="imagePanel" class="panel-center hidden">
+        <div id="shimmerOverlay" class="absolute inset-0 shimmer"></div>
+        <div id="imagePlaceholder" class="relative w-2/3 h-2/3 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 text-xl">
+          🎨 Image Preview
+        </div>
+      </div>
+      <div id="webPanel" class="panel-center hidden space-y-3 text-center">
+        <svg class="w-12 h-12 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-width="2" d="M3 10h4l3 10 4-18 3 10h4"/>
+        </svg>
+        <div class="text-gray-700 text-lg">
+          Searching web<span class="blinking-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        </div>
+      </div>
+      <div id="thinkPanel" class="panel-center hidden space-y-4">
+        <!-- Typing box -->
+        <div class="typing-box">
+          <span class="dot blinking-dots"></span>
+          <span class="dot blinking-dots" style="animation-delay:0.3s;"></span>
+          <span class="dot blinking-dots" style="animation-delay:0.6s;"></span>
+        </div>
+        <!-- Thought bubble -->
+        <div id="thoughtBubble" class="hidden bg-white border border-gray-300 p-4 rounded-lg shadow-sm w-3/4">
+          <p class="text-gray-800">* contemplating deep connections ... *</p>
+        </div>
+      </div>
     </div>
-  </div>
-  <!-- Web-Search Mode -->
-  <div id="webPanel" class="panel-center hidden space-y-3 text-center">
-    <svg class="w-12 h-12 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-width="2" d="M3 10h4l3 10 4-18 3 10h4"/>
-    </svg>
-    <div class="text-gray-700 text-lg">
-      Searching web<span class="blinking-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-    </div>
-  </div>
-  <!-- Thinking Mode -->
-  <div id="thinkPanel" class="panel-center hidden space-y-3 text-center">
-    <div class="flex">
-      <div class="dot blinking-dots"></div>
-      <div class="dot blinking-dots" style="animation-delay:0.3s;"></div>
-      <div class="dot blinking-dots" style="animation-delay:0.6s;"></div>
-    </div>
-    <div class="text-gray-700 text-lg">Thinking...</div>
-  </div>
-</div>
-
   </div>  <script>
     const chatPanel = document.getElementById('chatPanel');
-    const panels = {
-      search: document.getElementById('searchPanel'),
-      image:  document.getElementById('imagePanel'),
-      web:    document.getElementById('webPanel'),
-      think:  document.getElementById('thinkPanel'),
-    };
-
-    let mode = 0; // 0: deep search, 1: image, 2: web, 3: think
-
+    const panels = { search: document.getElementById('searchPanel'), image: document.getElementById('imagePanel'), web: document.getElementById('webPanel'), think: document.getElementById('thinkPanel') };
+    let mode = 0;
     function clearAll() {
       chatPanel.innerHTML = '';
       Object.values(panels).forEach(p => p.classList.add('hidden'));
       panels.search.innerHTML = '';
+      document.getElementById('thoughtBubble').classList.add('hidden');
     }
-
-    function addMsg(text, fromAI = false) {
+    function addMsg(text, fromAI=false) {
       const div = document.createElement('div');
-      div.className = fromAI 
-        ? 'self-start bg-gray-100 text-black px-3 py-2 rounded-md max-w-xs transition-opacity duration-500' 
-        : 'self-end bg-blue-100 text-black px-3 py-2 rounded-md max-w-xs transition-opacity duration-500';
+      div.className = fromAI ? 'self-start bg-gray-100 text-black px-3 py-2 rounded-md max-w-xs transition-opacity duration-500' : 'self-end bg-blue-100 text-black px-3 py-2 rounded-md max-w-xs transition-opacity duration-500';
       div.textContent = text;
       div.style.opacity = 0;
       chatPanel.appendChild(div);
       setTimeout(() => div.style.opacity = 1, 100);
       chatPanel.scrollTop = chatPanel.scrollHeight;
     }
-
     function typeText(el, txt, cb, delay=80) {
-      let i=0;
-      (function next(){
-        if(i<txt.length) {
-          el.textContent += txt[i++];
-          setTimeout(next, delay);
-        } else if(cb) cb();
-      })();
+      let i=0; (function next(){ if(i<txt.length){ el.textContent+=txt[i++]; setTimeout(next,delay);} else if(cb) cb(); })();
     }
-
     function runDeepSearch() {
       panels.search.classList.remove('hidden');
-      addMsg("ChatGPT introduction preview");
-      // Centered steps
+      addMsg('ChatGPT introduction preview');
       setTimeout(() => {
         const u = document.createElement('p'); u.className='text-gray-600 text-lg';
-        typeText(u, "Understanding the request", () => {
+        typeText(u, 'Understanding the request', () => {
           const s = document.createElement('p'); s.className='text-gray-800 text-lg';
           s.innerHTML = `Searching for: <strong>ChatGPT introduction preview</strong><span class="blinking-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
           panels.search.append(u, s);
           setTimeout(() => {
-            ["openai.com","springer.com","wikipedia.org"].forEach(link => {
-              const a = document.createElement('a');
-              a.href="#"; a.textContent=link;
-              a.className = 'bg-white border border-blue-300 text-blue-600 px-3 py-1 rounded-full shadow-sm my-1 block';
-              panels.search.appendChild(a);
+            ['openai.com','springer.com','wikipedia.org'].forEach(link => {
+              const a=document.createElement('a'); a.href='#'; a.textContent=link;
+              a.className='bg-white border border-blue-300 text-blue-600 px-3 py-1 rounded-full shadow-sm my-1 block'; panels.search.appendChild(a);
             });
             setTimeout(() => {
-              const done = document.createElement('p');
-              done.className = 'text-green-600 font-semibold text-lg';
-              done.textContent = '✅ Deep Search Completed!';
-              panels.search.appendChild(done);
-              setTimeout(() => {
-                addMsg(`According to openai.com, ChatGPT is a powerful assistant.`, true);
-                setTimeout(() => { addMsg("Thanks, that was helpful!"); cycle(); }, 1200);
-              }, 800);
-            }, 1200);
-          }, 1400);
-        });
-        panels.search.append(u);
-      }, 600);
+              const done=document.createElement('p'); done.className='text-green-600 font-semibold text-lg'; done.textContent='✅ Deep Search Completed!'; panels.search.appendChild(done);
+              setTimeout(()=>{ addMsg('According to openai.com, ChatGPT is a powerful assistant.', true); setTimeout(()=>{ addMsg('Thanks, that was helpful!'); cycle(); },1200); },800);
+            },1200);
+          },1400);
+        }); panels.search.append(u);
+      },600);
     }
-
     function runImageGen() {
-      panels.image.classList.remove('hidden');
-      addMsg("Generate an image of a sunset over mountains");
-      setTimeout(() => {
-        panels.image.querySelector('#shimmerOverlay').classList.remove('hidden');
-        setTimeout(() => {
-          panels.image.querySelector('#shimmerOverlay').classList.add('hidden');
-          panels.image.querySelector('#imagePlaceholder').classList.remove('hidden');
-          setTimeout(() => {
-            addMsg("Here is the image you requested:", true);
-            setTimeout(() => { addMsg("Thanks, that looks great!"); cycle(); }, 1200);
-          }, 1000);
-        }, 3000);
-      }, 600);
+      panels.image.classList.remove('hidden'); addMsg('Generate an image of a sunset over mountains');
+      setTimeout(()=>{ document.getElementById('shimmerOverlay').classList.remove('hidden'); setTimeout(()=>{ document.getElementById('shimmerOverlay').classList.add('hidden'); document.getElementById('imagePlaceholder').classList.remove('hidden'); setTimeout(()=>{ addMsg('Here is the image you requested:', true); setTimeout(()=>{ addMsg('Thanks, that looks great!'); cycle(); },1200); },1000); },3000); },600);
     }
-
     function runWebSearch() {
-      panels.web.classList.remove('hidden');
-      addMsg("Search the web for the latest GPT-4 papers");
-      setTimeout(() => {
-        addMsg("Found 3 relevant papers. Here’s a summary...", true);
-        setTimeout(() => { cycle(); }, 1200);
-      }, 2000);
+      panels.web.classList.remove('hidden'); addMsg('Search the web for the latest GPT-4 papers');
+      setTimeout(()=>{ addMsg('Found 3 relevant papers. Here’s a summary...', true); setTimeout(()=>{ cycle(); },1200); },2000);
     }
-
     function runThinking() {
-      panels.think.classList.remove('hidden');
-      addMsg("Let me think about that...");
-      setTimeout(() => {
-        addMsg("Done thinking! Here’s my answer.", true);
-        setTimeout(() => { cycle(); }, 1200);
-      }, 2000);
+      panels.think.classList.remove('hidden'); addMsg('Let me think about that...');
+      setTimeout(()=>{
+        document.querySelector('.typing-box').classList.add('hidden');
+        const thought = document.getElementById('thoughtBubble'); thought.classList.remove('hidden');
+        setTimeout(()=>{ addMsg('Done thinking! Here’s my answer.', true); setTimeout(()=>{ cycle(); },1200); },4000);
+      },2000);
     }
-
     function cycle() {
-      setTimeout(() => {
-        clearAll();
-        if (mode === 0) runDeepSearch();
-        if (mode === 1) runImageGen();
-        if (mode === 2) runWebSearch();
-        if (mode === 3) runThinking();
-        mode = (mode + 1) % 4;
-      }, 1000);
+      setTimeout(()=>{ clearAll(); if(mode===0) runDeepSearch(); if(mode===1) runImageGen(); if(mode===2) runWebSearch(); if(mode===3) runThinking(); mode=(mode+1)%4; },1000);
     }
-
     document.addEventListener('DOMContentLoaded', cycle);
   </script></body>
 </html>
