@@ -1,157 +1,691 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>8K Ultra 3D DeepSearch Assistant</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepSearch AI Assistant</title>
   <style>
+    /* Basic Reset & Body Styling */
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      margin: 0;
-      overflow: hidden;
-      background: radial-gradient(circle at center, #0a0f2a, #000);
-      font-family: 'Segoe UI', sans-serif;
+      background:#0a0c10;
+      color:#e5e5e5;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      font-family:'Inter', sans-serif; /* Using Inter font as per instructions */
+      overflow: hidden; /* Prevent scrollbars */
     }
-    .container {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
+
+    /* Main Screen Container */
+    .screen-container {
+      width:700px;
+      height:500px;
+      background:#0d1117;
+      border-radius:12px;
+      box-shadow:0 0 20px rgba(0,0,0,0.7);
+      display:flex;
+      overflow:hidden;
+      position:relative;
+    }
+
+    /* Left Side: Chat Wrapper */
+    .chat-wrapper {
+      width:50%;
+      border-right:1px solid #222;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .chat-header {
+      padding:12px;
+      background:#161a1f;
+      text-align:center;
+      font-weight:600;
+      border-bottom: 1px solid #222;
+    }
+
+    .messages {
+      flex:1;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      overflow-y:auto;
+      scrollbar-width: thin; /* Firefox */
+      scrollbar-color: #5e8aff #1f2933; /* Firefox */
+    }
+
+    /* Custom scrollbar for Webkit browsers */
+    .messages::-webkit-scrollbar {
+      width: 8px;
+    }
+    .messages::-webkit-scrollbar-track {
+      background: #1f2933;
+      border-radius: 10px;
+    }
+    .messages::-webkit-scrollbar-thumb {
+      background-color: #5e8aff;
+      border-radius: 10px;
+      border: 2px solid #1f2933;
+    }
+
+    .message {
+      max-width:85%; /* Adjusted for better appearance */
+      padding:10px 14px; /* Adjusted padding */
+      border-radius:10px;
+      opacity:0;
+      transform:translateY(10px);
+      animation:fadeIn 0.3s forwards;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .user {
+      align-self:flex-end;
+      background:#2a3942;
+      box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .ai {
+      align-self:flex-start;
+      background:#1f2933;
+      box-shadow:0 2px 8px rgba(94,138,255,0.2);
+    }
+
+    .ai.typing-message {
+      background: #1f2933; /* Keep background for typing message */
+      box-shadow: none; /* No shadow for typing indicator */
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display:inline-flex; /* Changed to inline-flex */
+      gap:4px;
+      margin-left:4px;
       align-items: center;
-      justify-content: center;
     }
-    .card-3d { perspective: 2000px; }
-    .card-inner { transform-style: preserve-3d; transition: transform 0.8s ease; }
-    .card-inner.hovered { transform: rotateY(6deg) rotateX(4deg) scale(1.01); }.panel { width: 40vw; height: 70vh; overflow: hidden; border-radius: 1rem; background: #111827; color: #e5e7eb; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
-.left-panel { margin-right: 2vw; padding: 2rem; overflow-y: auto; }
-.right-panel { position: relative; margin-left: 2vw; padding: 2rem; background: #1f2937; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .typing-indicator span {
+      width:5px;
+      height:5px;
+      background:#5e8aff;
+      border-radius:50%;
+      animation:blink 1s infinite;
+    }
+    .typing-indicator span:nth-child(2){animation-delay:.2s}
+    .typing-indicator span:nth-child(3){animation-delay:.4s}
 
-/* Chat bubbles */
-.chat-msg { display: flex; margin-bottom: 1.5rem; align-items: flex-end; opacity: 0; transition: opacity 0.5s ease; }
-.chat-msg.visible { opacity: 1; }
-.avatar { width: 50px; height: 50px; border-radius: 50%; margin-right: 1rem; }
-.bubble { max-width: 60%; padding: 1rem 1.2rem; border-radius: 1rem; position: relative; font-size: 1rem; line-height: 1.4; }
-.user { flex-direction: row-reverse; }
-.user .bubble { background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white; margin-right: 0; margin-left: 1rem; }
-.ai .bubble { background: linear-gradient(135deg, #10b981, #34d399); color: white; margin-left: 1rem; }
+    /* Right Side: Animation Box */
+    .right-box {
+      width:50%;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      padding:20px; /* Added padding to the right box itself */
+    }
 
-/* Dots */
-.typing { display: flex; align-items: center; gap: 8px; }
-.dot { width: 12px; height: 12px; background: #fff; border-radius: 50%; animation: blink 1s infinite ease-in-out; }
-.dot:nth-child(2) { animation-delay: 0.2s; }
-.dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes blink { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+    .anim-box {
+      flex:1;
+      background:#161a1f;
+      border-radius:10px;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 15px rgba(94,138,255,0.5);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      transition: box-shadow 0.5s ease-in-out; /* Smooth transition for shadow */
+    }
 
-/* Timeline left */
-.step { margin-bottom: 2rem; }
-.step h3 { font-size: 1.25rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-.step p { font-size: 1rem; color: #cbd5e1; }
-.sources { margin-top: 0.5rem; display: flex; gap: 0.5rem; }
-.source-icon { width: 24px; height: 24px; background-size: cover; border-radius: 0.5rem; }
+    /* Shimmer Effect for Image Generation */
+    .anim-box.shimmer {
+        box-shadow:0 0 25px rgba(94,138,255,0.8), 0 0 10px rgba(255,255,255,0.3); /* Enhanced glow */
+    }
+    .anim-box.shimmer::before {
+      content:'';
+      position:absolute;
+      top:-100%;
+      left:-100%;
+      width:200%;
+      height:200%;
+      background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.1),rgba(255,255,255,0.04));
+      transform:rotate(25deg);
+      animation:shimmer 3s infinite;
+    }
 
-/* Image preview */
-#preview-image { width: 60%; border-radius: 1rem; box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
+    .anim-icon {
+      width:60px;
+      height:60px;
+      fill:#5e8aff;
+      z-index:1;
+    }
 
+    .anim-text {
+      z-index:1;
+      margin-top:10px;
+      font-size:1rem;
+      text-align: center;
+    }
+
+    /* Process Details / Thought Process Section */
+    .process-details {
+      display: none; /* Hidden by default */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0f131a;
+      border-radius: 10px;
+      padding: 20px;
+      overflow-y: auto;
+      z-index: 2;
+      animation: fadeIn 0.5s forwards;
+      color: #c0c0c0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      text-align: left;
+      flex-direction: column; /* Ensure it's a flex container for its children */
+      gap: 10px; /* Spacing between paragraphs/steps */
+      scrollbar-width: thin; /* Firefox */
+      scrollbar-color: #5e8aff #1f2933; /* Firefox */
+    }
+    .process-details::-webkit-scrollbar {
+      width: 8px;
+    }
+    .process-details::-webkit-scrollbar-track {
+      background: #1f2933;
+      border-radius: 10px;
+    }
+    .process-details::-webkit-scrollbar-thumb {
+      background-color: #5e8aff;
+      border-radius: 10px;
+      border: 2px solid #1f2933;
+    }
+
+    .process-details h3 {
+        color: #5e8aff;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    .process-details p {
+        margin-bottom: 8px;
+    }
+    .process-details .process-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #b0b0b0;
+    }
+    .process-details .process-step.completed {
+        color: #4CAF50; /* Green for completed steps */
+    }
+    .process-details .process-step svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor; /* Use parent's color */
+    }
+
+
+    /* DeepSearch Panel */
+    .deep-panel {
+      display:none; /* Hidden by default */
+      flex-direction:column;
+      background:#0f131a;
+      border-radius:10px;
+      padding:16px;
+      width:100%;
+      height:100%;
+      overflow-y:auto;
+      position:absolute; /* Position over the anim-box content */
+      top:0;
+      left:0;
+      z-index: 2; /* Ensure it's above anim-icon/text */
+      animation: fadeIn 0.5s forwards; /* Fade in when displayed */
+      scrollbar-width: thin; /* Firefox */
+      scrollbar-color: #5e8aff #1f2933; /* Firefox */
+    }
+    .deep-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+    .deep-panel::-webkit-scrollbar-track {
+      background: #1f2933;
+      border-radius: 10px;
+    }
+    .deep-panel::-webkit-scrollbar-thumb {
+      background-color: #5e8aff;
+      border-radius: 10px;
+      border: 2px solid #1f2933;
+    }
+
+
+    .deep-header {
+      font-size:1.1rem;
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color: #5e8aff; /* Highlight header */
+      font-weight: 600;
+    }
+    .deep-header svg {
+      width:20px;
+      height:20px;
+      fill:#5e8aff;
+      animation:spin 2s linear infinite;
+    }
+
+    .deep-search-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .deep-search-steps div {
+        font-size: 0.9rem;
+        color: #b0b0b0;
+        display: flex;
+        align-items: center;
+    }
+
+    .source-list {
+      display:none; /* Hidden by default, shown dynamically */
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:16px; /* Increased margin */
+      padding-top: 8px; /* Spacing from steps */
+      border-top: 1px solid #1a1f26; /* Separator */
+    }
+
+    .source-item {
+      background:#1f2933;
+      padding:8px 12px; /* Adjusted padding */
+      border-radius:8px; /* More rounded */
+      font-size:.8rem;
+      color: #a0a0a0;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .source-item:hover {
+        background: #2a3942;
+        color: #e5e5e5;
+    }
+
+    .deep-code {
+      background:#1a1f26;
+      padding:12px; /* Adjusted padding */
+      border-radius:8px; /* More rounded */
+      font-family:monospace;
+      font-size:.85rem;
+      color: #c0c0c0;
+      white-space: pre-wrap; /* Preserve whitespace and wrap text */
+      word-break: break-all; /* Break long words */
+    }
+
+    /* Image Preview in Chat */
+    .image-preview {
+        width: 100px;
+        height: 100px;
+        background: #333; /* Placeholder background */
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #aaa;
+        font-size: 0.75rem;
+        overflow: hidden;
+        margin-top: 5px;
+    }
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeIn {
+      to { opacity:1; transform:translateY(0); }
+    }
+    @keyframes blink {
+      0%,80%,100% {opacity:0}
+      40% {opacity:1}
+    }
+    @keyframes shimmer {
+      0% {transform:translate(-100%,-100%) rotate(25deg)}
+      100% {transform:translate(100%,100%) rotate(25deg)}
+    }
+    @keyframes spin {
+      from {transform:rotate(0)}
+      to {transform:rotate(360deg)}
+    }
   </style>
 </head>
 <body>
-  <div class="container card-3d" onmouseover="toggle3D(true)" onmouseout="toggle3D(false)">
-    <div class="card-inner" id="card">
-      <!-- Left panel -->
-      <div class="panel left-panel">
-        <div id="timeline"></div>
-      </div><!-- Right panel -->
-  <div class="panel right-panel">
-    <img src="/mnt/data/preview-image" id="preview-image" alt="Preview Image" />
-    <div id="typingDots" class="typing" style="margin-top:2rem; display:none;">
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  <div class="screen-container">
+    <div class="chat-wrapper">
+      <div class="chat-header">Indox AI Assistant</div>
+      <div class="messages" id="messages"></div>
+    </div>
+    <div class="right-box">
+      <div class="anim-box" id="animBox">
+        <svg id="animIcon" class="anim-icon" viewBox="0 0 24 24"></svg>
+        <div id="animText" class="anim-text">Welcome!</div>
+        <div class="process-details" id="processDetails">
+          </div>
+        <div class="deep-panel" id="deepPanel">
+          <div class="deep-header">
+            <svg viewBox="0 0 24 24"><path d="M12 4l1.41 1.41L7.83 11H20v2H7.83l5.58 5.59L12 20l-8-8 8-8z"/></svg>
+            DeepSearch 15s
+          </div>
+          <div id="deepSearchSteps" class="deep-search-steps">
+            </div>
+          <div class="source-list" id="sourceList">
+            <div class="source-item">openai.com</div>
+            <div class="source-item">springer.com</div>
+            <div class="source-item">scribbr.com</div>
+            <div class="source-item">ctstate.edu</div>
+          </div>
+          <div class="deep-code">
+            <code>import requests
+response = requests.get('https://api.openai.com/v1/...')
+print(response.json())</code>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Chat panel overlay -->
-<div class="panel right-panel" style="position:absolute; left: 55vw; top:15vh; height:auto; width:30vw; background:transparent; box-shadow:none; overflow:visible;">
-  <div id="chatPanel"></div>
-</div>
+  <script>
+    const messages = document.getElementById('messages');
+    const animBox = document.getElementById('animBox');
+    const animIcon = document.getElementById('animIcon');
+    const animText = document.getElementById('animText');
+    const processDetails = document.getElementById('processDetails'); // New element for process details
+    const deepPanel = document.getElementById('deepPanel');
+    const deepSearchStepsContainer = document.getElementById('deepSearchSteps');
+    const sourceList = document.getElementById('sourceList');
 
-  </div>  <input type="file" id="imgUpload" accept="image/*" style="display:none;" onchange="loadImage(event)">  <script>
-    const timeline = document.getElementById('timeline');
-    const chatPanel = document.getElementById('chatPanel');
-    const typingDots = document.getElementById('typingDots');
-    const previewImg = document.getElementById('preview-image');
-    let mode = 0, step = 0;
-
-    const steps = [
-      { title: 'Normal Chat', text: 'User: Hello, what can you do?', avatar: 'https://i.pravatar.cc/50?img=5' },
-      { title: 'Deep Search', text: 'Searching for: ChatGPT features...', sources: ['openai.com','github.com'] },
-      { title: 'Thinking Tool', text: 'Analyzing results deeply...', },
-      { title: 'Web Search', text: 'Looking up recent GPT-4 papers...', sources: ['arxiv.org'] }
-    ];
-
-    function renderTimeline() {
-      timeline.innerHTML = '';
-      steps.forEach((s,i) => {
-        const div = document.createElement('div'); div.className='step';
-        div.innerHTML = `<h3>Step ${i+1}: ${s.title}</h3><p>${s.text}</p>`;
-        if (s.sources) {
-          const srcDiv=document.createElement('div'); srcDiv.className='sources';
-          s.sources.forEach(src=>{
-            const ic=document.createElement('div'); ic.className='source-icon'; ic.style.backgroundImage=`url(https://www.google.com/s2/favicons?domain=${src})`;
-            srcDiv.append(ic);
-          }); div.append(srcDiv);
-        }
-        timeline.append(div);
-      });
-    }
-
-    function toggle3D(on) { document.getElementById('card').classList.toggle('hovered', on); }
-
-    function loadImage(e) {
-      const file=e.target.files[0]; if(!file) return;
-      previewImg.src=URL.createObjectURL(file);
-    }
-
-    function addChat(msg, fromAI=false) {
-      const div=document.createElement('div'); div.className='chat-msg '+(fromAI?'ai':'user');
-      const avatar=document.createElement('img'); avatar.className='avatar';
-      avatar.src=fromAI? 'https://i.pravatar.cc/50?img=12' : 'https://i.pravatar.cc/50?img=5';
-      const bubble=document.createElement('div'); bubble.className='bubble'; bubble.textContent=msg;
-      div.append(avatar,bubble); chatPanel.append(div);
-      setTimeout(()=>div.classList.add('visible'),50);
-      chatPanel.scrollTop=chatPanel.scrollHeight;
-    }
-
-    async function runSequence() {
-      renderTimeline();
-      // 1. Normal chat
-      addChat('Hello, what can you do?'); await delay(2000);
-      addChat('I can perform deep searches, generate images, think, and browse the web.', true); await delay(2000);
-      // 2. Deep Search
-      addChat('Search: ChatGPT features'); await delay(2000);
-      typingDots.style.display='flex'; await delay(3000);
-      typingDots.style.display='none'; addChat('Found detailed info on openai.com and github.com', true); await delay(2000);
-      // 3. Thinking
-      addChat('Let me think deeply...'); await delay(2000);
-      typingDots.style.display='flex'; await delay(3000);
-      typingDots.style.display='none'; addChat('I have integrated the insights.', true); await delay(2000);
-      // 4. Web Search
-      addChat('Search web: GPT-4 papers'); await delay(2000);
-      typingDots.style.display='flex'; await delay(3000);
-      typingDots.style.display='none'; addChat('I found recent papers on arxiv.org', true); await delay(2000);
-      // 5. Image
-      typingDots.style.display='none'; triggerImageUpload();
-    }
-
-    function delay(ms) { return new Promise(res=>setTimeout(res,ms)); }
-
-    function triggerImageUpload() {
-      document.getElementById('imgUpload').click();
-    }
-
-    document.getElementById('imgUpload').onchange = async e => {
-      loadImage(e);
-      addChat('Generating preview image...', false);
-      typingDots.style.display='flex'; await delay(3000);
-      typingDots.style.display='none'; addChat('Here is the preview image.', true);
+    // SVG icons for different actions
+    const icons = {
+      img: 'M21 19V5c0-1.1-.9-2-2-2H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM5 19V5h14v14H5zm3-7l2.5 3.01L14.5 11l4.5 6H5l3-4z', // Image icon
+      think: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.34 0 .67-.03 1-.08v-2.02c-.32.05-.66.1-1 .1-4.42 0-8-3.58-8-8 0-4.42 3.58-8 8-8s8 3.58 8 8c0 1.44-.39 2.78-1.07 3.93l1.46 1.46C21.17 15.14 22 13.63 22 12c0-5.52-4.48-10-10-10z', // Thinking icon
+      web: 'M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z', // Web search icon
+      deep: 'M12 4l1.41 1.41L7.83 11H20v2H7.83l5.58 5.59L12 20l-8-8 8-8z', // Deep search icon (used in header for animation)
+      check: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z' // Checkmark icon
     };
 
-    window.onload = runSequence;
-  </script></body>
+    // Conversation flow for the animation
+    const convo = [
+      { from: 'user', text: "What is Indox AI?" },
+      { from: 'ai', text: 'Indox AI is a cutting-edge artificial intelligence assistant designed to provide comprehensive information, generate creative content, and perform deep web searches to assist users with a wide range of tasks. Its advanced capabilities include natural language understanding, image synthesis, and intelligent data analysis.' },
+      { from: 'user', text: 'Generate a sample image.' },
+      { action: 'img', text: 'Generating image...', process: [
+        'Initializing image generation model...',
+        'Analyzing prompt for visual elements...',
+        'Synthesizing base image structure...',
+        'Adding intricate details and textures...',
+        'Applying color grading and lighting...',
+        'Optimizing pixels for clarity and resolution...',
+        'Finalizing image output.'
+      ], processDelay: 700, postProcessDelay: 2000 }, // Increased delay for image generation process
+      { from: 'ai', text: 'Image ready!', image: 'https://placehold.co/100x100/5e8aff/ffffff?text=Sample+Image' }, // Placeholder image
+      { from: 'user', text: 'How to create a website in GitHub?' },
+      { action: 'think', text: 'Thinking about GitHub website creation...', process: [
+        '<h3>Thought Process:</h3>',
+        '<p>Analyzing the request: "How to create a website in GitHub?" This implies understanding GitHub Pages, static site generators, and basic web development (HTML, CSS, JS).</p>',
+        '<p>Initial knowledge retrieval: Recall steps for GitHub repository creation, enabling GitHub Pages, and common file structures (index.html).</p>',
+        '<p>Identifying potential complexities: Custom domains, Jekyll/Hugo integration, CI/CD for updates.</p>',
+        '<p>Formulating a structured answer: Break down the process into manageable steps for the user.</p>'
+      ], processDelay: 800, postProcessDelay: 1500 },
+      { action: 'analysisComplete', text: 'Analysis completed.' }, // New action for analysis completion
+      { from: 'ai', text: 'Creating a website on GitHub typically involves using GitHub Pages, a feature that allows you to host static websites directly from your GitHub repository. You\'ll need to create a repository, push your HTML, CSS, and JavaScript files, and then enable GitHub Pages in your repository settings. For more complex sites, you might use static site generators like Jekyll or Hugo.' },
+      { from: 'user', text: 'Deep dive into website creation planning and styling.' },
+      // DeepSearch specific steps
+      { action: 'deepSearchStart', text: 'Initiating DeepSearch for website planning...' },
+      { action: 'deepSearchStep1', text: 'Understanding website requirements and user flow.' },
+      { action: 'deepSearchStep2', text: 'Researching best practices for responsive CSS design and modern JavaScript frameworks.', typing: true },
+      { action: 'deepSearchStep3', text: 'Compiling resources for HTML structure, CSS styling, and interactive JS elements.' },
+      { action: 'deepSearchComplete', text: 'Deep Search Completed!' }, // This action triggers the final checkmark in the deep panel
+      { from: 'ai', text: '✅ Deep Search Completed!' }, // Final message in the chat panel
+      { from: 'ai', text: 'For website creation, planning involves defining your target audience, content strategy, and user experience (UX) flow. For styling, modern best practices include mobile-first design, responsive layouts using Flexbox or Grid, and leveraging CSS frameworks like Tailwind CSS. JavaScript is crucial for interactivity, dynamic content, and features like form validation or API integrations.' },
+      { from: 'user', text: 'Thanks, that was helpful!' }
+    ];
+
+    let idx = 0; // Current step index in the conversation
+    let typingMessageElement = null; // To hold the typing indicator message element
+
+    /**
+     * Simulates typing text into an element.
+     * @param {HTMLElement} element The element to type into.
+     * @param {string} text The text to type.
+     * @param {number} speed Typing speed in milliseconds per character.
+     * @param {function} callback Function to call after typing is complete.
+     */
+    function typeEffect(element, text, speed, callback) {
+      let i = 0;
+      element.textContent = ''; // Clear existing text
+      const typingInterval = setInterval(() => {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+        } else {
+          clearInterval(typingInterval);
+          if (callback) callback();
+        }
+      }, speed);
+    }
+
+    /**
+     * Appends a new message to the chat interface.
+     * @param {string} cls Class name for the message (e.g., 'user', 'ai').
+     * @param {string} text The text content of the message.
+     * @param {string} [imageSrc] Optional URL for an image to display.
+     */
+    function appendMsg(cls, text, imageSrc = null) {
+      const d = document.createElement('div');
+      d.className = 'message ' + cls;
+
+      if (cls === 'ai' && typingMessageElement) {
+        // If there's an active typing message, replace its content
+        d.style.opacity = 1; // Ensure it's visible immediately
+        d.style.transform = 'translateY(0)';
+        typingMessageElement.replaceWith(d);
+        typingMessageElement = null; // Clear the reference
+      } else {
+        messages.appendChild(d);
+      }
+
+      d.textContent = text; // Set text content
+
+      if (imageSrc) {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'image-preview';
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.alt = 'Generated Image Preview';
+        imgContainer.appendChild(img);
+        d.appendChild(imgContainer);
+      }
+
+      // Scroll to the bottom to show the latest message
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    /**
+     * Displays a typing indicator message in the chat.
+     */
+    function showTypingIndicator() {
+      const d = document.createElement('div');
+      d.className = 'message ai typing-message';
+      d.innerHTML = 'Indox AI is typing <span class="typing-indicator"><span></span><span></span><span></span></span>';
+      messages.appendChild(d);
+      messages.scrollTop = messages.scrollHeight;
+      typingMessageElement = d; // Store reference to the typing message
+    }
+
+    /**
+     * Clears all dynamic content from the right panel.
+     */
+    function clearRightPanelContent() {
+      processDetails.style.display = 'none';
+      processDetails.innerHTML = '';
+      deepPanel.style.display = 'none';
+      deepSearchStepsContainer.innerHTML = '';
+      sourceList.style.display = 'none';
+      animBox.classList.remove('shimmer');
+    }
+
+    /**
+     * Populates and displays the process details in the right panel.
+     * @param {Array<string>} steps An array of strings, each representing a step or paragraph.
+     * @param {number} delayBetweenSteps Delay in ms between displaying each step.
+     * @param {function} callback Function to call after all steps are displayed.
+     */
+    function displayProcessSteps(steps, delayBetweenSteps, callback) {
+      processDetails.style.display = 'flex'; // Show the process details panel
+      processDetails.innerHTML = ''; // Clear previous content
+
+      let stepIndex = 0;
+
+      function showNextStep() {
+        if (stepIndex < steps.length) {
+          const stepContent = steps[stepIndex];
+          const stepDiv = document.createElement('div');
+          // Check if it's an HTML string (e.g., for <h3> or <p>)
+          if (stepContent.startsWith('<')) {
+            stepDiv.innerHTML = stepContent;
+          } else {
+            // For simple text steps, add a checkmark icon
+            stepDiv.className = 'process-step';
+            stepDiv.innerHTML = `<svg viewBox="0 0 24 24"><path d="${icons.check}"/></svg><span>${stepContent}</span>`;
+          }
+          processDetails.appendChild(stepDiv);
+          processDetails.scrollTop = processDetails.scrollHeight; // Scroll to new step
+          stepIndex++;
+          setTimeout(showNextStep, delayBetweenSteps);
+        } else {
+          if (callback) callback();
+        }
+      }
+      showNextStep();
+    }
+
+
+    /**
+     * Proceeds to the next step in the animation sequence.
+     */
+    function nextStep() {
+      // Check if all steps in the conversation are completed
+      if (idx >= convo.length) {
+        // If so, wait for a bit, then clear everything and restart the sequence
+        setTimeout(() => {
+          messages.innerHTML = ''; // Clear chat messages
+          idx = 0; // Reset conversation index
+          animText.textContent = 'Welcome!'; // Reset animation box text
+          clearRightPanelContent(); // Clear all dynamic content from right panel
+          setTimeout(nextStep, 1000); // Restart animation after a delay
+        }, 3000); // Delay before restarting the entire sequence
+        return;
+      }
+
+      const m = convo[idx++]; // Get the current step and increment index
+      let delay = 1000; // Default delay between steps
+
+      if (m.from) {
+        // If it's a chat message (from user or AI)
+        clearRightPanelContent(); // Clear dynamic content when chat message appears
+
+        if (m.from === 'ai') {
+          // If AI is about to respond, show typing indicator first
+          showTypingIndicator();
+          delay = 1500; // Delay before actual AI message appears
+          setTimeout(() => appendMsg(m.from, m.text, m.image), delay);
+          // Crucial: Return here as appendMsg is delayed, and nextStep will be called after
+          // the current message is fully displayed (or replaced typing indicator).
+          setTimeout(nextStep, delay + 500); // Call next step after the AI message is fully displayed
+          return;
+        } else {
+          appendMsg(m.from, m.text, m.image);
+        }
+      } else if (m.action) {
+        // If it's an action for the animation box
+        clearRightPanelContent(); // Clear previous dynamic content
+
+        animIcon.innerHTML = '<path d="' + icons[m.action] + '"/>'; // Set icon
+        animText.textContent = m.text; // Set animation box text
+
+        if (m.action === 'img' || m.action === 'think' || m.action === 'web') {
+          if (m.action === 'img') animBox.classList.add('shimmer'); // Apply shimmer for image
+          displayProcessSteps(m.process, m.processDelay, () => {
+            // After process steps, keep shimmer if image, then wait for postProcessDelay
+            setTimeout(() => {
+                setTimeout(nextStep, 500); // Proceed to next convo step after post-process delay
+            }, m.postProcessDelay);
+          });
+          return; // Don't call nextStep immediately, it's called by the callback
+        } else if (m.action === 'analysisComplete') {
+            animText.textContent = m.text; // Update animBox text with analysis complete
+            delay = 1000; // Short delay for this final message
+        } else if (m.action === 'deepSearchStart') {
+          deepPanel.style.display = 'flex'; // Show DeepSearch panel
+          deepSearchStepsContainer.innerHTML = ''; // Clear any previous steps
+          const step1 = document.createElement('div');
+          step1.textContent = 'Understanding the request';
+          deepSearchStepsContainer.appendChild(step1);
+          delay = 1500;
+        } else if (m.action === 'deepSearchStep1') {
+          // This step is handled by 'deepSearchStart' adding the first line.
+          delay = 1500;
+        } else if (m.action === 'deepSearchStep2') {
+          // Simulate typing for the search query
+          const step2 = document.createElement('div');
+          const textSpan = document.createElement('span');
+          step2.appendChild(textSpan);
+          deepSearchStepsContainer.appendChild(step2);
+
+          const typingText = m.text;
+          const typingSpeed = 70; // Speed of typing characters
+          typeEffect(textSpan, typingText, typingSpeed, () => {
+            // Add typing dots after the text is fully typed
+            const dots = document.createElement('span');
+            dots.className = 'typing-indicator ml-2'; // Add margin-left for spacing
+            dots.innerHTML = '<span></span><span></span><span></span>';
+            step2.appendChild(dots);
+            setTimeout(() => {
+              dots.remove(); // Remove dots after a short display
+              setTimeout(nextStep, 500); // Proceed to the next step
+            }, 1500); // Duration for which dots are visible
+          });
+          return; // Crucial: Do not call nextStep immediately, it's called by the typeEffect callback
+        } else if (m.action === 'deepSearchStep3') {
+          // Display search results (source list)
+          const step3 = document.createElement('div');
+          step3.textContent = 'Displaying search results...';
+          deepSearchStepsContainer.appendChild(step3);
+          sourceList.style.display = 'flex'; // Show the source list
+          delay = 2000;
+        } else if (m.action === 'deepSearchComplete') {
+          // Final DeepSearch message in the panel
+          const step4 = document.createElement('div');
+          step4.className = 'text-green-400 font-semibold'; // Highlight success message
+          step4.innerHTML = `<svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor; margin-right:5px;"><path d="${icons.check}"/></svg>${m.text}`;
+          deepSearchStepsContainer.appendChild(step4);
+          animText.textContent = m.text; // Update animBox text as well
+          delay = 1000;
+        }
+      }
+      // Schedule the next step based on the calculated delay
+      setTimeout(nextStep, delay);
+    }
+
+    // Start the animation sequence after a short initial delay
+    setTimeout(nextStep, 1000);
+  </script>
+</body>
 </html>
+
