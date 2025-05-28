@@ -2,172 +2,128 @@
 <head>
   <meta charset="UTF-8">
   <title>3D DeepSearch AI Assistant Preview</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* 3D card styles */
-    .card-3d {
-      perspective: 1000px;
-    }
-    .card-inner {
-      transform-style: preserve-3d;
-      transition: transform 0.6s ease;
-    }
-    .card-inner.hovered {
-      transform: rotateY(10deg) rotateX(5deg) scale(1.02);
-    }
-    .card-face {
-      backface-visibility: hidden;
-    }
-    /* Shimmer effect */
-    .shimmer {
-      background: linear-gradient(to right, #e0e0e0 8%, #f0f0f0 18%, #e0e0e0 33%);
-      background-size: 1000px 100%;
-      animation: shimmer 1.8s ease-in-out infinite;
-    }
-    @keyframes shimmer {
-      0% { background-position: -1000px 0; }
-      100% { background-position: 1000px 0; }
-    }
-    /* Dots animations */
-    @keyframes blink { 0%,100%{opacity:0}50%{opacity:1} }
-    .blinking-dots { animation:blink 1.2s ease-in-out infinite; }
-    .dot { width:8px; height:8px; background:#10a37f; border-radius:50%; display:inline-block; margin:0 2px; }
-    /* Layout */
-    .panel-center { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; }
-    .typing-box { display:flex; align-items:center; gap:6px; background:#f5f5f5; padding:8px 16px; border-radius:20px; }
-    .message-center { display:flex; justify-content:center; }
+    /* 3D card container */
+    .card-3d { perspective: 1200px; }
+    .card-inner { transform-style: preserve-3d; transition: transform 0.6s ease; }
+    .card-inner.hovered { transform: rotateY(10deg) rotateX(5deg) scale(1.03); }/* Panels layout */
+.panel-center { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+.half { width: 50%; position: relative; }
+
+/* DeepSearch timeline (left) */
+.timeline { padding: 2rem; background: #111827; color: #e5e7eb; height: 100%; overflow-y: auto; font-family: ui-sans-serif; }
+.timeline h2 { font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.timeline ol { list-style: none; counter-reset: step; margin-left: 1rem; }
+.timeline li { position: relative; padding-left: 2rem; margin-bottom: 1.5rem; }
+.timeline li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0; width: 1.5rem; height: 1.5rem; background: #374151; color: #f9fafb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; }
+.timeline li::after { content: ''; position: absolute; left: 0.75rem; top: 1.5rem; width: 2px; height: calc(100% - 1.5rem); background: #4b5563; }
+.timeline li:last-child::after { display: none; }
+.timeline .sources { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+.timeline .source-icon { width: 1.5rem; height: 1.5rem; background-size: cover; border-radius: 0.375rem; }
+
+/* Right panel modes */
+.panel-face { background: #f9fafb; height: 100%; }
+.mode { display: none; }
+.mode.active { display: flex; }
+.shimmer { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%); background-size: 200% 100%; animation: shimmer 1.6s infinite; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.typing-box { display: flex; align-items: center; gap: 6px; background: #f3f4f6; padding: 8px 16px; border-radius: 9999px; }
+.dot { width: 8px; height: 8px; background: #10a37f; border-radius: 50%; animation: blink 1.2s infinite; }
+@keyframes blink { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+.button-upload { background: #4f46e5; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; }
+.preview-img { max-width: 100%; max-height: 80%; border-radius: 0.5rem; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+
   </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center h-screen">
-  <div class="flex w-[800px] h-[550px] overflow-hidden rounded-2xl shadow-2xl card-3d" onmouseover="flip3D(true)" onmouseout="flip3D(false)">
-    <!-- Chat Panel -->
-    <div id="chatPanel" class="w-1/2 bg-white p-6 flex flex-col gap-4 overflow-y-auto card-face card-inner">
-      <!-- Chat bubbles inserted here -->
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="flex w-[800px] h-[550px] rounded-2xl shadow-2xl card-3d" onmouseover="flip3D(true)" onmouseout="flip3D(false)">
+    <!-- Left: DeepSearch Timeline -->
+    <div class="half timeline card-face card-inner">
+      <h2><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/></svg> DeepSearch 15s</h2>
+      <ol id="timelineList">
+        <!-- Steps inserted here -->
+      </ol>
+    </div><!-- Right: Content Panel -->
+<div class="half card-face card-inner panel-face p-6 flex items-center justify-center">
+  <!-- Modes -->
+  <div id="mode-search" class="mode panel-center">
+    <div class="text-xl font-medium mb-4">Understanding the request</div>
+    <div class="text-lg">Searching for: <strong>ChatGPT introduction preview</strong></div>
+    <div id="searchResults" class="mt-4 flex flex-col items-start"></div>
+  </div>
+  <div id="mode-image" class="mode panel-center flex-col">
+    <button class="button-upload" onclick="triggerUpload()">Upload Preview Image</button>
+    <img id="preview-image" class="preview-img mt-4" src="preview-image.png" alt="Preview">
+  </div>
+  <div id="mode-web" class="mode panel-center flex-col">
+    <div class="typing-box">
+      <div class="dot"></div><div class="dot" style="animation-delay:0.3s"></div><div class="dot" style="animation-delay:0.6s"></div>
     </div>
-    <!-- DeepSearch Panel -->
-    <div class="w-1/2 bg-white p-6 card-face card-inner relative">
-      <div id="searchPanel" class="panel-center hidden space-y-4"></div>
-      <div id="imagePanel" class="panel-center hidden">
-        <div id="shimmerOverlay" class="absolute inset-0 shimmer rounded-xl"></div>
-        <div id="imagePlaceholder" class="relative w-3/4 h-3/4 bg-gray-200 rounded-xl flex items-center justify-center text-gray-500 text-2xl">
-          🎨 Generating Image...
-        </div>
-      </div>
-      <div id="webPanel" class="panel-center hidden text-center space-y-4">
-        <svg class="w-16 h-16 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-width="2" d="M3 10h4l3 10 4-18 3 10h4"/>
-        </svg>
-        <div class="text-gray-800 text-xl">
-          Searching web<span class="blinking-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-        </div>
-      </div>
-      <div id="thinkPanel" class="panel-center hidden space-y-4">
-        <div class="typing-box">
-          <span class="dot blinking-dots"></span>
-          <span class="dot blinking-dots" style="animation-delay:0.3s;"></span>
-          <span class="dot blinking-dots" style="animation-delay:0.6s;"></span>
-        </div>
-        <div id="thoughtBubble" class="hidden max-w-xs bg-gray-100 p-4 rounded-xl shadow-inner">
-          <p class="text-gray-700 italic">* Integrating context and exploring insights ... *</p>
-        </div>
-      </div>
+    <div class="mt-2 text-lg">Searching web for GPT-4 papers...</div>
+  </div>
+  <div id="mode-think" class="mode panel-center flex-col">
+    <div class="typing-box">
+      <div class="dot"></div><div class="dot" style="animation-delay:0.3s"></div><div class="dot" style="animation-delay:0.6s"></div>
     </div>
-  </div>  <script>
-    const chatPanel = document.getElementById('chatPanel');
-    const panels = {
-      search: document.getElementById('searchPanel'),
-      image:  document.getElementById('imagePanel'),
-      web:    document.getElementById('webPanel'),
-      think:  document.getElementById('thinkPanel')
-    };
-    let mode = 0;
+    <div id="thoughtText" class="mt-4 italic text-gray-600 max-w-xs text-center">
+      Integrating all available info...
+    </div>
+  </div>
+</div>
 
-    function flip3D(hover) {
-      document.querySelectorAll('.card-inner').forEach(el => {
-        el.classList.toggle('hovered', hover);
-      });
+  </div>  <input type="file" id="imgUpload" accept="image/*" class="hidden" onchange="handleImage(event)">  <script>
+    const timeline = document.getElementById('timelineList');
+    const modes = ['search','image','web','think'];
+    let step = 0;
+
+    const steps = [
+      { text: 'Understanding the request', sources: [] },
+      { text: 'Searching for: ChatGPT introduction preview', sources: ['openai.com','springer.com','wikipedia.org'] },
+      { text: '✅ Deep Search Completed!', sources: [] },
+      { text: 'Generating image...', sources: [] },
+      { text: 'Image ready for preview', sources: [] },
+      { text: 'Searching the web for GPT-4 papers', sources: ['arxiv.org','openai.com'] },
+      { text: 'Thinking through the insights', sources: [] },
+      { text: 'All steps complete!', sources: [] }
+    ];
+
+    function appendTimelineStep(item) {
+      const li = document.createElement('li');
+      li.textContent = item.text;
+      if (item.sources.length) {
+        const div = document.createElement('div'); div.className='sources';
+        item.sources.forEach(s => {
+          const icon = document.createElement('div');
+          icon.className = 'source-icon';
+          icon.style.backgroundImage = `url(https://www.google.com/s2/favicons?domain=${s})`;
+          div.append(icon);
+        });
+        li.append(div);
+      }
+      timeline.append(li);
     }
 
-    function clearAll() {
-      chatPanel.innerHTML = '';
-      Object.values(panels).forEach(p => p.classList.add('hidden'));
-      panels.search.innerHTML = '';
-      document.getElementById('thoughtBubble').classList.add('hidden');
-    }
-
-    function addMsg(text, fromAI=false) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'message-center';
-      const div = document.createElement('div');
-      div.className = fromAI
-        ? 'bg-gradient-to-r from-green-100 to-green-50 text-gray-900 px-4 py-3 rounded-xl shadow-md max-w-xs'
-        : 'bg-gradient-to-r from-blue-100 to-blue-50 text-gray-900 px-4 py-3 rounded-xl shadow-md max-w-xs';
-      div.textContent = text;
-      wrapper.append(div);
-      wrapper.style.opacity = 0;
-      chatPanel.appendChild(wrapper);
-      setTimeout(() => wrapper.style.opacity = 1, 100);
-      chatPanel.scrollTop = chatPanel.scrollHeight;
-    }
-
-    function typeText(el, txt, cb, delay=60) {
-      let i = 0;
-      (function next() {
-        if (i < txt.length) {
-          el.textContent += txt[i++];
-          setTimeout(next, delay);
-        } else cb && cb();
-      })();
-    }
-
-    function runDeepSearch() {
-      panels.search.classList.remove('hidden');
-      addMsg('What is ChatGPT?');
-      setTimeout(() => {
-        const step1 = document.createElement('p'); step1.className='text-gray-600 text-2xl font-medium';
-        typeText(step1, 'Understanding your question...', () => {
-          const step2 = document.createElement('p'); step2.className='text-gray-800 text-xl';
-          step2.innerHTML = `Searching: <strong>ChatGPT overview</strong><span class="blinking-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
-          panels.search.append(step1, step2);
-          setTimeout(() => {
-            ["openai.com","arxiv.org","medium.com"].forEach(link => {
-              const a=document.createElement('a'); a.href='#'; a.textContent=link;
-              a.className='block text-indigo-600 hover:underline'; panels.search.appendChild(a);
-            });
-            setTimeout(() => {
-              const done=document.createElement('p'); done.className='text-green-600 text-2xl font-semibold'; done.textContent='✅ Done';
-              panels.search.appendChild(done);
-              setTimeout(() => { addMsg('ChatGPT is a conversational AI developed by OpenAI.', true); setTimeout(() => { addMsg('Great, thank you!'); cycle(); }, 1200); }, 1000);
-            }, 1500);
-          }, 1500);
-        }); panels.search.append(step1);
-      }, 800);
-    }
-
-    function runImageGen() {
-      panels.image.classList.remove('hidden'); addMsg('Create a cyberpunk cityscape');
-      setTimeout(() => {document.getElementById('shimmerOverlay').classList.remove('hidden');
-        setTimeout(() => {document.getElementById('shimmerOverlay').classList.add('hidden'); document.getElementById('imagePlaceholder').textContent='🌆 Cyberpunk City Generated';
-          setTimeout(() => { addMsg('Here is your image!', true); setTimeout(() => { addMsg('Amazing output!'); cycle(); }, 1200); }, 800);
-        }, 3500);
-      }, 800);
-    }
-
-    function runWebSearch() {
-      panels.web.classList.remove('hidden'); addMsg('Find recent GPT-4 research');
-      setTimeout(() => { addMsg('3 papers found on arxiv.org.'); setTimeout(() => { cycle(); }, 1500); }, 2500);
-    }
-
-    function runThinking() {
-      panels.think.classList.remove('hidden'); addMsg('Hmm, let me think...');
-      setTimeout(() => { document.querySelector('.typing-box').classList.add('hidden'); const tb=document.getElementById('thoughtBubble'); tb.classList.remove('hidden');
-        setTimeout(() => { addMsg('Done thinking—here is the insight.', true); setTimeout(() => { cycle(); }, 1200); }, 5000);
-      }, 2500);
-    }
+    function clearTimeline() { timeline.innerHTML = ''; }
+    function showMode(name) { modes.forEach(m => document.getElementById(`mode-${m}`).classList.toggle('active', m===name)); }
 
     function cycle() {
-      setTimeout(() => { clearAll(); switch (mode) { case 0: runDeepSearch(); break; case 1: runImageGen(); break; case 2: runWebSearch(); break; case 3: runThinking(); break; } mode=(mode+1)%4; }, 1200);
+      clearTimeline();
+      for (let i=0; i<=step; i++) appendTimelineStep(steps[i]);
+      const mIndex = Math.floor(step/2) % modes.length;
+      showMode(modes[mIndex]);
+      if (mIndex===1 && step===3) { /* image mode waiting for upload */ }
+      step = (step+1) % steps.length;
+      setTimeout(cycle, 2500);
+    }
+
+    function flip3D(on) { document.querySelectorAll('.card-inner').forEach(e=>e.classList.toggle('hovered',on)); }
+    function triggerUpload() { document.getElementById('imgUpload').click(); }
+    function handleImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      document.getElementById('preview-image').src = url;
     }
 
     document.addEventListener('DOMContentLoaded', cycle);
