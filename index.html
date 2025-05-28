@@ -1,265 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Ultra 3D DeepSearch Assistant</title>
+  <title>DeepSearch AI Assistant Preview</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background: radial-gradient(circle at center, #0f172a, #000);
-      font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
+    .shimmer {
+      background: linear-gradient(to right, #f6f7f8 8%, #eaeaea 18%, #f6f7f8 33%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s ease-in-out infinite;
     }
-
-    .card-3d {
-      perspective: 1500px;
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
     }
-
-    .card-inner {
-      transform-style: preserve-3d;
-      transition: transform 0.8s ease-in-out;
-    }
-
-    .card-inner.hovered {
-      transform: rotateY(8deg) rotateX(4deg) scale(1.02);
-    }
-
-    .panel-center {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-    }
-
-    .timeline {
-      padding: 2rem;
-      background: #0f172a;
-      color: #cbd5e1;
-      height: 100%;
-      overflow-y: auto;
-      backdrop-filter: blur(12px);
-    }
-
-    .timeline h2 {
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #38bdf8;
-    }
-
-    .timeline ol {
-      list-style: none;
-      counter-reset: step;
-    }
-
-    .timeline li {
-      position: relative;
-      padding-left: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    .timeline li::before {
-      counter-increment: step;
-      content: counter(step);
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 1.5rem;
-      height: 1.5rem;
-      background: #1e293b;
-      color: #f0f9ff;
-      border-radius: 9999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timeline li::after {
-      content: '';
-      position: absolute;
-      left: 0.75rem;
-      top: 1.5rem;
-      width: 2px;
-      height: calc(100% - 1.5rem);
-      background: #334155;
-    }
-
-    .timeline .sources {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    .timeline .source-icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      background-size: cover;
-      border-radius: 0.375rem;
-    }
-
-    .card-face {
-      height: 100%;
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      color: white;
-      padding: 1rem;
-      border-radius: 1rem;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-    }
-
-    .mode { display: none; }
-    .mode.active { display: flex; }
-
-    .typing-box {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #334155;
-      padding: 10px 20px;
-      border-radius: 9999px;
-      box-shadow: inset 0 0 8px #22d3ee;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      background: #22d3ee;
-      border-radius: 50%;
-      animation: blink 1.2s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-
-    .button-upload {
-      background: #4f46e5;
-      color: white;
-      padding: 0.75rem 1.25rem;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      box-shadow: 0 5px 15px rgba(79, 70, 229, 0.5);
-    }
-
-    .preview-img {
-      max-width: 90%;
-      max-height: 400px;
-      border-radius: 0.75rem;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    }
+    @keyframes blink { 0%,100%{opacity:0}50%{opacity:1} }
+    .blinking-dots { display:inline-block; animation:blink 1.2s ease-in-out infinite; }
+    .dot { width:6px; height:6px; background:#5e8aff; border-radius:50%; display:inline-block; margin:0 3px; }
+    .panel-center { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; }
+    .typing-box { display:flex; align-items:center; gap:4px; background:#e2e8f0; padding:6px 12px; border-radius:12px; }
   </style>
 </head>
-<body class="flex items-center justify-center h-screen">
-  <div class="flex w-[1000px] h-[600px] rounded-2xl card-3d" onmouseover="flip3D(true)" onmouseout="flip3D(false)">
-    <!-- Timeline Panel -->
-    <div class="w-1/2 timeline card-inner">
-      <h2>🚀 DeepSearch Assistant</h2>
-      <ol id="timelineList"></ol>
-    </div>
-
-    <!-- Right Panel -->
-    <div class="w-1/2 card-face card-inner flex items-center justify-center relative">
-      <div id="mode-search" class="mode panel-center">
-        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712103.png" class="w-14 h-14 mb-2 rounded-full"/>
-        <div class="text-xl font-bold mb-2">Understanding the request</div>
-        <div class="typing-box mb-2">
-          <div class="dot"></div>
-          <div class="dot" style="animation-delay:0.3s"></div>
-          <div class="dot" style="animation-delay:0.6s"></div>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+  <div class="flex w-[700px] h-[500px] border rounded-lg overflow-hidden shadow-lg">
+    <div id="chatPanel" class="w-1/2 bg-white p-4 flex flex-col gap-2 overflow-y-auto"></div>
+    <div id="deepSearchPanel" class="w-1/2 bg-gray-50 p-4 relative overflow-hidden">
+      <div id="searchPanel" class="panel-center hidden space-y-3"></div>
+      <div id="imagePanel" class="panel-center hidden">
+        <div id="shimmerOverlay" class="absolute inset-0 shimmer"></div>
+        <div id="imagePlaceholder" class="relative w-2/3 h-2/3 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 text-xl">
+          🎨 Image Preview
         </div>
-        <p class="text-center">Searching for <b>ChatGPT introduction preview</b>...</p>
       </div>
-
-      <div id="mode-image" class="mode panel-center flex-col">
-        <button class="button-upload mb-4" onclick="triggerUpload()">Upload Preview Image</button>
-        <img id="preview-image" class="preview-img" src="/mnt/data/A_user_interface_design_showcases_a_Dark-themed_im.png" alt="preview-image">
-      </div>
-
-      <div id="mode-web" class="mode panel-center flex-col">
-        <div class="typing-box mb-2">
-          <div class="dot"></div>
-          <div class="dot" style="animation-delay:0.3s"></div>
-          <div class="dot" style="animation-delay:0.6s"></div>
+      <div id="webPanel" class="panel-center hidden space-y-3 text-center">
+        <svg class="w-12 h-12 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-width="2" d="M3 10h4l3 10 4-18 3 10h4"/>
+        </svg>
+        <div class="text-gray-700 text-lg">
+          Searching web<span class="blinking-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
         </div>
-        <p class="text-lg">Searching web for GPT-4 papers...</p>
       </div>
-
-      <div id="mode-think" class="mode panel-center flex-col">
-        <div class="typing-box mb-2">
-          <div class="dot"></div>
-          <div class="dot" style="animation-delay:0.3s"></div>
-          <div class="dot" style="animation-delay:0.6s"></div>
+      <div id="thinkPanel" class="panel-center hidden space-y-4">
+        <!-- Typing box -->
+        <div class="typing-box">
+          <span class="dot blinking-dots"></span>
+          <span class="dot blinking-dots" style="animation-delay:0.3s;"></span>
+          <span class="dot blinking-dots" style="animation-delay:0.6s;"></span>
         </div>
-        <p class="italic text-center">Thinking through insights deeply...</p>
+        <!-- Thought bubble -->
+        <div id="thoughtBubble" class="hidden bg-white border border-gray-300 p-4 rounded-lg shadow-sm w-3/4">
+          <p class="text-gray-800">* contemplating deep connections ... *</p>
+        </div>
       </div>
     </div>
-  </div>
-
-  <input type="file" id="imgUpload" accept="image/*" class="hidden" onchange="handleImage(event)">
-
-  <script>
-    const timeline = document.getElementById('timelineList');
-    const modes = ['search','image','web','think'];
-    let step = 0;
-
-    const steps = [
-      { text: 'Understanding the request', sources: [] },
-      { text: 'Searching for: ChatGPT introduction preview', sources: ['openai.com','springer.com','wikipedia.org'] },
-      { text: '✅ Deep Search Completed!', sources: [] },
-      { text: 'Generating 3D image preview...', sources: [] },
-      { text: 'Image generated and previewed', sources: [] },
-      { text: 'Searching the web for GPT-4 papers', sources: ['arxiv.org','openai.com'] },
-      { text: 'Thinking through complex results', sources: [] },
-      { text: 'All tools complete!', sources: [] }
-    ];
-
-    function appendTimelineStep(item) {
-      const li = document.createElement('li');
-      li.textContent = item.text;
-      if (item.sources.length) {
-        const div = document.createElement('div');
-        div.className = 'sources';
-        item.sources.forEach(s => {
-          const icon = document.createElement('div');
-          icon.className = 'source-icon';
-          icon.style.backgroundImage = `url(https://www.google.com/s2/favicons?domain=${s})`;
-          div.append(icon);
-        });
-        li.append(div);
-      }
-      timeline.append(li);
+  </div>  <script>
+    const chatPanel = document.getElementById('chatPanel');
+    const panels = { search: document.getElementById('searchPanel'), image: document.getElementById('imagePanel'), web: document.getElementById('webPanel'), think: document.getElementById('thinkPanel') };
+    let mode = 0;
+    function clearAll() {
+      chatPanel.innerHTML = '';
+      Object.values(panels).forEach(p => p.classList.add('hidden'));
+      panels.search.innerHTML = '';
+      document.getElementById('thoughtBubble').classList.add('hidden');
     }
-
-    function clearTimeline() { timeline.innerHTML = ''; }
-    function showMode(name) { modes.forEach(m => document.getElementById(`mode-${m}`).classList.toggle('active', m === name)); }
-
+    function addMsg(text, fromAI=false) {
+      const div = document.createElement('div');
+      div.className = fromAI ? 'self-start bg-gray-100 text-black px-3 py-2 rounded-md max-w-xs transition-opacity duration-500' : 'self-end bg-blue-100 text-black px-3 py-2 rounded-md max-w-xs transition-opacity duration-500';
+      div.textContent = text;
+      div.style.opacity = 0;
+      chatPanel.appendChild(div);
+      setTimeout(() => div.style.opacity = 1, 100);
+      chatPanel.scrollTop = chatPanel.scrollHeight;
+    }
+    function typeText(el, txt, cb, delay=80) {
+      let i=0; (function next(){ if(i<txt.length){ el.textContent+=txt[i++]; setTimeout(next,delay);} else if(cb) cb(); })();
+    }
+    function runDeepSearch() {
+      panels.search.classList.remove('hidden');
+      addMsg('ChatGPT introduction preview');
+      setTimeout(() => {
+        const u = document.createElement('p'); u.className='text-gray-600 text-lg';
+        typeText(u, 'Understanding the request', () => {
+          const s = document.createElement('p'); s.className='text-gray-800 text-lg';
+          s.innerHTML = `Searching for: <strong>ChatGPT introduction preview</strong><span class="blinking-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
+          panels.search.append(u, s);
+          setTimeout(() => {
+            ['openai.com','springer.com','wikipedia.org'].forEach(link => {
+              const a=document.createElement('a'); a.href='#'; a.textContent=link;
+              a.className='bg-white border border-blue-300 text-blue-600 px-3 py-1 rounded-full shadow-sm my-1 block'; panels.search.appendChild(a);
+            });
+            setTimeout(() => {
+              const done=document.createElement('p'); done.className='text-green-600 font-semibold text-lg'; done.textContent='✅ Deep Search Completed!'; panels.search.appendChild(done);
+              setTimeout(()=>{ addMsg('According to openai.com, ChatGPT is a powerful assistant.', true); setTimeout(()=>{ addMsg('Thanks, that was helpful!'); cycle(); },1200); },800);
+            },1200);
+          },1400);
+        }); panels.search.append(u);
+      },600);
+    }
+    function runImageGen() {
+      panels.image.classList.remove('hidden'); addMsg('Generate an image of a sunset over mountains');
+      setTimeout(()=>{ document.getElementById('shimmerOverlay').classList.remove('hidden'); setTimeout(()=>{ document.getElementById('shimmerOverlay').classList.add('hidden'); document.getElementById('imagePlaceholder').classList.remove('hidden'); setTimeout(()=>{ addMsg('Here is the image you requested:', true); setTimeout(()=>{ addMsg('Thanks, that looks great!'); cycle(); },1200); },1000); },3000); },600);
+    }
+    function runWebSearch() {
+      panels.web.classList.remove('hidden'); addMsg('Search the web for the latest GPT-4 papers');
+      setTimeout(()=>{ addMsg('Found 3 relevant papers. Here’s a summary...', true); setTimeout(()=>{ cycle(); },1200); },2000);
+    }
+    function runThinking() {
+      panels.think.classList.remove('hidden'); addMsg('Let me think about that...');
+      setTimeout(()=>{
+        document.querySelector('.typing-box').classList.add('hidden');
+        const thought = document.getElementById('thoughtBubble'); thought.classList.remove('hidden');
+        setTimeout(()=>{ addMsg('Done thinking! Here’s my answer.', true); setTimeout(()=>{ cycle(); },1200); },4000);
+      },2000);
+    }
     function cycle() {
-      clearTimeline();
-      for (let i = 0; i <= step; i++) appendTimelineStep(steps[i]);
-      const mIndex = Math.floor(step / 2) % modes.length;
-      showMode(modes[mIndex]);
-      step = (step + 1) % steps.length;
-      setTimeout(cycle, 2000);
+      setTimeout(()=>{ clearAll(); if(mode===0) runDeepSearch(); if(mode===1) runImageGen(); if(mode===2) runWebSearch(); if(mode===3) runThinking(); mode=(mode+1)%4; },1000);
     }
-
-    function flip3D(on) {
-      document.querySelectorAll('.card-inner').forEach(e => e.classList.toggle('hovered', on));
-    }
-
-    function triggerUpload() {
-      document.getElementById('imgUpload').click();
-    }
-
-    function handleImage(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const url = URL.createObjectURL(file);
-      document.getElementById('preview-image').src = url;
-    }
-
     document.addEventListener('DOMContentLoaded', cycle);
-  </script>
-</body>
+  </script></body>
 </html>
