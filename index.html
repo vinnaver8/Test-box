@@ -12,14 +12,13 @@
     .messages { flex:1; padding:12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; }
     .message { max-width:70%; padding:8px 12px; border-radius:10px; opacity:0; transform:translateY(10px); animation:fadeIn 0.3s forwards; }
     .user { align-self:flex-end; background:#2a3942; }
-    .ai { align-self:flex-start; background:#1f2933; box-shadow:0 0 6px rgba(94,138,255,0.6); }.typing-indicator { display:flex; gap:4px; margin-left:4px; }
-.typing-indicator span { width:5px; height:5px; background:#5e8aff; border-radius:50%; animation:blink 1s infinite; }
-.typing-indicator span:nth-child(2){animation-delay:.2s}
-.typing-indicator span:nth-child(3){animation-delay:.4s}
-
-.right-box { width:50%; position:relative; display:flex; flex-direction:column; }
+    .ai { align-self:flex-start; background:#1f2933; box-shadow:0 0 6px rgba(94,138,255,0.6); }
+    .typing-indicator { display:flex; gap:4px; margin-left:4px; }
+    .typing-indicator span { width:5px; height:5px; background:#5e8aff; border-radius:50%; animation:blink 1s infinite; }
+    .typing-indicator span:nth-child(2){animation-delay:.2s}
+    .typing-indicator span:nth-child(3){animation-delay:.4s}.right-box { width:50%; position:relative; display:flex; flex-direction:column; }
 .anim-box { flex:1; margin:20px; background:#161a1f; border-radius:10px; position:relative; overflow:hidden; box-shadow:0 0 15px rgba(94,138,255,0.5); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
-.anim-box::before { content:''; position:absolute; top:-100%; left:-100%; width:200%; height:200%; background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.1),rgba(255,255,255,0.04)); transform:rotate(25deg); animation:shimmer 3s infinite; }
+.anim-box.shimmer::before { content:''; position:absolute; top:-100%; left:-100%; width:200%; height:200%; background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.1),rgba(255,255,255,0.04)); transform:rotate(25deg); animation:shimmer 3s infinite; }
 .anim-icon { width:60px; height:60px; fill:#5e8aff; z-index:1; }
 .anim-text { z-index:1; margin-top:10px; font-size:1rem; }
 .deep-panel { display:none; flex-direction:column; background:#0f131a; border-radius:10px; padding:16px; width:100%; height:100%; overflow-y:auto; }
@@ -27,7 +26,7 @@
 .deep-header svg { width:20px; height:20px; fill:#5e8aff; animation:spin 2s linear infinite; }
 .deep-list { margin-left:16px; list-style:disc; margin-bottom:12px; }
 .source-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
-.source-item { background:#1f2933; padding:6px 10px; border-radius:6px; font-size:.85rem; cursor:default; }
+.source-item { background:#1f2933; padding:6px 10px; border-radius:6px; font-size:.85rem; }
 .deep-code { background:#1a1f26; padding:10px; border-radius:6px; font-family:monospace; font-size:.85rem; }
 
 @keyframes fadeIn { to { opacity:1; transform:translateY(0); } }
@@ -54,8 +53,8 @@
           </div>
           <ul class="deep-list">
             <li>Understanding the request</li>
-            <li>The screen size is 700×500 px</li>
-            <li>Adding search animations with source list</li>
+            <li>Screen size is 700×500 px</li>
+            <li>Search animations with source list</li>
           </ul>
           <div class="source-list">
             <div class="source-item">openai.com</div>
@@ -74,6 +73,7 @@ print(response.json())</code>
   </div>
   <script>
     const messages = document.getElementById('messages');
+    const animBox = document.getElementById('animBox');
     const animIcon = document.getElementById('animIcon');
     const animText = document.getElementById('animText');
     const deepPanel = document.getElementById('deepPanel');
@@ -85,7 +85,7 @@ print(response.json())</code>
     };
     const convo = [
       {from:'user',text:"What's new in GPT-4?"},
-      {from:'ai',text:'Here\'s an overview.'},
+      {from:'ai',text:'Overview of features.'},
       {from:'user',text:'Generate an example image.'},
       {action:'img',text:'Generating image...'},
       {from:'ai',text:'Image ready!'},
@@ -99,18 +99,29 @@ print(response.json())</code>
       {action:'deep',text:'Deep searching...'}
     ];
     let idx=0;
-    function next(){if(idx>=convo.length)return;
+    function nextStep(){
+      if(idx>=convo.length){
+        // After deep completes, show final messages then restart
+        appendMsg('ai','Deep search completed!');
+        setTimeout(()=>appendMsg('user','Thanks, that was helpful!'),1000);
+        setTimeout(()=>{
+          messages.innerHTML=''; idx=0; animBox.classList.remove('shimmer'); deepPanel.style.display='none'; animText.textContent='Welcome!';
+          setTimeout(nextStep,1000);
+        },3000);
+        return;
+      }
       const m=convo[idx++];
-      if(m.from){appendMsg(m.from,m.text); deepPanel.style.display='none';}
+      if(m.from){ appendMsg(m.from,m.text); deepPanel.style.display='none'; animBox.classList.remove('shimmer'); }
       if(m.action){
         animIcon.innerHTML='<path d="'+icons[m.action]+'"/>';
         animText.textContent=m.text;
-        deepPanel.style.display = m.action==='deep'? 'flex':'none';
+        if(m.action==='img') animBox.classList.add('shimmer');
+        if(m.action==='deep') deepPanel.style.display='flex';
       }
-      setTimeout(next, m.from?1000:2000);
+      setTimeout(nextStep, m.from?1000:2000);
     }
-    function appendMsg(cls,t){const d=document.createElement('div');d.className='message '+cls;d.textContent=t;messages.appendChild(d);messages.scrollTop=messages.scrollHeight;}
-    setTimeout(next,1000);
+    function appendMsg(cls,t){ const d=document.createElement('div'); d.className='message '+cls; d.textContent=t; messages.appendChild(d); messages.scrollTop=messages.scrollHeight; }
+    setTimeout(nextStep,1000);
   </script>
 </body>
 </html>
