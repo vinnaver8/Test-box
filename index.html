@@ -20,6 +20,18 @@
       transition: transform 0.8s ease-in-out;
     }
 
+    .card-inner.hovered {
+      transform: rotateY(8deg) rotateX(4deg) scale(1.02);
+    }
+
+    .panel-center {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
     .timeline {
       padding: 2rem;
       background: #0f172a;
@@ -87,71 +99,111 @@
       border-radius: 0.375rem;
     }
 
-    .cube-container {
-      width: 300px;
-      height: 300px;
-      perspective: 1000px;
+    .card-face {
+      height: 100%;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      color: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
     }
 
-    .cube {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      animation: rotateCube 10s infinite linear;
-    }
+    .mode { display: none; }
+    .mode.active { display: flex; }
 
-    .face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: #1e293b;
-      color: #f0f9ff;
+    .typing-box {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      border: 2px solid #38bdf8;
+      gap: 6px;
+      background: #334155;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      box-shadow: inset 0 0 8px #22d3ee;
     }
 
-    .face.front  { transform: rotateY(0deg) translateZ(150px); }
-    .face.back   { transform: rotateY(180deg) translateZ(150px); }
-    .face.right  { transform: rotateY(90deg) translateZ(150px); }
-    .face.left   { transform: rotateY(-90deg) translateZ(150px); }
-    .face.top    { transform: rotateX(90deg) translateZ(150px); }
-    .face.bottom { transform: rotateX(-90deg) translateZ(150px); }
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #22d3ee;
+      border-radius: 50%;
+      animation: blink 1.2s infinite;
+    }
 
-    @keyframes rotateCube {
-      0% { transform: rotateX(0) rotateY(0); }
-      100% { transform: rotateX(360deg) rotateY(360deg); }
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    .button-upload {
+      background: #4f46e5;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(79, 70, 229, 0.5);
+    }
+
+    .preview-img {
+      max-width: 90%;
+      max-height: 400px;
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     }
   </style>
 </head>
 <body class="flex items-center justify-center h-screen">
-  <div class="flex w-[1000px] h-[600px] rounded-2xl card-3d">
+  <div class="flex w-[1000px] h-[600px] rounded-2xl card-3d" onmouseover="flip3D(true)" onmouseout="flip3D(false)">
     <!-- Timeline Panel -->
     <div class="w-1/2 timeline card-inner">
       <h2>🚀 DeepSearch Assistant</h2>
       <ol id="timelineList"></ol>
     </div>
 
-    <!-- 3D Cube Panel -->
-    <div class="w-1/2 flex items-center justify-center">
-      <div class="cube-container">
-        <div class="cube">
-          <div class="face front">Searching</div>
-          <div class="face back">Generating</div>
-          <div class="face right">Thinking</div>
-          <div class="face left">Previewing</div>
-          <div class="face top">Analyzing</div>
-          <div class="face bottom">Complete</div>
+    <!-- Right Panel -->
+    <div class="w-1/2 card-face card-inner flex items-center justify-center relative">
+      <div id="mode-search" class="mode panel-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712103.png" class="w-14 h-14 mb-2 rounded-full"/>
+        <div class="text-xl font-bold mb-2">Understanding the request</div>
+        <div class="typing-box mb-2">
+          <div class="dot"></div>
+          <div class="dot" style="animation-delay:0.3s"></div>
+          <div class="dot" style="animation-delay:0.6s"></div>
         </div>
+        <p class="text-center">Searching for <b>ChatGPT introduction preview</b>...</p>
+      </div>
+
+      <div id="mode-image" class="mode panel-center flex-col">
+        <button class="button-upload mb-4" onclick="triggerUpload()">Upload Preview Image</button>
+        <img id="preview-image" class="preview-img" src="/mnt/data/A_user_interface_design_showcases_a_Dark-themed_im.png" alt="preview-image">
+      </div>
+
+      <div id="mode-web" class="mode panel-center flex-col">
+        <div class="typing-box mb-2">
+          <div class="dot"></div>
+          <div class="dot" style="animation-delay:0.3s"></div>
+          <div class="dot" style="animation-delay:0.6s"></div>
+        </div>
+        <p class="text-lg">Searching web for GPT-4 papers...</p>
+      </div>
+
+      <div id="mode-think" class="mode panel-center flex-col">
+        <div class="typing-box mb-2">
+          <div class="dot"></div>
+          <div class="dot" style="animation-delay:0.3s"></div>
+          <div class="dot" style="animation-delay:0.6s"></div>
+        </div>
+        <p class="italic text-center">Thinking through insights deeply...</p>
       </div>
     </div>
   </div>
 
+  <input type="file" id="imgUpload" accept="image/*" class="hidden" onchange="handleImage(event)">
+
   <script>
     const timeline = document.getElementById('timelineList');
+    const modes = ['search','image','web','think'];
+    let step = 0;
+
     const steps = [
       { text: 'Understanding the request', sources: [] },
       { text: 'Searching for: ChatGPT introduction preview', sources: ['openai.com','springer.com','wikipedia.org'] },
@@ -180,9 +232,31 @@
       timeline.append(li);
     }
 
+    function clearTimeline() { timeline.innerHTML = ''; }
+    function showMode(name) { modes.forEach(m => document.getElementById(`mode-${m}`).classList.toggle('active', m === name)); }
+
     function cycle() {
-      timeline.innerHTML = '';
-      steps.forEach(step => appendTimelineStep(step));
+      clearTimeline();
+      for (let i = 0; i <= step; i++) appendTimelineStep(steps[i]);
+      const mIndex = Math.floor(step / 2) % modes.length;
+      showMode(modes[mIndex]);
+      step = (step + 1) % steps.length;
+      setTimeout(cycle, 2000);
+    }
+
+    function flip3D(on) {
+      document.querySelectorAll('.card-inner').forEach(e => e.classList.toggle('hovered', on));
+    }
+
+    function triggerUpload() {
+      document.getElementById('imgUpload').click();
+    }
+
+    function handleImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      document.getElementById('preview-image').src = url;
     }
 
     document.addEventListener('DOMContentLoaded', cycle);
