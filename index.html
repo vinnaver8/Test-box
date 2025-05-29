@@ -109,136 +109,90 @@
         </p>
     </div>
 
-    <script>
-        // Reference the draggable pin wrapper, not the image itself
-        const draggableBox = document.getElementById('draggablePinWrapper');
-        const draggableContainer = document.getElementById('draggableContainer');
-        const snapTargetRow = document.getElementById('snap-target-row');
-
-        let isDragging = false;
-        let offsetX, offsetY; // Offset from mouse pointer to box's top-left corner
-
-        // Function to get the bounding rectangle of an element
-        function getRect(element) {
-            return element.getBoundingClientRect();
+<script>
+const draggableBox = document.getElementById('draggablePinWrapper');
+const draggableContainer = document.getElementById('draggableContainer');
+const snapTargetRow = document.getElementById('snap-target-row');
+let isDragging = false;
+let offsetX, offsetY;
+function getRect(element) {
+return element.getBoundingClientRect();
         }
-
-        // Function to snap the box to the top of the designated snap target row and maintain its horizontal position
-        function snapToTargetRowAndMaintainHorizontalPosition() {
-            const containerRect = getRect(draggableContainer);
-            const boxRect = getRect(draggableBox);
-
-            if (!snapTargetRow) {
-                console.error("Snap target row not found.");
-                return;
-            }
-            const targetRowRect = getRect(snapTargetRow);
-
-            // Calculate the Y position to align with the top of the snap target row
-            // The pin's vertical center should align with the text's vertical center for a "next to" appearance
-            // Or, if you want the pin's TOP to align with the text's TOP, use:
-            // const targetY = targetRowRect.top - containerRect.top;
-            
-            // To align the pin's vertical center with the text's vertical center:
-            const targetY = (targetRowRect.top + targetRowRect.height / 2) - containerRect.top - (boxRect.height / 2);
-
-
-            // The targetX is the current horizontal position, clamped within container bounds
-            // We get the current transform X value to maintain it
-            const transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(draggableBox).transform);
-            let targetX = transformMatrix.m41;
-
-            // Ensure targetX is within the container's horizontal bounds
-            targetX = Math.max(0, Math.min(targetX, containerRect.width - boxRect.width));
-
-            // Set the new position using transform for smooth animation
-            draggableBox.style.transform = `translate(${targetX}px, ${targetY}px)`;
-            // Remove initial left/top styles set in HTML, as transform takes precedence
-            draggableBox.style.left = '0px';
-            draggableBox.style.top = '0px';
+function snapToTargetRowAndMaintainHorizontalPosition() {
+const containerRect = getRect(draggableContainer);
+const boxRect = getRect(draggableBox);
+if (!snapTargetRow) {
+console.error("Snap target row not found.");
+return;
+}
+const targetRowRect = getRect(snapTargetRow);
+const targetY = (targetRowRect.top + targetRowRect.height / 2) - containerRect.top - (boxRect.height / 2);
+const transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(draggableBox).transform);
+let targetX = transformMatrix.m41;
+targetX = Math.max(0, Math.min(targetX, containerRect.width - boxRect.width));
+draggableBox.style.transform = `translate(${targetX}px, ${targetY}px)`;
+draggableBox.style.left = '0px';
+draggableBox.style.top = '0px';
         }
-
-        // Mouse events
-        draggableBox.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            draggableBox.classList.add('dragging');
-
-            const boxRect = getRect(draggableBox);
-            offsetX = e.clientX - boxRect.left;
-            offsetY = e.clientY - boxRect.top;
+draggableBox.addEventListener('mousedown', (e) => {
+isDragging = true;
+draggableBox.classList.add('dragging');
+const boxRect = getRect(draggableBox);
+offsetX = e.clientX - boxRect.left;
+offsetY = e.clientY - boxRect.top;
         });
-
-        draggableContainer.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-
-            // Calculate new position relative to the container
-            const containerRect = getRect(draggableContainer);
-            let newX = e.clientX - offsetX - containerRect.left;
-            let newY = e.clientY - offsetY - containerRect.top;
-
-            // Clamp the position within the container bounds
-            const boxRect = getRect(draggableBox);
-            newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
-            newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
-
-            draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
+draggableContainer.addEventListener('mousemove', (e) => {
+if (!isDragging) return;
+const containerRect = getRect(draggableContainer);
+let newX = e.clientX - offsetX - containerRect.left;
+let newY = e.clientY - offsetY - containerRect.top;
+const boxRect = getRect(draggableBox);
+newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
+newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
+draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
         });
-
-        draggableContainer.addEventListener('mouseup', () => {
-            if (isDragging) {
-                isDragging = false;
-                draggableBox.classList.remove('dragging');
-                snapToTargetRowAndMaintainHorizontalPosition(); // Call the updated snapping function
+draggableContainer.addEventListener('mouseup', () => {
+if (isDragging) {
+isDragging = false;
+draggableBox.classList.remove('dragging');
+snapToTargetRowAndMaintainHorizontalPosition();
             }
         });
-
-        // Touch events for mobile responsiveness
-        draggableBox.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            draggableBox.classList.add('dragging');
-            e.preventDefault(); // Prevent scrolling while dragging
-
-            const touch = e.touches[0];
-            const boxRect = getRect(draggableBox);
-            offsetX = touch.clientX - boxRect.left;
-            offsetY = touch.clientY - boxRect.top;
+draggableBox.addEventListener('touchstart', (e) => {
+isDragging = true;
+draggableBox.classList.add('dragging');
+e.preventDefault();
+const touch = e.touches[0];
+const boxRect = getRect(draggableBox);
+offsetX = touch.clientX - boxRect.left;
+offsetY = touch.clientY - boxRect.top;
         });
-
-        draggableContainer.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault(); // Prevent scrolling while dragging
-
-            const touch = e.touches[0];
-            const containerRect = getRect(draggableContainer);
-            let newX = touch.clientX - offsetX - containerRect.left;
-            let newY = touch.clientY - offsetY - containerRect.top;
-
-            const boxRect = getRect(draggableBox);
-            newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
-            newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
-
-            draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
+draggableContainer.addEventListener('touchmove', (e) => {
+if (!isDragging) return;
+e.preventDefault();
+const touch = e.touches[0];
+const containerRect = getRect(draggableContainer);
+let newX = touch.clientX - offsetX - containerRect.left;
+let newY = touch.clientY - offsetY - containerRect.top;
+const boxRect = getRect(draggableBox);
+newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
+newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
+draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
         });
-
-        draggableContainer.addEventListener('touchend', () => {
-            if (isDragging) {
-                isDragging = false;
-                draggableBox.classList.remove('dragging');
-                snapToTargetRowAndMaintainHorizontalPosition(); // Call the updated snapping function
+draggableContainer.addEventListener('touchend', () => {
+if (isDragging) {
+isDragging = false;
+draggableBox.classList.remove('dragging');
+snapToTargetRowAndMaintainHorizontalPosition();
             }
         });
-
-        // Initial snap when the page loads
-        window.onload = () => {
-            snapToTargetRowAndMaintainHorizontalPosition();
+window.onload = () => {
+snapToTargetRowAndMaintainHorizontalPosition();
         };
-
-        // Recalculate snap position on window resize
-        window.addEventListener('resize', () => {
-            snapToTargetRowAndMaintainHorizontalPosition();
-        });
-
-    </script>
+window.addEventListener('resize', () => {
+snapToTargetRowAndMaintainHorizontalPosition();
+});
+</script>
 </body>
 </html>
 
