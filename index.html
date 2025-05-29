@@ -108,7 +108,208 @@
             With live real-time collaboration, remote teams are able to work together to bring a unified vision to life on the page. Tagging users, linking issues, and assigning action items are just a few of the advanced solutions powerful features available within the Huly document editor.
         </p>
     </div>
+<!--drag events------------------------------------------------------------------------------->
+<section
+         class="metabrain relative
+         min-h-[1700px]
+         overflow-hidden
+         pt-32">
+<div id="text-block" id="knowledge" class="relative md:absolute md:top-[1px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32">
+<h1 class="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500">
+  Knowledge at <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500">Fingertips</span>
+</h1>          
+<p class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">Huly offers a wide range of features to create and manage your project documentation. Huly's suite of collaborative editing tools boosts team efficiency.</p>
+</div>
+<!-- Container -->
+<div class="relative">
+<div id="toolbar"
+    class="absolute md:top-[115px] md:left-[370px] z-50 mx-auto flex h-10 w-fit min-w-[330px]
+           rounded-md px-3 shadow-[0px_10px_20px_0px_#00000080]
+           lg:-top-10 lg:left-11
+           md:-top-8 md:left-7 md:h-[30px] md:min-w-[218px] md:px-2
+           sm:-top-6 sm:left-0 sm:h-[27px] sm:min-w-[190px]"
+    style="background-color:#a53e00;">
+    <!-- Link -->
+<button id="btn-link" class="transition-all duration-200 flex h-6 cursor-default items-center rounded bg-blue pl-2 pr-2.5 text-14 tracking-snugger text-white md:h-[19px] md:px-1 md:text-11 sm:text-10">
+ <!-- your SVG -->
+<svg xmlns="http://www.w3.org/2000/svg"width="200" height="50" class="h-5 w-5 stroke-grey-60 transition-colors md:h-[15px] md:w-[15px]">
+<rect width="70" height="32" rx="5" ry="5" fill="#0D0D0D" />
+<text x="18%" y="35%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="white" style="filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));">
++ Link</text>
+</svg>
+</button>
+<!-- Bold -->
+<button id="btn-bold" class="ml-1 transition-all duration-200">
+<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 28 28" class="h-7 w-7 transition-colors hover:fill-white md:h-[21px] md:w-[21px] fill-grey-60"><path d="M9.197 19.5V7.621h4.756q1.31 0 2.186.389t1.317 1.079q.44.684.44 1.577 0 .696-.278 1.224-.277.522-.765.859-.482.33-1.102.47v.115q.678.03 1.27.383.597.354.969.992.37.633.37 1.508 0 .945-.469 1.688-.465.737-1.375 1.166t-2.244.429zm2.511-2.053h2.047q1.05 0 1.532-.4.48-.406.481-1.08 0-.492-.238-.87a1.6 1.6 0 0 0-.678-.591q-.435-.215-1.039-.215h-2.105zm0-4.855h1.862q.517 0 .916-.18.406-.186.638-.522.238-.336.238-.806 0-.644-.458-1.038-.452-.395-1.288-.395h-1.908z"></path></svg>
+<span class="sr-only">Bold</span>
+</button>
+<!-- Italic -->
+<button id="btn-italic" class="ml-1 transition-all duration-200">
+<!-- your Italic SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 28 28" class="h-7 w-7 transition-colors hover:fill-white md:h-[21px] md:w-[21px] fill-grey-60"><path d="M21 8.556V7H10.889v1.556h3.998l-3.4 10.888H7V21h10.111v-1.556h-3.998l3.4-10.888z"></path></svg>
+<span class="sr-only">Italic</span>
+</button>
+    <!-- Underline -->
+    <button id="btn-underline" class="ml-1 transition-all duration-200">
+      <!-- your Underline SVG -->
+     <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 28 28" class="h-7 w-7 transition-colors hover:fill-white md:h-[21px] md:w-[21px] fill-grey-60"><path d="M15.944 7.621h1.798v7.813q0 1.247-.586 2.21-.586.957-1.647 1.508-1.062.545-2.488.545-1.421 0-2.483-.545-1.062-.55-1.647-1.508-.585-.963-.586-2.21V7.621h1.792v7.668q0 .806.354 1.433.36.626 1.015.986.655.354 1.555.354.905 0 1.56-.354a2.5 2.5 0 0 0 1.01-.986q.353-.627.353-1.433zM7 22.164h12.833v1.167H7z"></path></svg>
+      <span class="sr-only">Underline</span>
+    </button>
+    <!-- Strikethrough -->
+    <button id="btn-strike" class="ml-1 transition-all duration-200">
+      <!-- your Line-through SVG -->
+     <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 28 28" class="h-7 w-7 transition-colors hover:fill-white md:h-[21px] md:w-[21px] fill-grey-60"><path d="M15.944 7.621h1.798v7.813q0 1.247-.586 2.21-.586.957-1.647 1.508-1.062.545-2.488.545-1.421 0-2.483-.545-1.062-.55-1.647-1.508-.585-.963-.586-2.21V7.621h1.792v7.668q0 .806.354 1.433.36.626 1.015.986.655.354 1.555.354.905 0 1.56-.354a2.5 2.5 0 0 0 1.01-.986q.353-.627.353-1.433z"></path><path d="M7 14h12.833v1.167H7z"></path></svg>
+      <span class="sr-only">Strikethrough</span>
+    </button>
+<span class="ml-1 h-full w-px bg-white-30"></span>
+<!-- Mention (no action) -->
+<button class="ml-2.5 md:ml-1.5 sm:ml-1 cursor-default transition-all duration-200">
+<!-- your Mention SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 20 20" class="h-5 w-5 stroke-grey-60 transition-colors md:h-[15px] md:w-[15px]"><path d="M9.866 13.335c1.765 0 3.195-1.555 3.195-3.472S11.63 6.39 9.866 6.39 6.672 7.945 6.672 9.863s1.43 3.472 3.194 3.472"></path><path d="M13.059 6.39v5.758c0 1.727 2.595 2.025 3.968-.31 1.165-1.975.88-4.988-.575-6.97C14.312 1.947 9.364.857 5.77 3.27 2.467 5.487 1.29 9.973 3.116 13.598c1.806 3.588 6.045 5.327 9.881 4.03"></path></svg>
+<span class="sr-only">Mention</span>
+</button>
+<!-- Highlight toggle -->
+<button id="btn-highlight" class="ml-3 md:ml-2 cursor-pointer transition-all duration-200">
+<!-- your Highlight SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="white" width="20px" height="20px" viewBox="0 0 24 24"
+  class="h-5 w-5 stroke-grey-60 transition-colors md:h-[15px] md:w-[15px]">
+  <path d="m20.707 5.826-3.535-3.533a.999.999 0 0 0-1.408-.006L7.096 10.82a1.01 1.01 0 0 0-.273.488l-1.024 4.437L4 18h2.828l1.142-1.129 3.588-.828c.18-.042.345-.133.477-.262l8.667-8.535a1 1 0 0 0 .005-1.42zm-9.369 7.833-2.121-2.12 7.243-7.131 2.12 2.12-7.242 7.131zM4 20h16v2H4z"/></svg>
+ <span class="sr-only">Toggle Highlight</span>
+</button>
+</div></div>
+<!------editor bar bere ----------------------------------------------------------->
+<div class="relative mt-12" id="editor-container">
+<!-- 1. Actual visible text (topmost) -->
+<div id="editor" contenteditable="true" 
+class="relative z-10 whitespace-pre-wrap leading-relaxed text-white font-normal p-2 focus:outline-none md:absolute md:top-[90px] md:left-[350px]">
+<span class="font-semibold">Documents in Huly</span> can be used for sharing reference materials among team members, collaborating on plans and roadmaps, storing meeting notes and assigning action items.
+</div>
+<!-- 2. Yellow highlight layer (middle) -->
+<div id="highlight-overlay"
+class="absolute top-0 scale-[1.02] inset-0 opacity-0 z-0 transition-opacity duration-300 pointer-events-none md:w-[625px] md:h-[10px] md:left-[10px] md:absolute md:top-[90px] md:left-[350px]"
+style="--highlight-position: 1;">
+<span class="pointer-events-none bg-no-repeat text-transparent whitespace-pre-wrap leading-relaxed block p-2"
+style="background:linear-gradient(90deg, #ffeba4 50%, transparent 50%) 100% 0 / 200% 100% no-repeat;
+background-position:calc((1 - var(--highlight-position)) * 100%) 1">
+<span class="font-semibold">Documents in Huly</span> can be used for sharing reference materials among team members, collaborating on plans and roadmaps, storing meeting notes and assigning action items.
+</span></div>
+<!-- 3. Cursor pin overlay (bottom) -->
+<div id="cursor-overlay"
+class="relative absolute w-full scale-[1] opacity-0 transition-opacity duration-300 pointer-events-none md:absolute md:top-[90px] md:left-[350px]"
+style="--cursor-position: 0;">
+<span class="pointer-events-none md:h-[10px] !bg-[length:10px_36px] bg-no-repeat text-transparent md:!bg-[length:8px_26px] whitespace-pre-wrap leading-relaxed block p-2 md:pr-2 sm:!bg-[length:7px_25px]"
+style="background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAxMCAzNiI+PHBhdGggZmlsbD0iIzMwMzIzNiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNNCAyNi4xQTUuMDAyIDUuMDAyIDAgMCAwIDUgMzZhNSA1IDAgMCAwIDEtOS45VjBINHoiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==)100%0 no-repeat;background-position:calc(var(--cursor-position)*100%) 8px" aria-hidden="true">
+<span class="font-semibold">Documents in Huly</span> can be used for sharing reference materials among team members, collaborating on plans and roadmaps, storing meeting notes and assigning action items.
+</span>
+</div>
+</div>
+<div class="relative flex items-center top-0 justify-center md:absolute md:top-[400px] md:left-[365px]">
+<img src="board.webp" alt="chat"
+class="w-[360px] h-[240px] md:w-[570px] md:h-[450px] rounded-[20px]" />
+</div>
 
+<div  class="relative flex flex-wrap md:absolute md:top-[850px] md:left-[360px] md:w-[500px] md:h-[50px]">
+<div class="absolute left-0 top-0 h-[31.5%] w-px xl:h-[33%] sm:hidden"></div>
+<p class="relative max-w-full break-words -mt-8 pb-3 pt-[68px] lg:-mt-9 md:mt-[-19px] md:pt-[47px] sm:mt-[-22px] sm:pt-[38px]">
+<span class="absolute left-1/2 top-0 -z-10 h-full w-px" aria-hidden="true"></span>
+With 
+<span class="relative text-center bg-gradient-to-br from-slate-7 to-slate-7 bg-[left_14px] bg-no-repeat [transition:background_1s_0.5s,color_0.5s_0s] lg:bg-[left_12px] md:bg-[left_9px] bg-[length:100%_2px] text-slate-7 sm:bg-[length:100%_1px]">live</span> 
+real-time collaboration, remote teams are able toa unifieo life on the page. Tagging users, linking to issues, and assigning action items are just a few of the 
+<span class="relative bg-gradient-to-br from-slate-7 to-slate-7 bg-[left_14px] bg-no-repeat [transition:background_1.5s_2s,color_0.5s_1.5s] lg:bg-[left_12px] md:bg-[left_9px] bg-[length:100%_2px] text-slate-7 sm:bg-[length:100%_1px]">advanced solutions</span> 
+<span class="relative pr-2 md:pr-1">
+<strong class="font-medium text-orange">powerful features</strong>
+<span class="relative">
+<span class="absolute z-40 flex flex-col items-center hover:cursor-grab active:cursor-grabbing group bottom-[-8px] left-[-30px] text-orange md:top-[10px] md:left-[-21px] sm:left-[-16px]" aria-hidden="true" draggable="false" style="-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:none">
+<img id="pin"
+alt="" loading="lazy" width="66" height="66" decoding="async" data-nimg="1" class="pointer-events-none z-10 max-w-none shadow-[0px_6px_25px_0px_#00000080] transition-all duration-200 group-active:translate-y-[-15px] group-active:scale-[1.05] group-active:shadow-[0px_14px_30px_0px_#00000080] md:max-w-[45px] sm:max-w-[36px]"
+style="color:transparent" srcset="orange-pin.png">
+
+<span class="flex flex-col items-center transition-transform duration-200 group-active:-translate-y-[25px]">
+<span class="h-[27px] w-0.5 bg-orange md:h-[18px] md:w-px"></span>
+<span class="-mt-px h-2.5 w-2.5 rounded-full bg-orange md:h-[7px] md:w-[7px]"></span>
+</span>
+</span>
+</span>
+</span>
+available within the Huly document editor.
+</p>
+</div>
+<div class="relative flex items-center justify-center
+         top-0 md:absolute md:top-[1000px] md:left-[365px]"
+>
+  <img id="visible" 
+    src="code.webp"
+    alt="code screenshot"
+    class="w-[360px] h-[240px] md:w-[570px] md:h-[450px] rounded-[20px]"
+  />
+  <pre id="codeBlock" class="hidden">
+async function fetchData() {
+  const response = await fetch('/api/data');
+  const data = await response.json();
+  return data;
+}
+
+async function handleRequest() {
+  try {
+    const data = await fetchData();
+    processData(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+</pre><button id="copyBtn"class="absolute top-2 right-2 flex items-center space-x-1 bg-gray-700 bg-opacity-75 hover:bg-opacity-100 text-white px-3 py-1 rounded text-sm" aria-label="Copy code to clipboard">
+<svg xmlns="http://www.w3.org/2000/svg"class="w-4 h-4"fill="none" viewBox="0 0 24 24"stroke="currentColor" stroke-width="2">
+<path stroke-linecap="round" stroke-linejoin="round"
+d="M8 16H6a2 2 0 01-2-2V6a2 
+2 0 012-2h8a2 2 0 012 2v2"/>
+<rect x="8" y="8" width="12" height="12"rx="2" ry="2" stroke-linecap="round"stroke-linejoin="round"/>
+</svg><span>Copy Code</span>
+</button>
+</div>
+<script>document .getElementById('copyBtn') .addEventListener('click', () => {
+const code = document.getElementById('codeBlock').innerText;
+navigator.clipboard
+ .writeText(code)
+ .then(() => { alert('Code copied to clipboard!'); })
+ .catch((err) => {  console.error('Copy failed:', err);}); });
+</script>
+<div id="text-block" id="pin" class="relative md:absolute md:top-[1350px] md:left-[375px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32">
+<p class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">Bring your documents to life with text styling, images, files, and code—perfect for planning, documenting, and aligning your team.</p>
+</div>
+<div class="relative">
+<div class="relative flex flex-wrap w-full mx-auto md:absolute md:top-[1370px] md:left-[370px]">
+<span class="text-slate-700">Tap here to continue...</span>
+</div>
+</div>
+<div class="relative">
+<div class="mt-3 flex w-fit gap-x-1 rounded-full bg-[#333333] p-[5px] shadow-[0px_4px_10px_0px_rgba(0,0,0,0.15)] sm:mt-2 sm:gap-x-0.5 sm:p-1 md:mt-1.5 mx-auto md:absolute md:top-[1400px] md:left-[370px]">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-black sm:h-[27px] sm:w-[27px] md:h-[30px] md:w-[30px]"> 
+<svg xmlns="[invalid url, do not cite]" fill="#000000" viewBox="0 0 12 12" class="m-auto h-auto w-3.5 stroke-white sm:w-3"><path d="M6 1v10M1 6h10"></path></svg>
+</div>
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-8 md:h-[30px] md:w-[30px] sm:h-[27px] sm:w-[27px]">
+<img class="m-auto h-auto w-5 sm:w-3" src="camera.svg" height="20" width="20" loading="lazy" alt="">
+</div>
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-8 md:h-[30px] md:w-[30px] sm:h-[27px] sm:w-[27px]">
+<img class="m-auto h-auto w-4.5 sm:w-3" src="data:image/svg+xml;base64,PHN2Z...=" height="18" width="18" loading="lazy" alt="">
+</div>
+</div>
+</div>
+<!-- line 1 -->
+<div
+class="card-wrapper hidden md:block absolute top-[50px] left-[100px] w-[100px] h-[1900px] z-[-2]"
+style="background-image: url('line1.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+</div>
+<!--line box ----------------------------------------------------------------------------------->
+<div id="card-wrapper"
+class="absolute top-[80px] left-[50px] w-[250px] sm:hidden">
+<div class="sm:hidden relative w-full h-[300px]">
+<img src="lbox.png"alt="Card background"
+class="sm:hidden absolute inset-0 w-full h-full object-cover rounded-2xl shadow-lg"/>
+</div>
+</div>
+</section>
+<!--section 3 end-->
+    
 <script>
 const draggableBox = document.getElementById('draggablePinWrapper');
 const draggableContainer = document.getElementById('draggableContainer');
