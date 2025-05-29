@@ -377,7 +377,13 @@ snapToTargetRowAndMaintainHorizontalPosition();
             }
         });
 window.onload = () => {
-snapToTar
+            snapToTargetRowAndMaintainHorizontalPosition();
+        };
+
+        // Recalculate snap position on window resize
+        window.addEventListener('resize', () => {
+            snapToTargetRowAndMaintainHorizontalPosition();
+        });
     </script></body>
 </html>
 
