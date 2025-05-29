@@ -7,66 +7,54 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
   #draggableContainer {
-            /* User's provided classes and styles */
-            /* relative md:absolute md:top-[950px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32 */
-            /* Ensure it's positioned correctly for the pin to be relative to it */
-            position: relative; /* Must be relative for absolute children */
+            position: relative;
             width: 90%;
             max-width: 800px;
-            background-color: #ffffff; /* Example background, adjust as needed */
+            background-color: #ffffff;
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            box-sizing: border-box; /* Include padding in width/height */
-            min-height: 400px; /* Ensure enough space for content and pin */
-            z-index: 1; /* Ensure it's above body background */
-        }
-
-        /* Styles for the draggable pin wrapper */
+            box-sizing: border-box;
+            min-height: 400px;
+            z-index: 1;
+            }
         #draggablePinWrapper {
-            /* User's provided classes and styles for the outer pin div */
-            /* absolute flex flex-col items-start cursor-grab active:cursor-grabbing select-none float-pin md:top-[900px] md:left-[100px] */
-            
-            /* Essential for dragging functionality */
             position: absolute;
             cursor: grab;
-            touch-action: none; /* Prevent browser default touch actions */
-            transition: transform 0.3s ease-in-out; /* Smooth snapping animation */
-            z-index: 100; /* Ensure pin is on top */
-
-            /* Initial positioning from user's HTML, will be overridden by JS transform */
-            /* left:1px; top:-20px; */
-            /* md:top-[900px] md:left-[100px] */
+            touch-action: none;
+            transition: transform 0.3s ease-in-out;
+            z-index: 100;
         }
 
         #draggablePinWrapper.dragging {
             cursor: grabbing;
-            transition: none; /* Disable transition during drag */
+            transition: none;
         }
-
-        /* Ensure the image inside the pin wrapper scales correctly */
         #draggablePinWrapper img {
-            pointer-events: none; /* Allows dragging the parent div, not just the image */
+            pointer-events: none;
         }
-
-        /* Basic styling for content within the container */
         #draggableContainer h1 {
-            font-size: 2.5rem; /* Larger font for heading */
+            font-size: 2.5rem;
             font-weight: bold;
             color: #000;
-            margin-bottom: 10px; /* Space below heading */
+            margin-bottom: 10px;
         }
 
         #draggableContainer p {
             font-size: 1rem;
             color: #555;
             line-height: 1.5;
-            margin-bottom: 10px; /* Space below paragraphs */
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body class="bg-[#0D0D0D] text-white min-h-screen overflow-x-hidden font-sans antialiased">
-    <div id="draggableContainer" class="relative md:absolute md:top-[50px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32">
+  <section
+         class="metabrain relative
+         min-h-[1700px]
+         overflow-hidden
+         pt-32">
+  <div id="draggableContainer" class="relative md:absolute md:top-[50px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32">
         <h1 class="text-4xl font-bold mb-4" style="color: #E5E5E5;">
             Knowledge at <span style="color: #E5E5E5;">Fingertips</span>
         </h1>
@@ -95,7 +83,7 @@
         <p class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">
             With live real-time collaboration, remote teams are able to work together to bring a unified vision to life on the page. Tagging users, linking issues, and assigning action items are just a few of the advanced solutions powerful features available within the Huly document editor.
         </p>
-    </div>
+    </div></section>
 <!--drag events------------------------------------------------------------------------------->
 <section
          class="metabrain relative
