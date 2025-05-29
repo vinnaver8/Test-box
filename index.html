@@ -1,176 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Floating Snap Button</title>
-  <style>
-    * {
-      padding: 0;
-      margin: 0;
-      box-sizing: border-box;
-    }
-    #main-wrapper {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      background-color: #E1E8FD;
-      overflow: hidden;
-    }
-    #floating-snap-btn-wrapper {
-      position: absolute;
-      top: 40%;
-      left: 30px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      transition: all 0.3s ease-in-out;
-    }
-    #floating-snap-btn-wrapper .fab-btn {
-      position: absolute;
-      top: 0; left: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%; height: 100%;
-      border-radius: 50%;
-      background-color: #6B26BB;
-      color: white;
-      z-index: 1000;
-      box-shadow: 0px 2px 17px -1px rgba(0,0,0,0.3);
-      cursor: grab;
-    }
-    #floating-snap-btn-wrapper ul {
-      position: relative;
-      width: 100%; height: 100%;
-      list-style: none;
-    }
-    #floating-snap-btn-wrapper ul li {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f7f7f7;
-      color: black;
-      transform: scale(0.95);
-      transition: .5s;
-      border-radius: 50%;
-    }
-    #floating-snap-btn-wrapper.fab-active li:hover {
-      background-color: #f8e487;
-    }
-    /* horizontal expand */
-    #floating-snap-btn-wrapper.left li:nth-child(1) { top:0; left:300%; transition-delay:0s }
-    #floating-snap-btn-wrapper.left li:nth-child(2) { top:0; left:200%; transition-delay:0.2s }
-    #floating-snap-btn-wrapper.left li:nth-child(3) { top:0; left:100%; transition-delay:0.4s }
-    #floating-snap-btn-wrapper.right li:nth-child(1){ top:0; left:-300%; transition-delay:0s }
-    #floating-snap-btn-wrapper.right li:nth-child(2){ top:0; left:-200%; transition-delay:0.2s }
-    #floating-snap-btn-wrapper.right li:nth-child(3){ top:0; left:-100%; transition-delay:0.4s }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Pin on Website Content</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align content to the top */
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            padding-top: 50px; /* Add some padding to the top */
+        }
+
+        /* Styles for the user's draggable container */
+        #draggableContainer {
+            /* User's provided classes and styles */
+            /* relative md:absolute md:top-[950px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32 */
+            /* Ensure it's positioned correctly for the pin to be relative to it */
+            position: relative; /* Must be relative for absolute children */
+            width: 90%;
+            max-width: 800px;
+            background-color: #ffffff; /* Example background, adjust as needed */
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box; /* Include padding in width/height */
+            min-height: 400px; /* Ensure enough space for content and pin */
+            z-index: 1; /* Ensure it's above body background */
+        }
+
+        /* Styles for the draggable pin wrapper */
+        #draggablePinWrapper {
+            /* User's provided classes and styles for the outer pin div */
+            /* absolute flex flex-col items-start cursor-grab active:cursor-grabbing select-none float-pin md:top-[900px] md:left-[100px] */
+            
+            /* Essential for dragging functionality */
+            position: absolute;
+            cursor: grab;
+            touch-action: none; /* Prevent browser default touch actions */
+            transition: transform 0.3s ease-in-out; /* Smooth snapping animation */
+            z-index: 100; /* Ensure pin is on top */
+
+            /* Initial positioning from user's HTML, will be overridden by JS transform */
+            /* left:1px; top:-20px; */
+            /* md:top-[900px] md:left-[100px] */
+        }
+
+        #draggablePinWrapper.dragging {
+            cursor: grabbing;
+            transition: none; /* Disable transition during drag */
+        }
+
+        /* Ensure the image inside the pin wrapper scales correctly */
+        #draggablePinWrapper img {
+            pointer-events: none; /* Allows dragging the parent div, not just the image */
+        }
+
+        /* Basic styling for content within the container */
+        #draggableContainer h1 {
+            font-size: 2.5rem; /* Larger font for heading */
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px; /* Space below heading */
+        }
+
+        #draggableContainer p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 10px; /* Space below paragraphs */
+        }
+    </style>
 </head>
 <body>
-  <div id="main-wrapper">
-    <div id="floating-snap-btn-wrapper">
-      <div class="fab-btn">
-        <ion-icon name="share-social"></ion-icon>
-      </div>
-      <ul>
-        <li><ion-icon name="logo-twitter"></ion-icon></li>
-        <li><ion-icon name="logo-facebook"></ion-icon></li>
-        <li><ion-icon name="logo-whatsapp"></ion-icon></li>
-      </ul>
+    <div id="draggableContainer" class="relative md:absolute md:top-[50px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32">
+        <h1 class="text-4xl font-bold mb-4" style="color: #E5E5E5;">
+            Knowledge at <span style="color: #E5E5E5;">Fingertips</span>
+        </h1>
+        <p id="snap-target-row" class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">
+            Huly offers a wide range of features to create and manage your project documentation. Huly's suite of collaborative editing tools boosts team efficiency.
+        </p>
+        
+        <div id="main-wrapper">
+            <div id="draggablePinWrapper"
+                class="absolute flex flex-col items-start cursor-grab active:cursor-grabbing select-none float-pin md:top-[900px] md:left-[100px]"
+                style="left:1px; top:-20px;">
+                <div class="relative w-[66px] h-[66px] md:w-[45px] md:h-[45px] sm:w-[50px] sm:h-[50px] ">
+                    <div class="absolute inset-0 rounded-full bg-red-500 opacity-50 animate-ping"></div>
+                    <div class="absolute inset-0 rounded-full border-3 border-red-500"></div>
+                    <img id="draggablebox"
+                        src="https://placehold.co/66x66/FF0000/FFFFFF?text=PIN"
+                        alt="pin"
+                        class="relative rounded-full bg-red border-4 border-red shadow-lg w-full h-full object-cover pointer-events-none"/>
+                </div>
+            </div>
+        </div>
+
+        <p class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">
+            Documents in Huly can be used for sharing reference materials among team members, collaborating on plans and roadmaps, storing meeting notes and assigning action items.
+        </p>
+        <p class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">
+            With live real-time collaboration, remote teams are able to work together to bring a unified vision to life on the page. Tagging users, linking issues, and assigning action items are just a few of the advanced solutions powerful features available within the Huly document editor.
+        </p>
     </div>
-  </div>
 
-  <script>
-    const fab = document.getElementById("floating-snap-btn-wrapper");
-    const wrapper = document.getElementById("main-wrapper");
-    let isDragging = false;
-    let offset = { x: 0, y: 0 };
+    <script>
+        // Reference the draggable pin wrapper, not the image itself
+        const draggableBox = document.getElementById('draggablePinWrapper');
+        const draggableContainer = document.getElementById('draggableContainer');
+        const snapTargetRow = document.getElementById('snap-target-row');
 
-    fab.addEventListener("mousedown", startDrag);
-    fab.addEventListener("touchstart", startDrag);
+        let isDragging = false;
+        let offsetX, offsetY; // Offset from mouse pointer to box's top-left corner
 
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("touchmove", onMove);
+        // Function to get the bounding rectangle of an element
+        function getRect(element) {
+            return element.getBoundingClientRect();
+        }
 
-    document.addEventListener("mouseup", endDrag);
-    document.addEventListener("touchend", endDrag);
+        // Function to snap the box to the top of the designated snap target row and maintain its horizontal position
+        function snapToTargetRowAndMaintainHorizontalPosition() {
+            const containerRect = getRect(draggableContainer);
+            const boxRect = getRect(draggableBox);
 
-    fab.addEventListener("click", (e) => {
-      // only toggle expand if it wasn't moved
-      if (!fab.classList.contains("moved")) {
-        fab.classList.toggle("fab-active");
-      }
-      fab.classList.remove("moved");
-    });
+            if (!snapTargetRow) {
+                console.error("Snap target row not found.");
+                return;
+            }
+            const targetRowRect = getRect(snapTargetRow);
 
-    function startDrag(e) {
-      isDragging = true;
-      fab.classList.remove("fab-active"); // collapse if open
-      fab.style.transition = "none";
-      const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
-      const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
-      offset.x = clientX - fab.offsetLeft;
-      offset.y = clientY - fab.offsetTop;
-    }
+            // Calculate the Y position to align with the top of the snap target row
+            // The pin's vertical center should align with the text's vertical center for a "next to" appearance
+            // Or, if you want the pin's TOP to align with the text's TOP, use:
+            // const targetY = targetRowRect.top - containerRect.top;
+            
+            // To align the pin's vertical center with the text's vertical center:
+            const targetY = (targetRowRect.top + targetRowRect.height / 2) - containerRect.top - (boxRect.height / 2);
 
-    function onMove(e) {
-      if (!isDragging) return;
-      e.preventDefault();
-      const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
-      const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
-      fab.style.left = (clientX - offset.x) + "px";
-      fab.style.top  = (clientY - offset.y) + "px";
-      fab.classList.add("moved");
-    }
 
-    function endDrag(e) {
-      if (!isDragging) return;
-      isDragging = false;
-      fab.style.transition = "all 0.3s ease-in-out";
+            // The targetX is the current horizontal position, clamped within container bounds
+            // We get the current transform X value to maintain it
+            const transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(draggableBox).transform);
+            let targetX = transformMatrix.m41;
 
-      // clamp inside wrapper
-      const wrapRect = wrapper.getBoundingClientRect();
-      const fabRect  = fab.getBoundingClientRect();
-      let x = fabRect.left - wrapRect.left;
-      let y = fabRect.top  - wrapRect.top;
-      x = Math.max(0, Math.min(x, wrapRect.width  - fabRect.width));
-      y = Math.max(0, Math.min(y, wrapRect.height - fabRect.height));
-      fab.style.left = x + "px";
-      fab.style.top  = y + "px";
+            // Ensure targetX is within the container's horizontal bounds
+            targetX = Math.max(0, Math.min(targetX, containerRect.width - boxRect.width));
 
-      // distances to edges
-      const dist = {
-        left:   x,
-        right:  wrapRect.width  - x - fabRect.width,
-        top:    y,
-        bottom: wrapRect.height - y - fabRect.height
-      };
-      const nearest = Object.entries(dist).reduce((prev,[k,v]) => v < prev[1] ? [k,v] : prev, ["left", Infinity])[0];
+            // Set the new position using transform for smooth animation
+            draggableBox.style.transform = `translate(${targetX}px, ${targetY}px)`;
+            // Remove initial left/top styles set in HTML, as transform takes precedence
+            draggableBox.style.left = '0px';
+            draggableBox.style.top = '0px';
+        }
 
-      // snap to nearest
-      switch(nearest) {
-        case "left":
-          fab.style.left = "30px";
-          fab.classList.add("left");
-          fab.classList.remove("right");
-          break;
-        case "right":
-          fab.style.left = (wrapRect.width - 30 - fabRect.width) + "px";
-          fab.classList.add("right");
-          fab.classList.remove("left");
-          break;
-        case "top":
-          fab.style.top  = "30px";
-          break;
-        case "bottom":
-          fab.style.top  = (wrapRect.height - 30 - fabRect.height) + "px";
-          break;
-      }
-    }
-  </script>
+        // Mouse events
+        draggableBox.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            draggableBox.classList.add('dragging');
+
+            const boxRect = getRect(draggableBox);
+            offsetX = e.clientX - boxRect.left;
+            offsetY = e.clientY - boxRect.top;
+        });
+
+        draggableContainer.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            // Calculate new position relative to the container
+            const containerRect = getRect(draggableContainer);
+            let newX = e.clientX - offsetX - containerRect.left;
+            let newY = e.clientY - offsetY - containerRect.top;
+
+            // Clamp the position within the container bounds
+            const boxRect = getRect(draggableBox);
+            newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
+            newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
+
+            draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
+        });
+
+        draggableContainer.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                draggableBox.classList.remove('dragging');
+                snapToTargetRowAndMaintainHorizontalPosition(); // Call the updated snapping function
+            }
+        });
+
+        // Touch events for mobile responsiveness
+        draggableBox.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            draggableBox.classList.add('dragging');
+            e.preventDefault(); // Prevent scrolling while dragging
+
+            const touch = e.touches[0];
+            const boxRect = getRect(draggableBox);
+            offsetX = touch.clientX - boxRect.left;
+            offsetY = touch.clientY - boxRect.top;
+        });
+
+        draggableContainer.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault(); // Prevent scrolling while dragging
+
+            const touch = e.touches[0];
+            const containerRect = getRect(draggableContainer);
+            let newX = touch.clientX - offsetX - containerRect.left;
+            let newY = touch.clientY - offsetY - containerRect.top;
+
+            const boxRect = getRect(draggableBox);
+            newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
+            newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
+
+            draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
+        });
+
+        draggableContainer.addEventListener('touchend', () => {
+            if (isDragging) {
+                isDragging = false;
+                draggableBox.classList.remove('dragging');
+                snapToTargetRowAndMaintainHorizontalPosition(); // Call the updated snapping function
+            }
+        });
+
+        // Initial snap when the page loads
+        window.onload = () => {
+            snapToTargetRowAndMaintainHorizontalPosition();
+        };
+
+        // Recalculate snap position on window resize
+        window.addEventListener('resize', () => {
+            snapToTargetRowAndMaintainHorizontalPosition();
+        });
+
+    </script>
 </body>
 </html>
+
