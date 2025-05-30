@@ -38,6 +38,24 @@
       pointer-events: none;
       filter: drop-shadow(0 0 10px rgba(0,123,255,0.8));
     }
+    @layer utilities {
+    @keyframes glowPulse {
+      0%, 100% {
+        text-shadow: 0 0 6px rgba(255, 0, 122, 0.4),
+                     0 0 12px rgba(255, 0, 122, 0.3),
+                     0 0 18px rgba(255, 0, 122, 0.2);
+      }
+      50% {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
+                     0 0 20px rgba(255, 200, 200, 0.6),
+                     0 0 30px rgba(255, 150, 150, 0.5);
+      }
+    }
+
+    .glow-text, .glow-text-span {
+      animation: glowPulse 2.5s ease-in-out infinite;
+    }
+  }
   </style>
 </head>
 
@@ -52,14 +70,14 @@
       class="relative md:absolute md:top-[1px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto overflow-visible pt-32"
     >
       <h1
-        class="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
-      >
-        Knowledge at
-        <span
-          class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
-        >
-          Fingertips
-        </span>
+  class="glow-text text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
+>
+  Knowledge at
+  <span
+    class="glow-text-span text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
+  >
+    Fingertips
+  </span>
       </h1>
 
       <p
