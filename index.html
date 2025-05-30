@@ -34,10 +34,9 @@
       transition: transform 0.3s ease-in-out;
     }
     #draggablePinWrapper.dragging {
-      cursor: grabbing;
-      transition: none;
+    cursor: grabbing;
+    transition: transform 0.06s ease-out; /* small but still animated */
     }
-
     /* ----------------------------------------
        Pin Image Drop Shadow
        - Respects pin’s transparent shape
