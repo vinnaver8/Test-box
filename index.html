@@ -96,89 +96,149 @@
        JAVASCRIPT: Horizontal Drag + Vertical Snap
        ================================= -->
   <script>
-    const draggableBox = document.getElementById("draggablePinWrapper");
-    const draggableContainer = document.getElementById("draggableContainer");
+const draggableBox = document.getElementById('draggablePinWrapper');
+const draggableContainer = document.getElementById('draggableContainer');
+const snapTargetRow = document.querySelector('.snap-target-row');
 
-    let isDragging = false;
-    let offsetX, offsetY;
+let isDragging = false;
+let offsetX, offsetY;
+let lastX = 0, lastY = 0;
+let velocityX = 0, velocityY = 0;
+let animationFrame;
 
-    function snapToContainer() {
-      const boxRect = draggableBox.getBoundingClientRect();
-      const containerRect = draggableContainer.getBoundingClientRect();
+function getRect(element) {
+    return element.getBoundingClientRect();
+}
 
-      // Compute the page‐coordinate for the vertical CENTER of the container
-      const pageScrollY =
-        window.pageYOffset || document.documentElement.scrollTop;
-      const sectionCenterPageY =
-        pageScrollY + containerRect.top + containerRect.height / 2;
+// Drag start (mouse + touch)
+function startDrag(e) {
+    isDragging = true;
+    draggableBox.classList.add('dragging');
 
-      // We want the pin's TOP so its CENTER aligns with sectionCenterPageY
-      const newTop = sectionCenterPageY - boxRect.height / 2;
+    const pointer = e.touches ? e.touches[0] : e;
+    const boxRect = getRect(draggableBox);
+    offsetX = pointer.clientX - boxRect.left;
+    offsetY = pointer.clientY - boxRect.top;
 
-      // Directly set 'top' since position: fixed
-      draggableBox.style.top = `${newTop}px`;
+    lastX = pointer.clientX;
+    lastY = pointer.clientY;
+
+    cancelAnimationFrame(animationFrame);
+}
+
+// Drag move (mouse + touch)
+function duringDrag(e) {
+    if (!isDragging) return;
+
+    const pointer = e.touches ? e.touches[0] : e;
+    const containerRect = getRect(draggableContainer);
+    let newX = pointer.clientX - offsetX - containerRect.left;
+    let newY = pointer.clientY - offsetY - containerRect.top;
+
+    const boxRect = getRect(draggableBox);
+
+    // Apply rubberband effect
+    const bounce = 40;
+    if (newX < 0) newX = -bounce + newX / 4;
+    if (newX > containerRect.width - boxRect.width) newX = (containerRect.width - boxRect.width + bounce) - (containerRect.width - boxRect.width - newX) / 4;
+
+    if (newY < 0) newY = -bounce + newY / 4;
+    if (newY > containerRect.height - boxRect.height) newY = (containerRect.height - boxRect.height + bounce) - (containerRect.height - boxRect.height - newY) / 4;
+
+    draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
+
+    // Save velocity for momentum
+    velocityX = pointer.clientX - lastX;
+    velocityY = pointer.clientY - lastY;
+    lastX = pointer.clientX;
+    lastY = pointer.clientY;
+}
+
+// Drag end (mouse + touch)
+function endDrag() {
+    if (!isDragging) return;
+
+    isDragging = false;
+    draggableBox.classList.remove('dragging');
+
+    // Momentum slide after release
+    applyMomentum();
+
+    // After momentum, snap smoothly
+    setTimeout(() => {
+        snapToTargetRowAndMaintainHorizontalPosition();
+    }, 300); // Wait before snapping
+}
+
+// Apply momentum slide
+function applyMomentum() {
+    const containerRect = getRect(draggableContainer);
+    const boxRect = getRect(draggableBox);
+    const matrix = new WebKitCSSMatrix(window.getComputedStyle(draggableBox).transform);
+
+    let currentX = matrix.m41;
+    let currentY = matrix.m42;
+
+    let step = 0;
+
+    function animate() {
+        velocityX *= 0.9;
+        velocityY *= 0.9;
+        currentX += velocityX;
+        currentY += velocityY;
+
+        // Clamp with bounce edges
+        const maxX = containerRect.width - boxRect.width;
+        const maxY = containerRect.height - boxRect.height;
+
+        currentX = Math.max(-20, Math.min(currentX, maxX + 20));
+        currentY = Math.max(-20, Math.min(currentY, maxY + 20));
+
+        draggableBox.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+        if (Math.abs(velocityX) > 0.5 || Math.abs(velocityY) > 0.5) {
+            animationFrame = requestAnimationFrame(animate);
+        }
     }
 
-    draggableBox.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      draggableBox.classList.add("dragging");
-      const boxRect = draggableBox.getBoundingClientRect();
-      offsetX = e.clientX - boxRect.left;
-      offsetY = e.clientY - boxRect.top;
-    });
+    animate();
+}
 
-    document.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      let newX = e.clientX - offsetX;
-      let newY = e.clientY - offsetY;
+// Snap logic (smooth)
+function snapToTargetRowAndMaintainHorizontalPosition() {
+    const containerRect = getRect(draggableContainer);
+    const boxRect = getRect(draggableBox);
+    const targetRowRect = getRect(snapTargetRow);
 
-      // Clamp horizontally to viewport
-      newX = Math.max(0, Math.min(newX, window.innerWidth - draggableBox.offsetWidth));
-      draggableBox.style.left = `${newX}px`;
-      draggableBox.style.top = `${newY}px`;
-    });
+    const targetY = (targetRowRect.top + targetRowRect.height / 2) - containerRect.top - (boxRect.height / 2);
 
-    document.addEventListener("mouseup", () => {
-      if (isDragging) {
-        isDragging = false;
-        draggableBox.classList.remove("dragging");
-        snapToContainer();
-      }
-    });
+    const matrix = new WebKitCSSMatrix(window.getComputedStyle(draggableBox).transform);
+    let targetX = matrix.m41;
 
-    // Touch support
-    draggableBox.addEventListener("touchstart", (e) => {
-      isDragging = true;
-      draggableBox.classList.add("dragging");
-      e.preventDefault();
-      const touch = e.touches[0];
-      const boxRect = draggableBox.getBoundingClientRect();
-      offsetX = touch.clientX - boxRect.left;
-      offsetY = touch.clientY - boxRect.top;
-    });
+    // Clamp to container
+    targetX = Math.max(0, Math.min(targetX, containerRect.width - boxRect.width));
 
-    document.addEventListener("touchmove", (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const touch = e.touches[0];
-      let newX = touch.clientX - offsetX;
-      let newY = touch.clientY - offsetY;
+    draggableBox.style.transition = 'transform 0.6s ease-in-out';
+    draggableBox.style.transform = `translate(${targetX}px, ${targetY}px)`;
 
-      newX = Math.max(0, Math.min(newX, window.innerWidth - draggableBox.offsetWidth));
-      draggableBox.style.left = `${newX}px`;
-      draggableBox.style.top = `${newY}px`;
-    });
+    setTimeout(() => {
+        draggableBox.style.transition = 'transform 0.06s linear'; // Restore for next drag
+    }, 600);
+}
 
-    document.addEventListener("touchend", () => {
-      if (isDragging) {
-        isDragging = false;
-        draggableBox.classList.remove("dragging");
-        snapToContainer();
-      }
-    });
+// Mouse events
+draggableBox.addEventListener('mousedown', startDrag);
+document.addEventListener('mousemove', duringDrag);
+document.addEventListener('mouseup', endDrag);
 
-    window.addEventListener("load", snapToContainer);
-    window.addEventListener("resize", snapToContainer);
+// Touch events
+draggableBox.addEventListener('touchstart', startDrag);
+document.addEventListener('touchmove', duringDrag, { passive: false });
+document.addEventListener('touchend', endDrag);
+
+// On load + resize
+window.onload = snapToTargetRowAndMaintainHorizontalPosition;
+window.addEventListener('resize', snapToTargetRowAndMaintainHorizontalPosition);
   </script>
 </body>
 </html>
