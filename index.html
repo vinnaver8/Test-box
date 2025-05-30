@@ -24,15 +24,14 @@
        Draggable Pin Wrapper
        - Using fixed positioning so it can move freely
     ---------------------------------------- */
-    #draggablePinWrapper {
-      position: fixed;
-      z-index: 100;
-      width: 66px;
-      height: 66px;
-      cursor: grab;
-      touch-action: none;
-      transition: transform 0.3s ease-in-out;
-    }
+ #draggablePinWrapper {
+    position: absolute;
+    cursor: grab;
+    touch-action: none;
+    transition: transform 0.3s ease-in-out;
+    will-change: transform;
+    z-index: 100;
+ }
     #draggablePinWrapper.dragging {
     cursor: grabbing;
     transition: transform 0.06s ease-out; /* small but still animated */
