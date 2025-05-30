@@ -1,228 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Draggable Pin on Website Content</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* ----------------------------------------
-       Section 2 Container (“Draggable Area”)
-    ---------------------------------------- */
-    #draggableContainer {
-      position: relative;
-      width: 90%;
-      max-width: 800px;
-      background-color: #0D0D0D;
-      padding: 90px;
-      box-sizing: border-box;
-      min-height: 500px;
-      z-index: 1;
-    }
-
-    /* ----------------------------------------
-       Draggable Pin Wrapper
-    ---------------------------------------- */
-    #draggablePinWrapper {
-      position: absolute;
-      cursor: grab;
-      touch-action: none;
-      transition: transform 0.3s ease-in-out;
-      z-index: 100;
-    }
-    #draggablePinWrapper.dragging {
-      cursor: grabbing;
-      transition: none;
-    }
-    #draggablePinWrapper img {
-      pointer-events: none;
-      filter: drop-shadow(0 0 10px rgba(0,123,255,0.8));
-    }
-    @layer utilities {
-    @keyframes glowPulse {
-      0%, 100% {
-        text-shadow: 0 0 6px rgba(255, 0, 122, 0.4),
-                     0 0 12px rgba(255, 0, 122, 0.3),
-                     0 0 18px rgba(255, 0, 122, 0.2);
-      }
-      50% {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
-                     0 0 20px rgba(255, 200, 200, 0.6),
-                     0 0 30px rgba(255, 150, 150, 0.5);
-      }
-    }
-
-    .glow-text, .glow-text-span {
-      animation: glowPulse 2.5s ease-in-out infinite;
-    }
-  }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Card Layout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for smooth transitions and font */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+        .card-content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .user-preview-circle {
+            transition: transform 0.3s ease-out; /* Smooth movement for the circle */
+        }
+    </style>
 </head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="relative flex min-h-screen">
+        <div class="fixed left-0 top-1/2 -translate-y-1/2 w-full md:w-1/3 lg:w-1/4 xl:w-1/5 p-4 flex justify-center items-center z-10">
+            <div id="left-card" class="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm md:max-w-xs lg:max-w-sm xl:max-w-md">
+                <div id="card-state-0" class="card-content opacity-100">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-900">Knowledge at Your Fingertip</h2>
+                    <p class="text-gray-600 text-sm">
+                        Huly offers a wide range of features to create and manage your collaborative tools and boost team efficiency.
+                    </p>
+                    <div class="mt-4 flex items-center justify-center space-x-2">
+                        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">John S.</span>
+                        <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Lilianna</span>
+                    </div>
+                </div>
 
-<body class="bg-[#0D0D0D] text-white min-h-screen overflow-x-hidden font-sans antialiased">
-  <!-- =================================
-       SECTION 1 (Dummy content above)
-       ================================= -->
-  <section class="metabrain relative min-h-[1700px] overflow-hidden pt-32">
-    <!-- SECTION 2: Draggable Container -->
-    <div
-      id="draggableContainer"
-      class="relative md:absolute md:top-[1px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto overflow-visible pt-32"
-    >
-      <h1
-  class="glow-text text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
->
-  Knowledge at
-  <span
-    class="glow-text-span text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
-  >
-    Fingertips
-  </span>
-      </h1>
+                <div id="card-state-1" class="card-content opacity-0 absolute top-0 left-0 w-full h-full p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-900">Collaborate</h2>
+                    <p class="text-gray-600 text-sm">
+                        Enhance teamwork with powerful real-time collaboration features.
+                    </p>
+                    <div class="mt-4 flex items-center justify-center space-x-2">
+                        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">John S.</span>
+                        <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Lilianna</span>
+                    </div>
+                </div>
 
-      <p
-        id="snap-target-row"
-        class="max-w-xl mx-auto md:mx-0 mb-20"
-        style="color: #A0A0A0;"
-      >
-        Huly offers a wide range of features to create and manage your project
-        documentation. Huly’s suite of collaborative editing tools boosts team
-        efficiency.
-      </p>
-
-      <div id="main-wrapper">
-        <div
-          id="draggablePinWrapper"
-          class="absolute flex flex-col items-start cursor-grab active:cursor-grabbing select-none float-pin md:top-[20px] md:left-[100px]"
-          style="left: 1px; top: -20px;"
-        >
-          <div class="relative w-[66px] h-[66px]">
-            <img
-              id="draggablebox"
-              src="blue-pin.png"
-              alt="pin"
-              class="relative w-full h-full object-contain pointer-events-none"
-            />
-          </div>
+                <div id="card-state-2" class="card-content opacity-0 absolute top-0 left-0 w-full h-full p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-900">Version History</h2>
+                    <p class="text-gray-600 text-sm">
+                        Track every edit effortlessly, and never lose a single change.
+                    </p>
+                    <div class="mt-4 text-gray-500 text-xs">
+                        <p>Finn Hayes - Today, 3:18 PM</p>
+                        <p>Zoe Quinn - Today, 1:50 PM</p>
+                        <p>Ava Neal - Yesterday, 2:55 PM</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="w-full md:ml-[33.333%] lg:ml-[25%] xl:ml-[20%] p-8 md:p-12 lg:p-16 relative z-0">
+            <div id="user-preview-circle" class="user-preview-circle fixed right-8 top-16 w-12 h-12 rounded-full bg-cover bg-center shadow-md z-20"
+                 style="background-image: url('https://placehold.co/48x48/FF6347/FFFFFF?text=User');">
+            </div>
+
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 md:mb-12 text-gray-900">Knowledge at Your Fingertip</h1>
+
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">Documents in Huly</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    Documents in Huly can be used for sharing reference material, plans and roadmaps, storing meeting notes, and assigning action items.
+                    Huly offers a wide range of features to create and manage your collaborative tools and boost team efficiency.
+                    With live real-time collaboration, remote teams are able to work together seamlessly on the page. Tagging users, linking to issues, and assigning action items are powerful features available within the Huly document editor.
+                </p>
+                <div class="mt-6 flex items-center space-x-4">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                        + Link
+                    </button>
+                    <span class="font-bold text-gray-700">B</span>
+                    <span class="italic text-gray-700">I</span>
+                    <span class="underline text-gray-700">U</span>
+                </div>
+            </div>
+
+            <div class="space-y-12">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Project Report</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        This document details the progress and outcomes of recent project updates.
+                        It covers key milestones, challenges encountered, and solutions implemented.
+                        The report also includes a summary of team contributions and future recommendations.
+                        Regular updates ensure all stakeholders are informed and aligned with project goals.
+                    </p>
+                    <div class="mt-4 text-gray-500 text-sm">
+                        <p>Finn Hayes - Today, 3:18 PM</p>
+                        <p>Zoe Quinn - Today, 1:50 PM</p>
+                        <p>Ava Neal - Yesterday, 2:55 PM</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Team Collaboration Guidelines</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        These guidelines outline best practices for effective team collaboration within Huly.
+                        They cover communication protocols, document sharing, and conflict resolution strategies.
+                        Adhering to these guidelines helps foster a productive and harmonious work environment.
+                        Continuous improvement is encouraged through regular feedback sessions.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Meeting Notes Archive</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        A comprehensive archive of all team meeting notes, organized by date and topic.
+                        This ensures easy access to past discussions, decisions, and action items.
+                        The archive serves as a valuable resource for new team members and for reviewing project history.
+                        Search functionality allows for quick retrieval of specific information.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Product Roadmap Q3 2025</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        The detailed roadmap for product development in Q3 2025, outlining key features,
+                        development sprints, and release targets. This document is crucial for aligning
+                        development efforts with business objectives and market demands.
+                        It is regularly updated to reflect changes in priorities or scope.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Customer Feedback Analysis</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        An analysis of recent customer feedback, identifying common themes, pain points,
+                        and areas for improvement. This data-driven approach helps prioritize feature
+                        development and enhance user satisfaction. Feedback is collected from various
+                        channels, including surveys, support tickets, and social media.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Marketing Strategy Document</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        This document outlines the comprehensive marketing strategy for the upcoming quarter,
+                        including target audiences, messaging, channels, and key performance indicators.
+                        It aligns with overall business goals and aims to maximize reach and engagement.
+                        Campaign performance is continuously monitored and optimized.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Team Onboarding Guide</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        A guide for new team members, providing essential information about company culture,
+                        tools, processes, and team structure. It aims to facilitate a smooth and efficient
+                        onboarding experience, helping new hires quickly become productive members of the team.
+                        The guide is regularly updated to reflect any changes.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Technical Documentation</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Detailed technical documentation for developers, covering API specifications,
+                        architecture diagrams, and code examples. This ensures consistency in development
+                        and simplifies the maintenance of the codebase. It is a living document, updated
+                        as the system evolves.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Legal and Compliance</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Documents related to legal policies, compliance regulations, and data privacy.
+                        This ensures the company operates within legal frameworks and protects user data.
+                        Regular audits and updates are conducted to maintain compliance with evolving laws.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Financial Reports</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Monthly and quarterly financial reports providing insights into company performance,
+                        revenue, expenses, and profitability. These reports are crucial for strategic
+                        decision-making and investor relations. Data is presented clearly with visualizations.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <!-- =================================
-       JAVASCRIPT: Horizontal Drag + Snap to Top of Paragraph
-       ================================= -->
-  <script>
-    const draggableBox       = document.getElementById('draggablePinWrapper');
-    const draggableContainer = document.getElementById('draggableContainer');
-    const snapTargetRow      = document.getElementById('snap-target-row');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardStates = [
+                document.getElementById('card-state-0'), // Knowledge at Your Fingertip
+                document.getElementById('card-state-1'), // Collaborate
+                document.getElementById('card-state-2')  // Version History
+            ];
+            const userPreviewCircle = document.getElementById('user-preview-circle');
 
-    let isDragging = false;
-    let offsetX = 0, offsetY = 0;
+            // Scroll thresholds based on the user's screenshot analysis
+            // These values are approximate and can be adjusted
+            const threshold1 = 950; // Corresponds to 'top-[950]' for the first animation
+            const threshold2 = 1830; // Corresponds to 'top-[1830px]' for the second animation
 
-    function getRect(el) {
-      return el.getBoundingClientRect();
-    }
+            let currentState = -1; // -1 means initial state, 0, 1, 2 for the actual states
 
-    // Snap so that the pin’s TOP aligns with the top of #snap-target-row
-    function snapToTargetTop() {
-      const containerRect = getRect(draggableContainer);
-      const boxRect       = getRect(draggableBox);
-      const targetRect    = getRect(snapTargetRow);
+            function updateCardContent() {
+                const scrollY = window.scrollY;
+                let newState = 0; // Default to the first state
 
-      // Compute targetY relative to container:
-      // (targetRect.top – containerRect.top)
-      const targetY = targetRect.top - containerRect.top;
+                if (scrollY >= threshold2) {
+                    newState = 2; // Version History
+                } else if (scrollY >= threshold1) {
+                    newState = 1; // Collaborate
+                } else {
+                    newState = 0; // Knowledge at Your Fingertip
+                }
 
-      // Read current transform X (if any)
-      const matrix = new WebKitCSSMatrix(
-        window.getComputedStyle(draggableBox).transform
-      );
-      let currentX = matrix.m41;
+                if (newState !== currentState) {
+                    // Hide current state
+                    if (currentState !== -1) { // Don't try to hide if it's the initial load
+                        cardStates[currentState].classList.remove('opacity-100');
+                        cardStates[currentState].classList.add('opacity-0');
+                        cardStates[currentState].classList.add('absolute', 'top-0', 'left-0', 'w-full', 'h-full'); // Overlay for smooth transition
+                    }
 
-      // Clamp X within [0, containerWidth - boxWidth]
-      const minX = 0;
-      const maxX = containerRect.width - boxRect.width;
-      currentX = Math.max(minX, Math.min(currentX, maxX));
+                    // Show new state
+                    cardStates[newState].classList.remove('opacity-0');
+                    cardStates[newState].classList.add('opacity-100');
+                    cardStates[newState].classList.remove('absolute', 'top-0', 'left-0', 'w-full', 'h-full'); // Remove overlay positioning for active state
 
-      // Apply smooth snap to (currentX, targetY)
-      draggableBox.style.transition = 'transform 0.4s ease-in-out';
-      draggableBox.style.transform  = `translate(${currentX}px, ${targetY}px)`;
+                    currentState = newState;
+                }
+            }
 
-      // After snap completes, restore quick transition
-      setTimeout(() => {
-        draggableBox.style.transition = 'transform 0.06s linear';
-      }, 400);
-    }
+            function updateUserPreviewCirclePosition() {
+                const scrollY = window.scrollY;
+                // Adjust the multiplier and offset to control how fast and where the circle moves
+                // This is a simple linear movement, more complex animations could be added
+                const maxScroll = document.body.scrollHeight - window.innerHeight;
+                const scrollProgress = scrollY / maxScroll;
+                const maxMovement = window.innerWidth * 0.2; // Example: move up to 20% of screen width
+                const initialRight = 32; // Tailwind 'right-8'
+                const initialTop = 64; // Tailwind 'top-16'
 
-    draggableBox.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      draggableBox.classList.add('dragging');
-      draggableBox.style.transition = 'transform 0.06s linear';
+                // Move the circle vertically based on scroll, but keep it within reasonable bounds
+                // For simplicity, let's just move it slightly up/down or keep it relatively fixed
+                // as the user's image shows it "traveling with user preview screen" implying it follows scroll.
+                // I'll make it move slightly up as user scrolls down, simulating it moving with content.
+                const newTop = initialTop - (scrollY * 0.1); // Moves up slightly as you scroll down
+                userPreviewCircle.style.top = `${Math.max(16, newTop)}px`; // Ensure it doesn't go off screen top
 
-      const boxRect = getRect(draggableBox);
-      offsetX = e.clientX - boxRect.left;
-      offsetY = e.clientY - boxRect.top;
-    });
+                // You could also make it move horizontally or change opacity based on scroll if desired.
+            }
 
-    draggableContainer.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      const containerRect = getRect(draggableContainer);
+            // Initial call to set the correct state on page load
+            updateCardContent();
+            updateUserPreviewCirclePosition();
 
-      let newX = e.clientX - offsetX - containerRect.left;
-      let newY = e.clientY - offsetY - containerRect.top;
+            // Add scroll event listener
+            window.addEventListener('scroll', () => {
+                updateCardContent();
+                updateUserPreviewCirclePosition();
+            });
 
-      // Clamp horizontally inside container
-      const boxRect = getRect(draggableBox);
-      newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
-
-      draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
-    });
-
-    draggableContainer.addEventListener('mouseup', () => {
-      if (!isDragging) return;
-      isDragging = false;
-      draggableBox.classList.remove('dragging');
-      snapToTargetTop();
-    });
-
-    // Touch support
-    draggableBox.addEventListener('touchstart', (e) => {
-      isDragging = true;
-      draggableBox.classList.add('dragging');
-      draggableBox.style.transition = 'transform 0.06s linear';
-      const touch   = e.touches[0];
-      const boxRect = getRect(draggableBox);
-
-      offsetX = touch.clientX - boxRect.left;
-      offsetY = touch.clientY - boxRect.top;
-      e.preventDefault();
-    });
-
-    draggableContainer.addEventListener('touchmove', (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const touch         = e.touches[0];
-      const containerRect = getRect(draggableContainer);
-
-      let newX = touch.clientX - offsetX - containerRect.left;
-      let newY = touch.clientY - offsetY - containerRect.top;
-
-      const boxRect = getRect(draggableBox);
-      newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
-
-      draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
-    });
-
-    draggableContainer.addEventListener('touchend', () => {
-      if (!isDragging) return;
-      isDragging = false;
-      draggableBox.classList.remove('dragging');
-      snapToTargetTop();
-    });
-
-    window.addEventListener('load', snapToTargetTop);
-    window.addEventListener('resize', snapToTargetTop);
-  </script>
+            // Handle window resize to ensure responsiveness, though Tailwind handles most of it
+            window.addEventListener('resize', () => {
+                updateUserPreviewCirclePosition(); // Recalculate position on resize
+            });
+        });
+    </script>
 </body>
 </html>
+
