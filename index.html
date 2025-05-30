@@ -1,151 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draggable Pin on Website Content</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-  #draggableContainer {
-            position: relative;
-            width: 90%;
-            max-width: 800px;
-            background-color: #0D0D0D;
-            padding: 90px;
-            box-sizing: border-box;
-            min-height: 50px;
-            z-index: 1;
-            }
-        #draggablePinWrapper {
-            position: absolute;
-            cursor: grab;
-            touch-action: none;
-            transition: transform 0.3s ease-in-out;
-            z-index: 100;
-        }
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Draggable Pin Snap to Another Section</title>
+  <!-- Tailwind CDN for utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /*--------------------------------------------------------------
+      1) SECTION STYLES
+    --------------------------------------------------------------*/
+    /* Both sections share the same dark background */
+    section {
+      background-color: #0d0d0d;
+    }
 
-        #draggablePinWrapper.dragging {
-            cursor: grabbing;
-            transition: none;
-        }
-        #draggablePinWrapper img {
-            pointer-events: none;
-        }
-    </style>
+    /*--------------------------------------------------------------
+      2) DRAGGABLE PIN WRAPPER
+    --------------------------------------------------------------*/
+    #draggablePinWrapper {
+      position: absolute;
+      top: 100px; /* initial Y ---
+                    tweak this if you want it higher/lower on page load */
+      left: 50px; /* initial X ---
+                    tweak this if you want it further right on page load */
+      width: 66px;
+      height: 66px;
+      cursor: grab;
+      touch-action: none;
+      z-index: 999; /* on top of everything */
+      transition: transform 0.2s ease-in-out;
+    }
+    #draggablePinWrapper.dragging {
+      cursor: grabbing;
+      transition: none;
+    }
+
+    /*--------------------------------------------------------------
+      3) PIN IMAGE SHADOW
+      - note: we use CSS `filter: drop-shadow()` so that only the
+        opaque parts of the pin glow, not the whole image box.
+    --------------------------------------------------------------*/
+    #draggablePinWrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.8));
+    }
+  </style>
 </head>
-<body class="bg-[#0D0D0D] text-white min-h-screen overflow-x-hidden font-sans antialiased">
-<section
-class="metabrain relative
-min-h-[1700px]
-overflow-hidden
-pt-32">
-<div id="draggableContainer" class="snap-target-row relative md:absolute md:top-[1px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto relative overflow-visible pt-32">
-<h1 class="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500">
-  Knowledge at <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500">Fingertips</span>
-</h1>
-<p class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">
-  Huly offers a wide range of features to create and manage your project documentation. Huly's suite of collaborative editing tools boosts team efficiency.
-</p>
-<div id="main-wrapper">
-<div id="draggablePinWrapper"
-  class="absolute flex flex-col items-start cursor-grab active:cursor-grabbing select-none float-pin md:top-[20px] md:left-[100px]"
-  style="left:1px; top:-20px;">
-  <div class="relative w-[66px] h-[66px]">
-    <img id="draggablebox"
-     src="blue-pin.png"
-     alt="pin"
-     class="relative w-full h-full object-contain pointer-events-none [filter:drop-shadow(0_0_10px_rgba(0,123,255,0.8))]" />
+
+<body class="min-h-screen overflow-x-hidden antialiased text-white font-sans">
+  <!-- ===========================
+        SECTION 1 (Current Section)
+       =========================== -->
+  <section
+    id="currentSection"
+    class="relative pt-32 pb-48 min-h-[600px] overflow-visible"
+  >
+    <div
+      class="mx-auto w-11/12 md:w-3/4 lg:w-1/2 text-center md:text-left"
+    >
+      <h1
+        class="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
+      >
+        Knowledge at
+        <span
+          class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
+          >Your Fingertips</span
+        >
+      </h1>
+      <p class="max-w-xl mx-auto md:mx-0 mb-12 text-gray-400">
+        Huly offers a wide range of features to create and manage your project
+        documentation. Huly’s suite of collaborative editing tools boosts team
+        efficiency.
+      </p>
+      <!-- (You can add more content in Section 1 here.) -->
+    </div>
+  </section>
+
+  <!-- ===========================
+        SECTION 2 (Target Section for Snap)
+       =========================== -->
+  <section
+    id="targetSection"
+    class="relative pt-48 pb-48 min-h-[600px] overflow-visible"
+  >
+    <div
+      class="mx-auto w-11/12 md:w-3/4 lg:w-1/2 text-center md:text-left"
+    >
+      <h2 class="text-3xl font-semibold text-white mb-4">
+        🎯 Drop Zone: Target Section
+      </h2>
+      <p class="text-gray-400">
+        When you release the blue pin above, it will snap here (centered)
+        vertically into this section. You can still drag it horizontally to any
+        x-position you like.
+      </p>
+      <!-- (You can put additional “target” content here if desired.) -->
+    </div>
+  </section>
+
+  <!-- ===========================
+        DRAGGABLE PIN (floats above both sections)
+       =========================== -->
+  <div id="draggablePinWrapper">
+    <img
+      id="draggablebox"
+      src="blue-pin.png"
+      alt="Blue Pin"
+    />
   </div>
-</div>
-</div></div>
-</section>
-<!--section 3 end-->
-    
-<script>
-const draggableBox = document.getElementById('draggablePinWrapper');
-const draggableContainer = document.getElementById('draggableContainer');
-const snapTargetRow = document.querySelector('.snap-target-row');
-let isDragging = false;
-let offsetX, offsetY;
-function getRect(element) {
-return element.getBoundingClientRect();
-        }
-function snapToTargetRowAndMaintainHorizontalPosition() {
-const containerRect = getRect(draggableContainer);
-const boxRect = getRect(draggableBox);
-if (!snapTargetRow) {
-console.error("Snap target row not found.");
-return;
-}
-const targetRowRect = getRect(snapTargetRow);
-const targetY = (targetRowRect.top + targetRowRect.height / 2) - containerRect.top - (boxRect.height / 2);
-const transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(draggableBox).transform);
-let targetX = transformMatrix.m41;
-targetX = Math.max(0, Math.min(targetX, containerRect.width - boxRect.width));
-draggableBox.style.transform = `translate(${targetX}px, ${targetY}px)`;
-draggableBox.style.left = '0px';
-draggableBox.style.top = '0px';
-        }
-draggableBox.addEventListener('mousedown', (e) => {
-isDragging = true;
-draggableBox.classList.add('dragging');
-const boxRect = getRect(draggableBox);
-offsetX = e.clientX - boxRect.left;
-offsetY = e.clientY - boxRect.top;
-        });
-draggableContainer.addEventListener('mousemove', (e) => {
-if (!isDragging) return;
-const containerRect = getRect(draggableContainer);
-let newX = e.clientX - offsetX - containerRect.left;
-let newY = e.clientY - offsetY - containerRect.top;
-const boxRect = getRect(draggableBox);
-newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
-newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
-draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
-        });
-draggableContainer.addEventListener('mouseup', () => {
-if (isDragging) {
-isDragging = false;
-draggableBox.classList.remove('dragging');
-snapToTargetRowAndMaintainHorizontalPosition();
-            }
-        });
-draggableBox.addEventListener('touchstart', (e) => {
-isDragging = true;
-draggableBox.classList.add('dragging');
-e.preventDefault();
-const touch = e.touches[0];
-const boxRect = getRect(draggableBox);
-offsetX = touch.clientX - boxRect.left;
-offsetY = touch.clientY - boxRect.top;
-        });
-draggableContainer.addEventListener('touchmove', (e) => {
-if (!isDragging) return;
-e.preventDefault();
-const touch = e.touches[0];
-const containerRect = getRect(draggableContainer);
-let newX = touch.clientX - offsetX - containerRect.left;
-let newY = touch.clientY - offsetY - containerRect.top;
-const boxRect = getRect(draggableBox);
-newX = Math.max(0, Math.min(newX, containerRect.width - boxRect.width));
-newY = Math.max(0, Math.min(newY, containerRect.height - boxRect.height));
-draggableBox.style.transform = `translate(${newX}px, ${newY}px)`;
-        });
-draggableContainer.addEventListener('touchend', () => {
-if (isDragging) {
-isDragging = false;
-draggableBox.classList.remove('dragging');
-snapToTargetRowAndMaintainHorizontalPosition();
-            }
-        });
-window.onload = () => {
-            snapToTargetRowAndMaintainHorizontalPosition();
+
+  <!-- ===========================
+        JAVASCRIPT (Drag + Snap Logic)
+       =========================== -->
+  <script>
+    (function () {
+      const pinWrapper = document.getElementById("draggablePinWrapper");
+      const pinImage = document.getElementById("draggablebox");
+      const targetSection = document.getElementById("targetSection");
+
+      let isDragging = false;
+      let startX = 0,
+        startY = 0;
+      let origX = 0,
+        origY = 0;
+
+      function getTranslateValues(el) {
+        const style = window.getComputedStyle(el);
+        const matrix = new DOMMatrixReadOnly(
+          style.transform === "none" ? "" : style.transform
+        );
+        return {
+          x: matrix.m41,
+          y: matrix.m42,
         };
+      }
 
-        // Recalculate snap position on window resize
-        window.addEventListener('resize', () => {
-            snapToTargetRowAndMaintainHorizontalPosition();
-        });
-    </script></body>
+      // Mouse ↓ (or Touch ↓) → begin dragging
+      pinWrapper.addEventListener("mousedown", beginDrag);
+      pinWrapper.addEventListener("touchstart", beginDrag, { passive: false });
+
+      function beginDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        pinWrapper.classList.add("dragging");
+
+        // Record the starting pointer position
+        if (e.type === "mousedown") {
+          startX = e.clientX;
+          startY = e.clientY;
+        } else {
+          // touchstart
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        }
+
+        // And record the pin’s current translation
+        const { x, y } = getTranslateValues(pinWrapper);
+        origX = x;
+        origY = y;
+
+        // Listen on the whole window for move / release
+        window.addEventListener("mousemove", onDrag);
+        window.addEventListener("touchmove", onDrag, { passive: false });
+        window.addEventListener("mouseup", endDrag);
+        window.addEventListener("touchend", endDrag);
+      }
+
+      function onDrag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        let clientX, clientY;
+        if (e.type === "mousemove") {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        } else {
+          // touchmove
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        }
+
+        // Calculate how far we moved from the start
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        // Apply it to the pin’s <div> via transform
+        pinWrapper.style.transform = `translate(${origX + dx}px, ${origY + dy}px)`;
+      }
+
+      function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        pinWrapper.classList.remove("dragging");
+
+        // Stop listening for move/release
+        window.removeEventListener("mousemove", onDrag);
+        window.removeEventListener("touchmove", onDrag);
+        window.removeEventListener("mouseup", endDrag);
+        window.removeEventListener("touchend", endDrag);
+
+        // Snap vertically into the center of targetSection:
+        snapToTargetSection();
+      }
+
+      function snapToTargetSection() {
+        if (!targetSection) return;
+        const sectionRect = targetSection.getBoundingClientRect();
+        const pinRect = pinWrapper.getBoundingClientRect();
+        const windowScrollY =
+          window.pageYOffset || document.documentElement.scrollTop;
+
+        // Compute absolute screen Y where we want the pin’s center to land:
+        const sectionCenterY =
+          windowScrollY + sectionRect.top + sectionRect.height / 2;
+
+        // We want the pin’s CENTER (pinRect.height / 2) to match that Y,
+        // so we subtract (pinHeight / 2) to get its TOP:
+        const newTop = sectionCenterY - pinRect.height / 2;
+
+        // Keep whatever X-translation was already on the pin:
+        const { x: currentX } = getTranslateValues(pinWrapper);
+
+        // Set final transform. Because we’re setting absolute Y in the page’s
+        // coordinate system, we compute how far that is *from zero* by subtracting any offset.
+        // But since pinWrapper is position: absolute with no parent transform,
+        // we can directly move it using translate(x, newY).
+        pinWrapper.style.transform = `translate(${currentX}px, ${newTop}px)`;
+      }
+
+      // On initial load, center the pin inside Section 1 but slightly above
+      window.addEventListener("load", () => {
+        // You can choose to snap it immediately into the target, or leave at initial style:
+        // snapToTargetSection();
+      });
+    })();
+  </script>
+</body>
 </html>
-
