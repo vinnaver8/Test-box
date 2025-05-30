@@ -36,6 +36,7 @@
     }
     #draggablePinWrapper img {
       pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(0,123,255,0.8));
     }
   </style>
 </head>
@@ -60,7 +61,12 @@
           Fingertips
         </span>
       </h1>
-      <p id="snap-target-row" class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">
+
+      <p
+        id="snap-target-row"
+        class="max-w-xl mx-auto md:mx-0 mb-12"
+        style="color: #A0A0A0;"
+      >
         Huly offers a wide range of features to create and manage your project
         documentation. Huly’s suite of collaborative editing tools boosts team
         efficiency.
@@ -70,14 +76,14 @@
         <div
           id="draggablePinWrapper"
           class="absolute flex flex-col items-start cursor-grab active:cursor-grabbing select-none float-pin md:top-[20px] md:left-[100px]"
-          style="left:1px; top:-20px;"
+          style="left: 1px; top: -20px;"
         >
           <div class="relative w-[66px] h-[66px]">
             <img
               id="draggablebox"
               src="blue-pin.png"
               alt="pin"
-              class="relative w-full h-full object-contain pointer-events-none [filter:drop-shadow(0_0_10px_rgba(0,123,255,0.8))]"
+              class="relative w-full h-full object-contain pointer-events-none"
             />
           </div>
         </div>
@@ -86,12 +92,12 @@
   </section>
 
   <!-- =================================
-       JAVASCRIPT: Horizontal Drag + Snap to Top of Target
+       JAVASCRIPT: Horizontal Drag + Snap to Top of Paragraph
        ================================= -->
   <script>
-    const draggableBox = document.getElementById('draggablePinWrapper');
+    const draggableBox       = document.getElementById('draggablePinWrapper');
     const draggableContainer = document.getElementById('draggableContainer');
-    const snapTargetRow   = document.getElementById('snap-target-row');
+    const snapTargetRow      = document.getElementById('snap-target-row');
 
     let isDragging = false;
     let offsetX = 0, offsetY = 0;
@@ -100,15 +106,17 @@
       return el.getBoundingClientRect();
     }
 
-    // Snap so that the pin’s TOP aligns with the top of the snap target
-    function snapToTop() {
+    // Snap so that the pin’s TOP aligns with the top of #snap-target-row
+    function snapToTargetTop() {
       const containerRect = getRect(draggableContainer);
       const boxRect       = getRect(draggableBox);
+      const targetRect    = getRect(snapTargetRow);
 
-      // targetY = container’s top edge relative to itself → 0
-      const targetY = 0;
+      // Compute targetY relative to container:
+      // (targetRect.top – containerRect.top)
+      const targetY = targetRect.top - containerRect.top;
 
-      // Get current transform X (if any)
+      // Read current transform X (if any)
       const matrix = new WebKitCSSMatrix(
         window.getComputedStyle(draggableBox).transform
       );
@@ -119,10 +127,11 @@
       const maxX = containerRect.width - boxRect.width;
       currentX = Math.max(minX, Math.min(currentX, maxX));
 
+      // Apply smooth snap to (currentX, targetY)
       draggableBox.style.transition = 'transform 0.4s ease-in-out';
       draggableBox.style.transform  = `translate(${currentX}px, ${targetY}px)`;
 
-      // After the snap animation completes, restore quick transition
+      // After snap completes, restore quick transition
       setTimeout(() => {
         draggableBox.style.transition = 'transform 0.06s linear';
       }, 400);
@@ -132,6 +141,7 @@
       isDragging = true;
       draggableBox.classList.add('dragging');
       draggableBox.style.transition = 'transform 0.06s linear';
+
       const boxRect = getRect(draggableBox);
       offsetX = e.clientX - boxRect.left;
       offsetY = e.clientY - boxRect.top;
@@ -140,6 +150,7 @@
     draggableContainer.addEventListener('mousemove', (e) => {
       if (!isDragging) return;
       const containerRect = getRect(draggableContainer);
+
       let newX = e.clientX - offsetX - containerRect.left;
       let newY = e.clientY - offsetY - containerRect.top;
 
@@ -154,7 +165,7 @@
       if (!isDragging) return;
       isDragging = false;
       draggableBox.classList.remove('dragging');
-      snapToTop();
+      snapToTargetTop();
     });
 
     // Touch support
@@ -164,6 +175,7 @@
       draggableBox.style.transition = 'transform 0.06s linear';
       const touch   = e.touches[0];
       const boxRect = getRect(draggableBox);
+
       offsetX = touch.clientX - boxRect.left;
       offsetY = touch.clientY - boxRect.top;
       e.preventDefault();
@@ -174,6 +186,7 @@
       e.preventDefault();
       const touch         = e.touches[0];
       const containerRect = getRect(draggableContainer);
+
       let newX = touch.clientX - offsetX - containerRect.left;
       let newY = touch.clientY - offsetY - containerRect.top;
 
@@ -187,11 +200,11 @@
       if (!isDragging) return;
       isDragging = false;
       draggableBox.classList.remove('dragging');
-      snapToTop();
+      snapToTargetTop();
     });
 
-    window.addEventListener('load', snapToTop);
-    window.addEventListener('resize', snapToTop);
+    window.addEventListener('load', snapToTargetTop);
+    window.addEventListener('resize', snapToTargetTop);
   </script>
 </body>
 </html>
