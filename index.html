@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Draggable Pin</title>
+  <title>Draggable Pin on Website Content</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      margin: 0;
-      background-color: #1A1A1A;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-
+    /* ----------------------------------------
+       Section 2 Container (“Draggable Area”)
+    ---------------------------------------- */
     #draggableContainer {
       position: relative;
       width: 90%;
       max-width: 800px;
-      margin: 50px auto;
       background-color: #0D0D0D;
       padding: 90px;
       box-sizing: border-box;
@@ -24,31 +20,29 @@
       z-index: 1;
     }
 
-    .snap-target-row {
-      width: 100%;
-      height: 50px;
-      background-color: #333;
-      margin-top: 50px;
-      text-align: center;
-      line-height: 50px;
-    }
-
+    /* ----------------------------------------
+       Draggable Pin Wrapper
+       - Using fixed positioning so it can move freely
+    ---------------------------------------- */
     #draggablePinWrapper {
       position: fixed;
-      z-index: 9999;
+      z-index: 100;
       width: 66px;
       height: 66px;
       cursor: grab;
       touch-action: none;
       transition: transform 0.3s ease-in-out;
     }
-
     #draggablePinWrapper.dragging {
       cursor: grabbing;
       transition: none;
     }
 
-    #draggablebox {
+    /* ----------------------------------------
+       Pin Image Drop Shadow
+       - Respects pin’s transparent shape
+    ---------------------------------------- */
+    #draggablePinWrapper img {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -57,73 +51,117 @@
     }
   </style>
 </head>
-<body>
 
-  <div id="draggableContainer">
-    <h1>Welcome to My Ghibli-Inspired Website</h1>
-    <p>Drag the pin to place it horizontally across the screen. It will snap vertically to the target row.</p>
-    <div class="snap-target-row">← Pin Snaps Vertically Here →</div>
-  </div>
+<body class="bg-[#0D0D0D] text-white min-h-screen overflow-x-hidden font-sans antialiased">
+  <!-- =================================
+       SECTION 1 (Dummy content above)
+       ================================= -->
+  <section class="metabrain relative min-h-[1700px] overflow-hidden pt-32">
+    <!-- SECTION 2: Draggable Container -->
+    <div
+      id="draggableContainer"
+      class="relative md:absolute md:top-[1px] md:left-[360px] md:text-left text-80 text-center w-full md:w-auto overflow-visible pt-32 snap-target-row"
+    >
+      <h1
+        class="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
+      >
+        Knowledge at
+        <span
+          class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500"
+          >Fingertips</span
+        >
+      </h1>
+      <p class="max-w-xl mx-auto md:mx-0 mb-12" style="color: #A0A0A0;">
+        Huly offers a wide range of features to create and manage your project
+        documentation. Huly’s suite of collaborative editing tools boosts team
+        efficiency.
+      </p>
+      <!-- (If you have more content for Section 2, add it here) -->
+    </div>
+  </section>
 
-  <!-- Draggable Pin (placed outside container) -->
+  <!-- =================================
+       DRAGGABLE PIN (floats over entire screen)
+       ================================= -->
   <div id="draggablePinWrapper" style="left: 100px; top: 100px;">
-    <img id="draggablebox" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Pushpin_icon.svg/1200px-Pushpin_icon.svg.png" alt="pin" />
+    <div class="relative w-[66px] h-[66px]">
+      <img
+        id="draggablebox"
+        src="blue-pin.png"
+        alt="pin"
+        class="relative w-full h-full object-contain pointer-events-none"
+      />
+    </div>
   </div>
 
+  <!-- =================================
+       JAVASCRIPT: Horizontal Drag + Vertical Snap
+       ================================= -->
   <script>
-    const draggableBox = document.getElementById('draggablePinWrapper');
-    const snapTargetRow = document.querySelector('.snap-target-row');
+    const draggableBox = document.getElementById("draggablePinWrapper");
+    const draggableContainer = document.getElementById("draggableContainer");
 
     let isDragging = false;
     let offsetX, offsetY;
 
-    function snapToTargetRowAndMaintainHorizontalPosition() {
+    function snapToContainer() {
       const boxRect = draggableBox.getBoundingClientRect();
-      const targetRowRect = snapTargetRow.getBoundingClientRect();
+      const containerRect = draggableContainer.getBoundingClientRect();
 
-      const targetY = targetRowRect.top + targetRowRect.height / 2 - boxRect.height / 2;
+      // Compute the page‐coordinate for the vertical CENTER of the container
+      const pageScrollY =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const sectionCenterPageY =
+        pageScrollY + containerRect.top + containerRect.height / 2;
 
-      draggableBox.style.top = `${targetY}px`;
+      // We want the pin's TOP so its CENTER aligns with sectionCenterPageY
+      const newTop = sectionCenterPageY - boxRect.height / 2;
+
+      // Directly set 'top' since position: fixed
+      draggableBox.style.top = `${newTop}px`;
     }
 
-    draggableBox.addEventListener('mousedown', (e) => {
+    draggableBox.addEventListener("mousedown", (e) => {
       isDragging = true;
-      draggableBox.classList.add('dragging');
+      draggableBox.classList.add("dragging");
       const boxRect = draggableBox.getBoundingClientRect();
       offsetX = e.clientX - boxRect.left;
       offsetY = e.clientY - boxRect.top;
     });
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
       let newX = e.clientX - offsetX;
       let newY = e.clientY - offsetY;
 
+      // Clamp horizontally to viewport
       newX = Math.max(0, Math.min(newX, window.innerWidth - draggableBox.offsetWidth));
       draggableBox.style.left = `${newX}px`;
       draggableBox.style.top = `${newY}px`;
     });
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener("mouseup", () => {
       if (isDragging) {
         isDragging = false;
-        draggableBox.classList.remove('dragging');
-        snapToTargetRowAndMaintainHorizontalPosition();
+        draggableBox.classList.remove("dragging");
+        snapToContainer();
       }
     });
 
     // Touch support
-    draggableBox.addEventListener('touchstart', (e) => {
+    draggableBox.addEventListener("touchstart", (e) => {
       isDragging = true;
-      draggableBox.classList.add('dragging');
+      draggableBox.classList.add("dragging");
+      e.preventDefault();
       const touch = e.touches[0];
       const boxRect = draggableBox.getBoundingClientRect();
       offsetX = touch.clientX - boxRect.left;
       offsetY = touch.clientY - boxRect.top;
     });
 
-    document.addEventListener('touchmove', (e) => {
+    document.addEventListener("touchmove", (e) => {
       if (!isDragging) return;
+      e.preventDefault();
       const touch = e.touches[0];
       let newX = touch.clientX - offsetX;
       let newY = touch.clientY - offsetY;
@@ -133,21 +171,16 @@
       draggableBox.style.top = `${newY}px`;
     });
 
-    document.addEventListener('touchend', () => {
+    document.addEventListener("touchend", () => {
       if (isDragging) {
         isDragging = false;
-        draggableBox.classList.remove('dragging');
-        snapToTargetRowAndMaintainHorizontalPosition();
+        draggableBox.classList.remove("dragging");
+        snapToContainer();
       }
     });
 
-    window.onload = () => {
-      snapToTargetRowAndMaintainHorizontalPosition();
-    };
-
-    window.addEventListener('resize', () => {
-      snapToTargetRowAndMaintainHorizontalPosition();
-    });
+    window.addEventListener("load", snapToContainer);
+    window.addEventListener("resize", snapToContainer);
   </script>
 </body>
 </html>
