@@ -1,82 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Holographic Badge</title>
-  <style>
-    /* Reset and smooth font */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #d5d4f5, #f3d4f4);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Video Overlay Layout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for smooth transitions and font */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+        .video-overlay-content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .user-preview-circle {
+            transition: transform 0.3s ease-out; /* Smooth movement for the circle */
+        }
 
-    .glass-container {
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+        /* Arrow animation styles for video overlay */
+        .video-overlay-content .arrow-container {
+            position: absolute;
+            top: 50%; /* Center vertically within the overlay */
+            left: 50%; /* Center horizontally within the overlay */
+            transform: translate(-50%, -50%); /* Adjust for its own size */
+            width: 150px; /* A fixed width for the container to define the central area */
+            height: 50px; /* Height to contain arrows */
+            pointer-events: none;
+            overflow: hidden;
+        }
 
-    .badge {
-      --border-size: 12px;
-      position: relative;
-      width: 200px;
-      height: 200px;
-      border-radius: 120px;
-      background: linear-gradient(100deg, #34DCE7 -6.37%, #7F5FFE 43.87%, #FF87A3 97.22%);
-      border: var(--border-size) solid white;
-      box-shadow:
-        6px 6px 30px rgba(0, 0, 0, 0.2),
-        0px 2px 40px 0px rgba(0, 0, 0, 0.25) inset;
-    }
+        .video-overlay-content .arrow-svg {
+            position: absolute;
+            fill: none;
+            stroke: #EF4444; /* Red color for arrows */
+            stroke-width: 2;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.3s ease-in-out;
+            top: 50%; /* Center vertically within its container */
+            transform: translateY(-50%); /* Adjust for its own height */
+        }
 
-    .badge::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      animation: holographic 2.4s linear infinite;
-      background: linear-gradient(
-        218deg,
-        rgba(255, 255, 255, 0.00) 10.16%,
-        #FFF 26.55%,
-        rgba(255, 255, 255, 0.00) 41.78%,
-        #FFF 56.62%,
-        rgba(255, 255, 255, 0.00) 72.63%,
-        #FFF 88.24%
-      );
-      background-position: 0% 0%;
-      background-size: 200%;
-      background-repeat: no-repeat;
-      mix-blend-mode: overlay;
-      border-radius: inherit;
-    }
+        /* Keyframes for arrow animation */
+        @keyframes arrowMoveLeft {
+            0% {
+                transform: translate(0px, -50%) scale(0.8); /* Start at center of container */
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-70px, -50%) scale(1); /* Move left from center */
+                opacity: 1;
+            }
+        }
 
-    @keyframes holographic {
-      to {
-        background-position: 100% 0;
-      }
-    }
-  </style>
+        @keyframes arrowMoveRight {
+            0% {
+                transform: translate(0px, -50%) scale(0.8); /* Start at center of container */
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(70px, -50%) scale(1); /* Move right from center */
+                opacity: 1;
+            }
+        }
+
+        /* Apply animation when active */
+        .video-overlay-active .arrow-left {
+            animation: arrowMoveLeft 1s forwards;
+            left: 50%; /* Start from center of arrow-container */
+        }
+
+        .video-overlay-active .arrow-right {
+            animation: arrowMoveRight 1s forwards;
+            left: 50%; /* Start from center of arrow-container */
+        }
+    </style>
 </head>
-<body>
-  <div class="glass-container">
-    <div class="badge"></div>
-  </div>
+<body class="bg-gray-50 text-gray-800">
+    <div class="relative flex min-h-screen">
+        <div class="fixed left-0 top-1/2 -translate-y-1/2 w-full md:w-1/3 lg:w-1/4 xl:w-1/5 p-4 flex justify-center items-center z-10">
+            <div id="left-video-panel" class="relative bg-black rounded-xl shadow-lg w-full max-w-sm md:max-w-xs lg:max-w-sm xl:max-w-md overflow-hidden aspect-video">
+                <video class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline>
+                    <source src="holographic.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+
+                <div id="video-overlay-0" class="video-overlay-content opacity-100 absolute inset-0 flex flex-col justify-center items-center p-6 text-white bg-black bg-opacity-50">
+                    <h2 class="text-xl font-semibold mb-4 text-white text-center">Knowledge at Your Fingertip</h2>
+                    <p class="text-gray-200 text-sm text-center">
+                        Huly offers a wide range of features to create and manage your collaborative tools and boost team efficiency.
+                    </p>
+                    <div class="mt-4 flex items-center justify-center space-x-2">
+                        <span class="inline-block bg-blue-400 text-blue-900 text-xs px-2 py-1 rounded-full">John S.</span>
+                        <span class="inline-block bg-purple-400 text-purple-900 text-xs px-2 py-1 rounded-full">Lilianna</span>
+                    </div>
+                </div>
+
+                <div id="video-overlay-1" class="video-overlay-content opacity-0 absolute inset-0 flex flex-col justify-center items-center p-6 text-white bg-black bg-opacity-50">
+                    <div class="relative w-full h-full flex flex-col justify-center items-center">
+                        <div class="arrow-container">
+                            <svg class="arrow-svg arrow-left" width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M15 18l-6-6 6-6"></path>
+                            </svg>
+                            <svg class="arrow-svg arrow-right" width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M9 18l6-6-6-6"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold mb-4 text-white z-10">Team</h2>
+                        <p class="text-gray-200 text-sm text-center z-10">
+                            Enhance teamwork with powerful real-time collaboration features.
+                        </p>
+                        <div class="mt-4 flex items-center justify-center space-x-2 z-10">
+                            <span class="inline-block bg-blue-400 text-blue-900 text-xs px-2 py-1 rounded-full">John S.</span>
+                            <span class="inline-block bg-purple-400 text-purple-900 text-xs px-2 py-1 rounded-full">Lilianna</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="video-overlay-2" class="video-overlay-content opacity-0 absolute inset-0 flex flex-col justify-center items-center p-6 text-white bg-black bg-opacity-50">
+                    <h2 class="text-xl font-semibold mb-4 text-white text-center">Version History</h2>
+                    <p class="text-gray-200 text-sm text-center">
+                        Track every edit effortlessly, and never lose a single change.
+                    </p>
+                    <div class="mt-4 text-gray-300 text-xs">
+                        <p>Finn Hayes - Today, 3:18 PM</p>
+                        <p>Zoe Quinn - Today, 1:50 PM</p>
+                        <p>Ava Neal - Yesterday, 2:55 PM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full md:ml-[33.333%] lg:ml-[25%] xl:ml-[20%] p-8 md:p-12 lg:p-16 relative z-0">
+            <div id="user-preview-circle" class="user-preview-circle fixed right-8 top-16 w-12 h-12 rounded-full bg-cover bg-center shadow-md z-20"
+                 style="background-image: url('https://placehold.co/48x48/FF6347/FFFFFF?text=User');">
+            </div>
+
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 md:mb-12 text-gray-900">Knowledge at Your Fingertip</h1>
+
+            <section class="metabrain relative min-h-[1700px] overflow-hidden pt-32 bg-gray-100 rounded-xl shadow-md p-6 mb-8">
+                <h2 class="text-3xl font-bold mb-6 text-gray-900">Welcome to Metabrain</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Explore the cutting-edge features of Metabrain, designed to revolutionize your workflow and enhance collaboration.
+                    This section demonstrates the immersive experience and advanced functionalities that set Metabrain apart.
+                    Scroll down to discover more about our innovative solutions.
+                </p>
+                <div class="h-[1400px] bg-gradient-to-b from-gray-100 to-gray-200 flex items-center justify-center text-gray-500 text-xl font-bold rounded-lg p-4">
+                    [More Metabrain Content Here - Scroll to see the video overlay animation]
+                </div>
+            </section>
+
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">Documents in Huly</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    Documents in Huly can be used for sharing reference material, plans and roadmaps, storing meeting notes, and assigning action items.
+                    Huly offers a wide range of features to create and manage your collaborative tools and boost team efficiency.
+                    With live real-time collaboration, remote teams are able to work together seamlessly on the page. Tagging users, linking to issues, and assigning action items are powerful features available within the Huly document editor.
+                </p>
+                <div class="mt-6 flex items-center space-x-4">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                        + Link
+                    </button>
+                    <span class="font-bold text-gray-700">B</span>
+                    <span class="italic text-gray-700">I</span>
+                    <span class="underline text-gray-700">U</span>
+                </div>
+            </div>
+
+            <div class="space-y-12">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Project Report</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        This document details the progress and outcomes of recent project updates.
+                        It covers key milestones, challenges encountered, and solutions implemented.
+                        The report also includes a summary of team contributions and future recommendations.
+                        Regular updates ensure all stakeholders are informed and aligned with project goals.
+                    </p>
+                    <div class="mt-4 text-gray-500 text-sm">
+                        <p>Finn Hayes - Today, 3:18 PM</p>
+                        <p>Zoe Quinn - Today, 1:50 PM</p>
+                        <p>Ava Neal - Yesterday, 2:55 PM</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Team Collaboration Guidelines</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        These guidelines outline best practices for effective team collaboration within Huly.
+                        They cover communication protocols, document sharing, and conflict resolution strategies.
+                        Adhering to these guidelines helps foster a productive and harmonious work environment.
+                        Continuous improvement is encouraged through regular feedback sessions.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Meeting Notes Archive</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        A comprehensive archive of all team meeting notes, organized by date and topic.
+                        This ensures easy access to past discussions, decisions, and action items.
+                        The archive serves as a valuable resource for new team members and for reviewing project history.
+                        Search functionality allows for quick retrieval of specific information.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Product Roadmap Q3 2025</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        The detailed roadmap for product development in Q3 2025, outlining key features,
+                        development sprints, and release targets. This document is crucial for aligning
+                        development efforts with business objectives and market demands.
+                        It is regularly updated to reflect changes in priorities or scope.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Customer Feedback Analysis</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        An analysis of recent customer feedback, identifying common themes, pain points,
+                        and areas for improvement. This data-driven approach helps prioritize feature
+                        development and enhance user satisfaction. Feedback is collected from various
+                        channels, including surveys, support tickets, and social media.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Marketing Strategy Document</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        This document outlines the comprehensive marketing strategy for the upcoming quarter,
+                        including target audiences, messaging, channels, and key performance indicators.
+                        It aligns with overall business goals and aims to maximize reach and engagement.
+                        Campaign performance is continuously monitored and optimized.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Team Onboarding Guide</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        A guide for new team members, providing essential information about company culture,
+                        tools, processes, and team structure. It aims to facilitate a smooth and efficient
+                        onboarding experience, helping new hires quickly become productive members of the team.
+                        The guide is regularly updated to reflect any changes.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Technical Documentation</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Detailed technical documentation for developers, covering API specifications,
+                        architecture diagrams, and code examples. This ensures consistency in development
+                        and simplifies the maintenance of the codebase. It is a living document, updated
+                        as the system evolves.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Legal and Compliance</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Documents related to legal policies, compliance regulations, and data privacy.
+                        This ensures the company operates within legal frameworks and protects user data.
+                        Regular audits and updates are conducted to maintain compliance with evolving laws.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Financial Reports</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Monthly and quarterly financial reports providing insights into company performance,
+                        revenue, expenses, and profitability. These reports are crucial for strategic
+                        decision-making and investor relations. Data is presented clearly with visualizations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoOverlayStates = [
+                document.getElementById('video-overlay-0'), // Knowledge at Your Fingertip
+                document.getElementById('video-overlay-1'), // Collaborate
+                document.getElementById('video-overlay-2')  // Version History
+            ];
+            const userPreviewCircle = document.getElementById('user-preview-circle');
+
+            // Scroll thresholds based on the user's screenshot analysis
+            // These values are approximate and can be adjusted
+            const threshold1 = 950; // Corresponds to 'top-[950]' for the first animation
+            const threshold2 = 1830; // Corresponds to 'top-[1830px]' for the second animation
+
+            let currentState = -1; // -1 means initial state, 0, 1, 2 for the actual states
+
+            function updateVideoOverlayContent() {
+                const scrollY = window.scrollY;
+                let newState = 0; // Default to the first state
+
+                if (scrollY >= threshold2) {
+                    newState = 2; // Version History
+                } else if (scrollY >= threshold1) {
+                    newState = 1; // Collaborate
+                } else {
+                    newState = 0; // Knowledge at Your Fingertip
+                }
+
+                if (newState !== currentState) {
+                    // Hide current state
+                    if (currentState !== -1) { // Don't try to hide if it's the initial load
+                        videoOverlayStates[currentState].classList.remove('opacity-100');
+                        videoOverlayStates[currentState].classList.add('opacity-0');
+                        // Remove animation class if previous state was video-overlay-1
+                        if (currentState === 1) {
+                            videoOverlayStates[currentState].classList.remove('video-overlay-active');
+                        }
+                    }
+
+                    // Show new state
+                    videoOverlayStates[newState].classList.remove('opacity-0');
+                    videoOverlayStates[newState].classList.add('opacity-100');
+
+                    // Add animation class if new state is video-overlay-1
+                    if (newState === 1) {
+                        videoOverlayStates[newState].classList.add('video-overlay-active');
+                    }
+
+                    currentState = newState;
+                }
+            }
+
+            function updateUserPreviewCirclePosition() {
+                const scrollY = window.scrollY;
+                const initialRight = 32; // Tailwind 'right-8'
+                const initialTop = 64; // Tailwind 'top-16'
+
+                const newTop = initialTop - (scrollY * 0.1);
+                userPreviewCircle.style.top = `${Math.max(16, newTop)}px`;
+            }
+
+            // Initial call to set the correct state on page load
+            updateVideoOverlayContent();
+            updateUserPreviewCirclePosition();
+
+            // Add scroll event listener
+            window.addEventListener('scroll', () => {
+                updateVideoOverlayContent();
+                updateUserPreviewCirclePosition();
+            });
+
+            // Handle window resize to ensure responsiveness
+            window.addEventListener('resize', () => {
+                updateUserPreviewCirclePosition();
+            });
+        });
+    </script>
 </body>
 </html>
+
