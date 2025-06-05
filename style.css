@@ -572,14 +572,14 @@ filter: blur(4px);i
     }
 
     /* When #dimension is checked, rotate/skew the entire grid in 3D */
-    :root:has(#dimension:checked) .grid {
+    :root:has(#dimension:checked) .custom-3d .grid {
       transform:
         rotateX(calc(1 * 20deg))
         rotateZ(calc(1 * -20deg))
         skewX(calc(1 * 20deg));
     }
 
-    .grid li {
+   .custom-3d .grid li {
       list-style: none;
       position: relative;
       width: 100%;
@@ -595,7 +595,7 @@ filter: blur(4px);i
     }
 
     /* Shadow under each item when active */
-    .grid li::before {
+   .custom-3d .grid li::before {
       content: "";
       position: absolute;
       inset: 4px 4px -2px -2px;
@@ -615,7 +615,7 @@ filter: blur(4px);i
     }
 
     /* Individual “tile” styling (darked out) */
-    .item {
+   .custom-3d .item {
       background-color: #111;
       border: 1px solid #333;
       border-radius: 6px;
@@ -689,7 +689,7 @@ filter: blur(4px);i
     }
 
     @media(prefers-reduced-motion: no-preference) {
-      .grid {
+     .custom-3d .grid {
         gap: 1rem;
       }
       li {
