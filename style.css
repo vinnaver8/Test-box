@@ -511,3 +511,273 @@ filter: blur(4px);i
         #draggablePinWrapper img {
             pointer-events: none;
 }
+/* Center box new replace animation */
+      @font-face {
+      font-family: "Geist Sans";
+      src: url("https://assets.codepen.io/605876/GeistVF.ttf") format("truetype");
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      background-color: #0D0D0D; /* Dark background */
+      color: #0D0D0D;            /* Light text for dark mode */
+      font-family: "Geist Sans", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.4;
+      overflow: hidden;
+    }
+
+    /*──────────────────────────────────────────────────────────────────────────
+      ROOT VARIABLES
+    ──────────────────────────────────────────────────────────────────────────*/
+    :root {
+      /* Speed of the vertical slide animation (in seconds) */
+      --speed: 10s;
+
+      /* Control how “deep” each item pops in 3D when hovered */
+      --hover-z: 24px;
+
+      /* Transition timing for hover states */
+      --transition: 0.15s;
+    }
+
+    /*──────────────────────────────────────────────────────────────────────────
+      ARTICLE / CENTER BOX
+    ──────────────────────────────────────────────────────────────────────────*/
+    main {
+      width: 100%;
+      max-width: 500px;
+      margin: 2rem;
+    }
+
+    article {
+      position: relative; /* for absolutely-positioned controls */
+      background-color: #0D0D0D;         /* slightly lighter than body */
+      border: 1px solid #0D0D0D;
+      border-radius: 6px;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+    }
+
+    .window {
+      /* maintain a fixed-height “viewport” for the scene */
+      height: 400px;
+      width: 500px;
+      transform-style: preserve-3d;
+    }
+
+    .scene {
+      --buff: 3rem; /* used for masking edges */
+      height: 100%;
+      width: 100%;
+      mask:
+        linear-gradient(transparent, white var(--buff), white calc(100% - var(--buff)), transparent),
+        linear-gradient(90deg, transparent, white var(--buff), white calc(100% - var(--buff)), transparent);
+      mask-composite: intersect;
+      -webkit-mask-composite: destination-in;
+    }
+
+    /*──────────────────────────────────────────────────────────────────────────
+      GLOBAL GRID & LIST ITEMS (DARK MODE STYLING)
+    ──────────────────────────────────────────────────────────────────────────*/
+    .grid {
+      --count: 6;   /* total columns (used in animation timing) */
+      --inset: 0;   /* offset at entry */
+      --outset: 2.5;/* offset at exit */
+
+      height: 100%;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      padding: 0 1rem;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease;
+    }
+
+    /* When #dimension is checked, rotate/skew the entire grid in 3D */
+    :root:has(#dimension:checked) .grid {
+      transform:
+        rotateX(calc(1 * 20deg))
+        rotateZ(calc(1 * -20deg))
+        skewX(calc(1 * 20deg));
+    }
+
+    .grid li {
+      list-style: none;
+      position: relative;
+      width: 100%;
+      min-height: 60px;
+      transform-style: preserve-3d;
+      z-index: calc(1 + var(--active, 0));
+      animation: slide var(--speed) calc((var(--speed) / var(--count)) * (var(--index) - 8)) infinite linear;
+      translate: 0% calc(((var(--count) - var(--index)) + var(--inset)) * 100%);
+    }
+
+    .grid:hover li {
+      animation-play-state: paused;
+    }
+
+    /* Shadow under each item when active */
+    .grid li::before {
+      content: "";
+      position: absolute;
+      inset: 4px 4px -2px -2px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      filter: blur(calc(var(--active, 0) * 8px));
+      z-index: -1;
+      transition: 
+        transform var(--transition),
+        opacity var(--transition),
+        filter var(--transition);
+      transform-origin: 50% 0;
+      transform: scale(1) scaleY(calc(1 + (var(--active, 0) * 0.05)));
+      opacity: calc(1 - var(--active, 0));
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.6),
+                  0 2px 4px -2px rgba(0,0,0,0.6);
+    }
+
+    /* Individual “tile” styling (darked out) */
+    .item {
+      background-color: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      text-align: center;
+      cursor: pointer;
+      transform: translate3d(0, 0, calc(var(--active) * var(--hover-z)));
+      transition: 
+        transform var(--transition),
+        scale var(--transition),
+        background-color 0.25s,
+        color 0.25s,
+        border-color 0.25s,
+        box-shadow 0.25s;
+      scale: calc(1 + (var(--active) * 0.05));
+    }
+
+    .item__icon {
+      width: 24px;
+      color: rgb(124, 58, 237);
+      flex-shrink: 0;
+    }
+
+    .item__text {
+      flex: 1;
+      font-size: 1rem;
+    }
+
+    /* Each <li> gets an --index for the animation delay */
+    li:nth-of-type(1)  { --index: 0; }
+    li:nth-of-type(2)  { --index: 0; }
+    li:nth-of-type(3)  { --index: 1; }
+    li:nth-of-type(4)  { --index: 1; }
+    li:nth-of-type(5)  { --index: 2; }
+    li:nth-of-type(6)  { --index: 2; }
+    li:nth-of-type(7)  { --index: 3; }
+    li:nth-of-type(8)  { --index: 3; }
+    li:nth-of-type(9)  { --index: 4; }
+    li:nth-of-type(10) { --index: 4; }
+    li:nth-of-type(11) { --index: 5; }
+    li:nth-of-type(12) { --index: 5; }
+
+    @container (width < 400px) {
+      .grid {
+        --count: 12;
+        --inset: 0;
+        --outset: 3;
+        grid-template-columns: 1fr;
+      }
+      li:nth-of-type(1)  { --index: 0; }
+      li:nth-of-type(2)  { --index: 1; }
+      li:nth-of-type(3)  { --index: 2; }
+      li:nth-of-type(4)  { --index: 3; }
+      li:nth-of-type(5)  { --index: 4; }
+      li:nth-of-type(6)  { --index: 5; }
+      li:nth-of-type(7)  { --index: 6; }
+      li:nth-of-type(8)  { --index: 7; }
+      li:nth-of-type(9)  { --index: 8; }
+      li:nth-of-type(10) { --index: 9; }
+      li:nth-of-type(11) { --index: 10; }
+      li:nth-of-type(12) { --index: 11; }
+      li {
+        --duration: calc(var(--speed) * 2);
+        --delay: calc((var(--duration) / var(--count)) * (var(--index) - 8));
+      }
+    }
+
+    @media(prefers-reduced-motion: no-preference) {
+      .grid {
+        gap: 1rem;
+      }
+      li {
+        --duration: calc(var(--speed) * 1);
+        --delay: calc((var(--duration) / var(--count)) * (var(--index) - 8));
+        animation: slide var(--duration) var(--delay) infinite linear;
+        translate: 0% calc(((var(--count) - var(--index)) + var(--inset)) * 100%);
+      }
+      li:hover {
+        --active: 1;
+      }
+      @keyframes slide {
+        100% {
+          translate: 0% calc(calc((var(--index) + var(--outset)) * -100%));
+        }
+      }
+      @container (width < 400px) {
+        li {
+          --duration: calc(var(--speed) * 2);
+          --delay: calc((var(--duration) / var(--count)) * (var(--index) - 8));
+        }
+      }
+    }
+
+    /*──────────────────────────────────────────────────────────────────────────
+      “3D” CONTROL STYLING (positioned over the box)
+    ──────────────────────────────────────────────────────────────────────────*/
+    .controls {
+      position: absolute;
+      top: 80%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #eee;
+      z-index: 10;
+      font-size: 0.9rem;
+    }
+
+    .controls label {
+      cursor: pointer;
+    }
+
+    .controls input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+      accent-color: #db2777;
+      cursor: pointer;
+    }
