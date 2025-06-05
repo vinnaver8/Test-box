@@ -512,17 +512,26 @@ filter: blur(4px);i
             pointer-events: none;
 }
 /* Center box new replace animation */
-.custom-3d {
-  --speed: 10s;
-  --hover-z: 24px;
-  --transition: 0.15s;
-}
- /*──────────────────────────────────────────────────────────────────────────
+      /*──────────────────────────────────────────────────────────────────────────
+      ROOT VARIABLES
+    ──────────────────────────────────────────────────────────────────────────*/
+    :root {
+      /* Speed of the vertical slide animation (in seconds) */
+      --speed: 10s;
+
+      /* Control how “deep” each item pops in 3D when hovered */
+      --hover-z: 24px;
+
+      /* Transition timing for hover states */
+      --transition: 0.15s;
+    }
+
+    /*──────────────────────────────────────────────────────────────────────────
       ARTICLE / CENTER BOX
     ──────────────────────────────────────────────────────────────────────────*/
     main {
       width: 100%;
-      max-width: 550px;
+      max-width: 600px;
       margin: 2rem;
     }
 
@@ -572,14 +581,14 @@ filter: blur(4px);i
     }
 
     /* When #dimension is checked, rotate/skew the entire grid in 3D */
-    :root:has(#dimension:checked) .custom-3d .grid {
+    :root:has(#dimension:checked) .grid {
       transform:
         rotateX(calc(1 * 20deg))
         rotateZ(calc(1 * -20deg))
         skewX(calc(1 * 20deg));
     }
 
-   .custom-3d .grid li {
+    .grid li {
       list-style: none;
       position: relative;
       width: 100%;
@@ -595,7 +604,7 @@ filter: blur(4px);i
     }
 
     /* Shadow under each item when active */
-   .custom-3d .grid li::before {
+    .grid li::before {
       content: "";
       position: absolute;
       inset: 4px 4px -2px -2px;
@@ -615,7 +624,7 @@ filter: blur(4px);i
     }
 
     /* Individual “tile” styling (darked out) */
-   .custom-3d .item {
+    .item {
       background-color: #111;
       border: 1px solid #333;
       border-radius: 6px;
@@ -664,7 +673,7 @@ filter: blur(4px);i
     li:nth-of-type(12) { --index: 5; }
 
     @container (width < 400px) {
-      .custom-3d .grid {
+      .grid {
         --count: 12;
         --inset: 0;
         --outset: 3;
@@ -689,7 +698,7 @@ filter: blur(4px);i
     }
 
     @media(prefers-reduced-motion: no-preference) {
-     .custom-3d .grid {
+      .grid {
         gap: 1rem;
       }
       li {
@@ -717,7 +726,7 @@ filter: blur(4px);i
     /*──────────────────────────────────────────────────────────────────────────
       “3D” CONTROL STYLING (positioned over the box)
     ──────────────────────────────────────────────────────────────────────────*/
-   .custom-3d .controls {
+    .controls {
       position: absolute;
       top: 80%;
       left: 50%;
