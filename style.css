@@ -664,7 +664,7 @@ filter: blur(4px);i
     li:nth-of-type(12) { --index: 5; }
 
     @container (width < 400px) {
-      .grid {
+      .custom-3d .grid {
         --count: 12;
         --inset: 0;
         --outset: 3;
@@ -717,7 +717,7 @@ filter: blur(4px);i
     /*──────────────────────────────────────────────────────────────────────────
       “3D” CONTROL STYLING (positioned over the box)
     ──────────────────────────────────────────────────────────────────────────*/
-    .controls {
+   .custom-3d .controls {
       position: absolute;
       top: 80%;
       left: 50%;
