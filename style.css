@@ -512,18 +512,12 @@ filter: blur(4px);i
             pointer-events: none;
 }
 /* Center box new replace animation */
-:root {
-      /* Speed of the vertical slide animation (in seconds) */
-      --speed: 10s;
-
-      /* Control how “deep” each item pops in 3D when hovered */
-      --hover-z: 24px;
-
-      /* Transition timing for hover states */
-      --transition: 0.15s;
-    }
-
-    /*──────────────────────────────────────────────────────────────────────────
+.custom-3d {
+  --speed: 10s;
+  --hover-z: 24px;
+  --transition: 0.15s;
+}
+ /*──────────────────────────────────────────────────────────────────────────
       ARTICLE / CENTER BOX
     ──────────────────────────────────────────────────────────────────────────*/
     main {
@@ -543,8 +537,8 @@ filter: blur(4px);i
 
     .window {
       /* maintain a fixed-height “viewport” for the scene */
-      height: 400px;
-      width: 500px;
+      height: 350px;
+      width: 550px;
       transform-style: preserve-3d;
     }
 
